@@ -59,6 +59,9 @@ section[id]{scroll-margin-top:82px}
 .filter{border:1px solid var(--line);background:#0d0d0d;color:var(--muted);border-radius:8px;padding:8px 10px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .filter:hover,.filter.active{background:#181818;color:var(--text);border-color:var(--line-strong)}
 .results-count{color:#64645f;font:9px ui-monospace,SFMono-Regular,Menlo,monospace}
+.catalog-empty{min-height:220px;border:1px solid var(--line);border-radius:12px;background:rgba(12,12,12,.72);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:32px;color:var(--muted)}
+.catalog-empty strong{color:var(--text);font-size:20px;letter-spacing:-.04em}
+.catalog-empty span{max-width:420px;font-size:11px;line-height:1.6}
 .product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .product-card{border:1px solid var(--line);background:rgba(12,12,12,.75);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .16s ease,transform .16s ease,background .16s ease}
 .product-card:hover{border-color:var(--line-strong);transform:translateY(-2px);background:#111}
