@@ -9,7 +9,7 @@
   const SUPPORT_WA = String(cfg.WHATSAPP_NUMBER || "919422843899").replace(/\D/g, "");
   const CART_KEY = "dewify-cart-v3";
 
-  const PRODUCTS = [
+  const DEFAULT_PRODUCTS = [
     {id:"dw-storage-vault",name:"FoldAway Storage Vault",category:"Home",categoryLabel:"Home & Daily",price:799,badge:"SMART PICK",sku:"CJYD237778201AZ",sourceUrl:"https://cjdropshipping.com/product/foldable-clothes-storage-bag-large-capacity-organizer-with-handle-and-double-zipper-for-bedding-moving-travel-under-bed-storage-p-2505160457141629100.html",images:["https://maqsood.me/cdn/shop/files/Product_Content_77.jpg?v=1785268495","https://i.ebayimg.com/images/g/VYkAAeSwPQ9o70Sj/s-l1600.jpg","https://i5.walmartimages.com/asr/a768a3be-cfa1-4543-be3b-d4bd41afa22b.ea5dadef1a02b6a0039473215a545f99.jpeg?odnBg=FFFFFF&odnHeight=768&odnWidth=768"],description:"A foldable, large-capacity organizer for clothes, bedding, seasonal items, moving and travel.",highlights:["Large-capacity storage","Double-zipper opening","Reinforced carry handle","Folds away when empty"]},
     {id:"dw-witchlight",name:"Witchlight Gothic Hat Lamp",category:"Home",categoryLabel:"Home & Daily",price:1499,badge:"LIMITED",sku:"CJYD296761901AZ",sourceUrl:"https://cjdropshipping.com/product/witch-hat-lamps-creative-home-gothic-night-light-gift-witch-hat-light-ornament-halloween-home-ornament-decoration-p-2607040852081633100.html",images:["https://oss-cf.cjdropshipping.com/product/2026/07/04/08/08fcf3b3-a6bf-4e84-b942-996b9b5d9f5d.jpeg","https://media.adeo.com/mkp/0ba7d37825817478bfa35ebd0ee2e46a/media.jpeg?fit=bounds&format=jpg&height=650&quality=80&width=650"],description:"A character-filled decorative lamp for shelves, bedside tables and gothic-inspired rooms.",highlights:["Statement décor piece","USB powered listing","Three style variants","Themed-room friendly"]},
     {id:"dw-heatcore-jacket",name:"HeatCore USB Heated Jacket",category:"Wear",categoryLabel:"Wear",price:2499,badge:"WINTER",sku:"CJYR158132801AZ",sourceUrl:"https://cjdropshipping.com/product/winter-heated-jacket-usb-electric-cotton-coat-zip-up-heater-thermal-clothing-heating-vest-for-men-p-1578267399776907264.html",images:["https://cf.cjdropshipping.com/17000928/1725075714115506176.jpg","https://cf.cjdropshipping.com/17000928/1725075714283278336.jpg"],description:"A USB-powered heated jacket designed for cold commutes, travel and outdoor days.",highlights:["3 temperature settings","Carbon-fiber heating elements","Removable hood listing","S–6XL size range listing"]},
@@ -27,6 +27,41 @@
   const $$ = (s,root=document) => [...root.querySelectorAll(s)];
   const money = value => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(value);
   const proxy = (url,width) => "https://images.weserv.nl/?url="+encodeURIComponent(url)+"&w="+width+"&q=78&output=webp&fit=cover";
+
+  const PRODUCTS_CACHE_KEY = "dewify-products-v1";
+  const CATEGORY_LABELS = {"Home":"Home & Daily","Wear":"Wear","Pet":"Pet"};
+
+  function normalizeRemoteProduct(item){
+    if(!item || typeof item !== "object") return null;
+    const images = Array.isArray(item.images) ? item.images.map(x=>String(x||"").trim()).filter(Boolean).slice(0,12) : [];
+    const category = ["Home","Wear","Pet"].includes(String(item.category||"")) ? String(item.category) : "Home";
+    const price = Number(item.price);
+    if(!item.id || !item.name || !images.length || !Number.isFinite(price)) return null;
+    return {
+      id:String(item.id),
+      name:String(item.name),
+      category:category,
+      categoryLabel:String(item.categoryLabel || CATEGORY_LABELS[category] || category),
+      price:Math.round(price),
+      badge:String(item.badge || ""),
+      sku:String(item.sku || ""),
+      sourceUrl:String(item.sourceUrl || ""),
+      images:images,
+      description:String(item.description || ""),
+      highlights:Array.isArray(item.highlights) ? item.highlights.map(x=>String(x||"").trim()).filter(Boolean) : [],
+      active:item.active!==false
+    };
+  }
+
+  function loadProductCache(){
+    try{
+      const raw=JSON.parse(localStorage.getItem(PRODUCTS_CACHE_KEY)||"[]");
+      return Array.isArray(raw) ? raw.map(normalizeRemoteProduct).filter(Boolean) : [];
+    }catch{return []}
+  }
+
+  let PRODUCTS = loadProductCache();
+  if(!PRODUCTS.length) PRODUCTS = DEFAULT_PRODUCTS.map(p=>({...p,active:true}));
 
   let cart = loadCart();
   let activeFilter = "All";
@@ -175,7 +210,7 @@
           <p class="eyebrow">${escapeHtml(p.categoryLabel)} / DEWIFY DROP</p>
           <h1 id="detailTitle">${escapeHtml(p.name)}</h1>
           <p class="detail-description">${escapeHtml(p.description)}</p>
-          <div class="detail-list">${p.highlights.map((x,i)=>'<div><b>'+String(i+1).padStart(2,"0")+'</b>&nbsp;&nbsp;'+escapeHtml(x)+'</div>').join("")}</div>
+          <div class="detail-list">${(p.highlights||[]).map((x,i)=>'<div><b>'+String(i+1).padStart(2,"0")+'</b>&nbsp;&nbsp;'+escapeHtml(x)+'</div>').join("")}</div>
           <div class="detail-buy"><strong>${money(p.price)}</strong><button class="button button-light" data-detail-add="${p.id}" type="button">Add to bag <span>↗</span></button></div>
           <div class="detail-meta"><span>CATEGORY / ${escapeHtml(p.categoryLabel.toUpperCase())}</span><span>SKU / ${escapeHtml(p.sku)}</span><a href="${escapeAttr(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">VIEW SOURCE LISTING ↗</a></div>
         </div>
@@ -362,6 +397,27 @@
     else setTimeout(warm,1200);
   }
 
+  async function refreshProductsFromBackend(){
+    if(!API_URL.startsWith("https://script.google.com/macros/s/")) return;
+    try{
+      const sep=API_URL.includes("?")?"&":"?";
+      const response=await fetch(API_URL+sep+"action=products",{method:"GET",cache:"no-store",redirect:"follow"});
+      if(!response.ok) return;
+      const result=await response.json();
+      const remote=Array.isArray(result?.products) ? result.products.map(normalizeRemoteProduct).filter(Boolean) : [];
+      if(!remote.length) return;
+
+      PRODUCTS=remote;
+      try{localStorage.setItem(PRODUCTS_CACHE_KEY,JSON.stringify(PRODUCTS));}catch(_){}
+      const validIds=new Set(PRODUCTS.map(p=>p.id));
+      cart=cart.filter(item=>validIds.has(item.id));
+      saveCart();
+      renderProducts();
+      renderCart();
+      renderCheckoutSummary();
+    }catch(_){}
+  }
+
   function initSupport(){
     const link=$("#supportLink");
     if(link)link.href="https://wa.me/"+SUPPORT_WA;
@@ -369,6 +425,7 @@
 
   function init(){
     renderProducts();renderCart();renderCheckoutSummary();updateBagCount();initEvents();initSupport();initStars();warmOrderApi();
+    setTimeout(refreshProductsFromBackend,180);
     const m=location.hash.match(/^#product\/(.+)$/);
     if(m)openDetail(decodeURIComponent(m[1]),false);
   }
