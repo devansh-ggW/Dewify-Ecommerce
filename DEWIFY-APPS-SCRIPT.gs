@@ -39,9 +39,7 @@ function doGet() {
 }
 
 function doPost(e) {
-  const lock=LockService.getScriptLock();
   try {
-    lock.waitLock(10000);
     if(!e || !e.postData || typeof e.postData.contents!=="string") throw new Error("Missing request body.");
 
     let input;
@@ -50,6 +48,7 @@ function doPost(e) {
 
     const action=clean_(input.action,40);
 
+    // Read-only admin requests do not take the global script lock.
     if(action==="auth") {
       requireAdmin_(input.token);
       return json_({ok:true,authenticated:true});
@@ -58,21 +57,25 @@ function doPost(e) {
       requireAdmin_(input.token);
       return json_({ok:true,orders:listOrders_()});
     }
-    if(action==="updateOrder") {
-      requireAdmin_(input.token);
-      return json_({ok:true,order:updateOrder_(input)});
-    }
-    if(action==="deleteOrder") {
-      requireAdmin_(input.token);
-      return json_({ok:true,deleted:deleteOrder_(input.orderId)});
+
+    // Writes are serialized only around the actual sheet mutation.
+    if(action==="updateOrder"||action==="deleteOrder") {
+      const lock=LockService.getScriptLock();
+      try {
+        lock.waitLock(8000);
+        requireAdmin_(input.token);
+        return action==="updateOrder"
+          ? json_({ok:true,order:updateOrder_(input)})
+          : json_({ok:true,deleted:deleteOrder_(input.orderId)});
+      } finally {
+        try { lock.releaseLock(); } catch(_) {}
+      }
     }
 
     return createOrder_(input);
   } catch(err) {
     console.error(err && err.stack ? err.stack : err);
     return json_({ok:false,error:err && err.message ? err.message : String(err)});
-  } finally {
-    try { lock.releaseLock(); } catch(_) {}
   }
 }
 
@@ -80,59 +83,77 @@ function doPost(e) {
 
 function createOrder_(input) {
   const order=validateAndNormalize_(input);
-  const sheet=getOrdersSheet_();
 
-  const existing=findClientRequestId_(order.clientRequestId);
-  if(existing) {
-    return json_({
+  // Fast path: avoid taking the write lock for an already-completed retry.
+  const earlyDuplicate=findClientRequestId_(order.clientRequestId);
+  if(earlyDuplicate) return json_({
+    ok:true,
+    duplicate:true,
+    orderId:earlyDuplicate.orderId,
+    createdAt:earlyDuplicate.createdAt,
+    orderStatus:earlyDuplicate.orderStatus
+  });
+
+  const lock=LockService.getScriptLock();
+  try {
+    lock.waitLock(8000);
+
+    // Re-check after acquiring the lock so two simultaneous submissions
+    // with the same clientRequestId cannot create two rows.
+    const existing=findClientRequestId_(order.clientRequestId);
+    if(existing) return json_({
       ok:true,
       duplicate:true,
       orderId:existing.orderId,
       createdAt:existing.createdAt,
       orderStatus:existing.orderStatus
     });
+
+    const sheet=getOrdersSheetFast_();
+    const orderId=createUniqueOrderId_();
+    const now=new Date();
+    const productText=order.items.map(i=>i.name+" × "+i.qty).join(" | ");
+    const quantity=order.items.reduce((s,i)=>s+i.qty,0);
+    const paymentStatus=order.paymentMethod==="COD" ? "COD_PENDING" : "PENDING";
+
+    const row=new Array(HEADERS.length).fill("");
+    row[0]=orderId;
+    row[1]=now;
+    row[2]=order.customer.name;
+    row[3]=order.customer.phone;
+    row[4]=order.customer.email;
+    row[5]=order.customer.address;
+    row[6]=order.customer.city;
+    row[7]=order.customer.state;
+    row[8]=order.customer.pincode;
+    row[9]=productText;
+    row[10]=quantity;
+    row[11]=order.total;
+    row[12]=order.paymentMethod;
+    row[13]="NEW";
+    row[14]=paymentStatus;
+    row[17]=now;
+
+    // appendRow is enough; an explicit SpreadsheetApp.flush() only adds
+    // latency before the response is returned to the customer.
+    sheet.appendRow(row);
+
+    rememberClientRequest_(order.clientRequestId,{
+      orderId:orderId,
+      createdAt:now.toISOString(),
+      orderStatus:"NEW"
+    });
+
+    return json_({
+      ok:true,
+      orderId:orderId,
+      createdAt:now.toISOString(),
+      orderStatus:"NEW",
+      paymentStatus:paymentStatus
+    });
+  } finally {
+    try { lock.releaseLock(); } catch(_) {}
   }
-
-  const orderId=createUniqueOrderId_(sheet);
-  const now=new Date();
-  const productText=order.items.map(i=>i.name+" × "+i.qty).join(" | ");
-  const quantity=order.items.reduce((s,i)=>s+i.qty,0);
-  const paymentStatus=order.paymentMethod==="COD" ? "COD_PENDING" : "PENDING";
-
-  const row=new Array(HEADERS.length).fill("");
-  row[0]=orderId;
-  row[1]=now;
-  row[2]=order.customer.name;
-  row[3]=order.customer.phone;
-  row[4]=order.customer.email;
-  row[5]=order.customer.address;
-  row[6]=order.customer.city;
-  row[7]=order.customer.state;
-  row[8]=order.customer.pincode;
-  row[9]=productText;
-  row[10]=quantity;
-  row[11]=order.total;
-  row[12]=order.paymentMethod;
-  row[13]="NEW";
-  row[14]=paymentStatus;
-  row[17]=now;
-
-  sheet.appendRow(row);
-  SpreadsheetApp.flush();
-
-  rememberClientRequest_(order.clientRequestId,{
-    orderId:orderId,
-    createdAt:now.toISOString(),
-    orderStatus:"NEW"
-  });
-
-  return json_({
-    ok:true,
-    orderId:orderId,
-    createdAt:now.toISOString(),
-    orderStatus:"NEW",
-    paymentStatus:paymentStatus
-  });
 }
 
 function validateAndNormalize_(input) {
@@ -197,6 +218,27 @@ function validateAndNormalize_(input) {
 
 /* ---------- Sheet ---------- */
 
+function getOrdersSheetFast_() {
+  if(!SPREADSHEET_ID) throw new Error("SPREADSHEET_ID is not configured.");
+
+  let ss;
+  try { ss=SpreadsheetApp.openById(SPREADSHEET_ID); }
+  catch(_) {
+    throw new Error("Could not open spreadsheet. Check SPREADSHEET_ID and Apps Script authorization.");
+  }
+
+  let sheet=ss.getSheetByName(SHEET_NAME);
+  if(!sheet) sheet=ss.insertSheet(SHEET_NAME);
+
+  if(sheet.getLastRow()===0) {
+    sheet.getRange(1,1,1,HEADERS.length).setValues([HEADERS]);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1,1,1,HEADERS.length).setFontWeight("bold");
+  }
+
+  return sheet;
+}
+
 function getOrdersSheet_() {
   if(!SPREADSHEET_ID) throw new Error("SPREADSHEET_ID is not configured.");
 
@@ -220,6 +262,18 @@ function getOrdersSheet_() {
   return sheet;
 }
 
+function getReadOnlyOrdersSheet_() {
+  if(!SPREADSHEET_ID) throw new Error("SPREADSHEET_ID is not configured.");
+  let ss;
+  try { ss=SpreadsheetApp.openById(SPREADSHEET_ID); }
+  catch(_) {
+    throw new Error("Could not open spreadsheet. Check SPREADSHEET_ID and Apps Script authorization.");
+  }
+  const sheet=ss.getSheetByName(SHEET_NAME);
+  if(!sheet) return null;
+  return sheet;
+}
+
 function ensureHeaders_(sheet) {
   const width=Math.max(sheet.getLastColumn(),HEADERS.length);
   const current=sheet.getRange(1,1,1,width).getValues()[0];
@@ -238,20 +292,9 @@ function ensureHeaders_(sheet) {
   if(changed) sheet.getRange(1,1,1,HEADERS.length).setFontWeight("bold");
 }
 
-function createUniqueOrderId_(sheet) {
-  const lastRow=sheet.getLastRow();
-  const values=lastRow>=2
-    ? sheet.getRange(2,1,lastRow-1,1).getDisplayValues().flat()
-    : [];
-
-  const used=new Set(values.filter(Boolean));
-  let id;
-
-  do {
-    id="DEWIFY-"+Math.floor(100000+Math.random()*900000);
-  } while(used.has(id));
-
-  return id;
+function createUniqueOrderId_() {
+  // UUID-derived IDs avoid scanning the entire sheet on every checkout.
+  return "DEWIFY-"+Utilities.getUuid().replace(/-/g,"").slice(0,6).toUpperCase();
 }
 
 /* ---------- Admin ---------- */
@@ -267,7 +310,8 @@ function requireAdmin_(token) {
 }
 
 function listOrders_() {
-  const sheet=getOrdersSheet_();
+  const sheet=getReadOnlyOrdersSheet_();
+  if(!sheet) return [];
   const lastRow=sheet.getLastRow();
   if(lastRow<2) return [];
 
