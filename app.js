@@ -382,14 +382,14 @@
       pageH=Math.max(h,document.documentElement.scrollHeight||h);
       const area=w*pageH;
       const count=mobile
-        ? Math.max(240,Math.min(360,Math.floor(area/7200)))
-        : Math.max(430,Math.min(680,Math.floor(area/5600)));
+        ? Math.max(360,Math.min(520,Math.floor(area/5200)))
+        : Math.max(620,Math.min(900,Math.floor(area/4300)));
 
       stars=Array.from({length:count},()=>({
         x:Math.random()*w,
         y:Math.random()*pageH,
-        r:Math.random()<.2?(0.8+Math.random()*.55):(0.45+Math.random()*.65),
-        a:Math.random()<.22?(0.72+Math.random()*.18):(0.28+Math.random()*.42),
+        r:Math.random()<.3?(1.05+Math.random()*.65):(0.65+Math.random()*.75),
+        a:Math.random()<.35?(0.86+Math.random()*.14):(0.48+Math.random()*.38),
         warm:Math.random()<.16,
         phase:Math.random()*Math.PI*2,
         speed:8+Math.random()*10,
@@ -454,7 +454,7 @@
       const radius2=radius*radius;
       const spring=1-Math.pow(0.0007,dt/16.7);
       const drift=now*0.001;
-      const alphaStep=mobile?1:1;
+      const alphaStep=1;
 
       for(const s of stars){
         let x=((s.x+drift*s.speed)%w+w)%w;
