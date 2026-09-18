@@ -8,6 +8,7 @@
   const API_URL = String(cfg.GOOGLE_APPS_SCRIPT_URL || "");
   const SUPPORT_WA = String(cfg.WHATSAPP_NUMBER || "919422843899").replace(/\D/g, "");
   const CART_KEY = "dewify-cart-v3";
+  const CATALOG_PAUSED = true;
 
   const DEFAULT_PRODUCTS = [
     {id:"dw-storage-vault",name:"FoldAway Storage Vault",category:"Home",categoryLabel:"Home & Daily",price:799,badge:"SMART PICK",sku:"CJYD237778201AZ",sourceUrl:"https://cjdropshipping.com/product/foldable-clothes-storage-bag-large-capacity-organizer-with-handle-and-double-zipper-for-bedding-moving-travel-under-bed-storage-p-2505160457141629100.html",images:["https://maqsood.me/cdn/shop/files/Product_Content_77.jpg?v=1785268495","https://i.ebayimg.com/images/g/VYkAAeSwPQ9o70Sj/s-l1600.jpg","https://i5.walmartimages.com/asr/a768a3be-cfa1-4543-be3b-d4bd41afa22b.ea5dadef1a02b6a0039473215a545f99.jpeg?odnBg=FFFFFF&odnHeight=768&odnWidth=768"],description:"A foldable, large-capacity organizer for clothes, bedding, seasonal items, moving and travel.",highlights:["Large-capacity storage","Double-zipper opening","Reinforced carry handle","Folds away when empty"]},
@@ -60,8 +61,8 @@
     }catch{return []}
   }
 
-  let PRODUCTS = loadProductCache();
-  if(!PRODUCTS.length) PRODUCTS = DEFAULT_PRODUCTS.map(p=>({...p,active:true}));
+  let PRODUCTS = CATALOG_PAUSED ? [] : loadProductCache();
+  if(!CATALOG_PAUSED && !PRODUCTS.length) PRODUCTS = DEFAULT_PRODUCTS.map(p=>({...p,active:true}));
 
   let cart = loadCart();
   let activeFilter = "All";
@@ -126,6 +127,9 @@
     const count=$("#resultsCount");
     if(!grid)return;
     const list=activeFilter==="All"?PRODUCTS:PRODUCTS.filter(p=>p.category===activeFilter);
+    const empty=$("#catalogEmpty"),toolbar=$("#catalogToolbar");
+    if(empty) empty.hidden=list.length!==0;
+    if(toolbar) toolbar.style.display=list.length ? "" : "none";
     grid.innerHTML=list.map((p,i)=>`
       <article class="product-card" data-product-id="${p.id}" tabindex="0" aria-label="View ${escapeAttr(p.name)}">
         <div class="product-visual" data-product-id="${p.id}">
@@ -398,6 +402,7 @@
   }
 
   async function refreshProductsFromBackend(){
+    if(CATALOG_PAUSED) return;
     if(!API_URL.startsWith("https://script.google.com/macros/s/")) return;
     try{
       const sep=API_URL.includes("?")?"&":"?";
@@ -424,6 +429,9 @@
   }
 
   function init(){
+    if(CATALOG_PAUSED){
+      try{localStorage.removeItem(PRODUCTS_CACHE_KEY);localStorage.removeItem(CART_KEY);}catch(_){}
+    }
     renderProducts();renderCart();renderCheckoutSummary();updateBagCount();initEvents();initSupport();initStars();warmOrderApi();
     setTimeout(refreshProductsFromBackend,180);
     const m=location.hash.match(/^#product\/(.+)$/);
