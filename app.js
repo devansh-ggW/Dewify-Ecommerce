@@ -240,7 +240,7 @@
 
     const button=$("#submitOrderButton");
     if(button?.disabled)return;
-    if(button){button.disabled=true;button.textContent="Sending…";}
+    if(button){button.disabled=true;button.textContent="Creating order…";}
     const payload={
       clientRequestId:clientRequestId(),
       customer:values,
@@ -249,7 +249,10 @@
       paymentMethod:"UPI"
     };
     try{
-      const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),redirect:"follow",cache:"no-store"});
+      const controller=window.AbortController?new AbortController():null;
+      const timeout=controller?setTimeout(()=>controller.abort(),20000):null;
+      const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),redirect:"follow",cache:"no-store",signal:controller?.signal,keepalive:true});
+      if(timeout)clearTimeout(timeout);
       if(!response.ok)throw new Error("HTTP "+response.status);
       const raw=await response.text();
       let result;try{result=JSON.parse(raw)}catch{throw new Error("The order service returned an invalid response.")}
@@ -350,13 +353,22 @@
     },{passive:true});
   }
 
+  function warmOrderApi(){
+    if(!API_URL.startsWith("https://script.google.com/macros/s/"))return;
+    // Fire-and-forget GET to warm the Apps Script runtime while the customer browses.
+    // It is delayed so first paint stays completely free of network work.
+    const warm=()=>{try{fetch(API_URL,{method:"GET",mode:"no-cors",cache:"no-store",keepalive:true}).catch(()=>{});}catch(_){}};
+    if("requestIdleCallback" in window) window.requestIdleCallback(warm,{timeout:2500});
+    else setTimeout(warm,1200);
+  }
+
   function initSupport(){
     const link=$("#supportLink");
     if(link)link.href="https://wa.me/"+SUPPORT_WA;
   }
 
   function init(){
-    renderProducts();renderCart();renderCheckoutSummary();updateBagCount();initEvents();initSupport();initStars();
+    renderProducts();renderCart();renderCheckoutSummary();updateBagCount();initEvents();initSupport();initStars();warmOrderApi();
     const m=location.hash.match(/^#product\/(.+)$/);
     if(m)openDetail(decodeURIComponent(m[1]),false);
   }
