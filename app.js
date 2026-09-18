@@ -368,87 +368,157 @@
     if(!ctx)return;
 
     const reduced=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    const touch=matchMedia?.("(pointer: coarse)")?.matches;
-    const mobile=window.innerWidth<700;
-    if(reduced){
-      canvas.style.opacity=".5";
-    }
-
-    let dpr=Math.min(window.devicePixelRatio||1,1.25);
-    let w=0,h=0;
+    const coarse=window.matchMedia?.("(pointer: coarse)")?.matches;
+    let mobile=window.innerWidth<700||coarse;
+    let dpr=Math.min(window.devicePixelRatio||1,mobile?1:1.15);
+    let w=0,h=0,pageH=0;
     let stars=[];
     let raf=0,last=0,resizeTimer=0;
+    let running=true;
     let pointer={x:-9999,y:-9999,active:false};
-    let running=true,scrollY=0,scrollSmooth=0;
+    let pointerTarget={x:-9999,y:-9999,active:false};
 
-    function rebuild(){
-      const area=w*h;
-      const base=mobile?Math.floor(area/10000):Math.floor(area/7000);
-      const count=Math.max(mobile?110:170,Math.min(mobile?280:420,base));
+    function build(){
+      pageH=Math.max(h,document.documentElement.scrollHeight||h);
+      const area=w*pageH;
+      const count=mobile
+        ? Math.max(240,Math.min(360,Math.floor(area/7200)))
+        : Math.max(430,Math.min(680,Math.floor(area/5600)));
+
       stars=Array.from({length:count},()=>({
         x:Math.random()*w,
-        y:Math.random()*Math.max(h,document.documentElement.scrollHeight||h),
-        r:Math.random()<.22?(0.9+Math.random()*.6):(0.45+Math.random()*.7),
-        a:Math.random()<.22?(0.72+Math.random()*.18):(0.32+Math.random()*.38),
-        tint:Math.random()<.18,
+        y:Math.random()*pageH,
+        r:Math.random()<.2?(0.8+Math.random()*.55):(0.45+Math.random()*.65),
+        a:Math.random()<.22?(0.72+Math.random()*.18):(0.28+Math.random()*.42),
+        warm:Math.random()<.16,
         phase:Math.random()*Math.PI*2,
-        speed:4+Math.random()*5,
-        sway:2+Math.random()*4
+        speed:8+Math.random()*10,
+        sway:3+Math.random()*7,
+        swayY:1.5+Math.random()*4,
+        repelX:0,
+        repelY:0
       }));
     }
-    function resize(){
-      clearTimeout(resizeTimer);
-      resizeTimer=setTimeout(()=>{
-        dpr=Math.min(window.devicePixelRatio||1,1.25);
-        w=innerWidth;h=innerHeight;
-        canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-        rebuild();
-      },90);
+
+    function refreshSize(){
+      const oldW=w;
+      const oldH=h;
+      dpr=Math.min(window.devicePixelRatio||1,mobile?1:1.15);
+      w=window.innerWidth;
+      h=window.innerHeight;
+      mobile=w<700||coarse;
+      canvas.width=Math.floor(w*dpr);
+      canvas.height=Math.floor(h*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+
+      if(!oldW||!oldH){
+        build();
+        return;
+      }
+
+      const sx=w/oldW;
+      const sy=Math.max(1,(document.documentElement.scrollHeight||h)/Math.max(1,pageH));
+      for(const s of stars){
+        s.x*=sx;
+        s.y*=sy;
+      }
+      pageH=Math.max(h,document.documentElement.scrollHeight||h);
     }
+
+    function scheduleResize(){
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(refreshSize,120);
+    }
+
+    function updatePointer(dt){
+      const ease=1-Math.pow(0.0002,dt/16.7);
+      pointer.x+=(pointerTarget.x-pointer.x)*ease;
+      pointer.y+=(pointerTarget.y-pointer.y)*ease;
+      pointer.active=pointerTarget.active;
+    }
+
     function frame(now){
       if(!running){raf=0;return}
-      const dt=Math.min(32,Math.max(0,(now-last)||16.7));last=now;
-      const ease=1-Math.pow(.0009,dt/16.7);
-      scrollY=window.scrollY||0;
-      scrollSmooth+=(scrollY-scrollSmooth)*Math.min(1,dt*.012);
+      const dt=Math.min(32,Math.max(0,(now-last)||16.7));
+      last=now;
+      updatePointer(dt);
+
+      if(Math.abs((document.documentElement.scrollHeight||h)-pageH)>80){
+        pageH=Math.max(h,document.documentElement.scrollHeight||h);
+      }
 
       ctx.clearRect(0,0,w,h);
-      const radius=touch||reduced?0:120;
-      for(const s of stars){
-        const t=now*.00015+s.phase;
-        let x=s.x-(now*.0006*s.speed)%w+Math.sin(t)*s.sway;
-        if(x<0)x+=w;
-        let y=s.y-scrollSmooth+Math.sin(t*.78+s.phase)*s.sway*.3;
-        if(y<-3||y>h+3)continue;
 
+      const scrollY=window.scrollY||window.pageYOffset||0;
+      const radius=mobile||reduced?0:150;
+      const radius2=radius*radius;
+      const spring=1-Math.pow(0.0007,dt/16.7);
+      const drift=now*0.001;
+      const alphaStep=mobile?1:1;
+
+      for(const s of stars){
+        let x=((s.x+drift*s.speed)%w+w)%w;
+        let y=s.y-scrollY+Math.sin(drift*.9+s.phase)*s.swayY;
+        if(y<-4)y+=pageH;
+        if(y>h+4)y-=pageH;
+
+        let targetX=0,targetY=0;
         if(radius&&pointer.active){
-          const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy);
-          if(d<radius&&d>.1){
-            const f=1-d/radius;
-            const k=f*f*(3-2*f);
-            x+=dx/d*k*12;y+=dy/d*k*12;
+          const dx=x-pointer.x;
+          const dy=y-pointer.y;
+          const dist2=dx*dx+dy*dy;
+          if(dist2<radius2&&dist2>0.01){
+            const inv=1/Math.sqrt(dist2);
+            const force=(1-Math.sqrt(dist2)/radius);
+            const eased=force*force*(3-2*force);
+            const displacement=eased*24;
+            targetX=dx*inv*displacement;
+            targetY=dy*inv*displacement;
           }
         }
-        ctx.globalAlpha=s.a;
-        ctx.fillStyle=s.tint?"#f6d887":"#fbf2d3";
-        ctx.beginPath();ctx.arc(x,y,s.r,0,Math.PI*2);ctx.fill();
+
+        s.repelX+=(targetX-s.repelX)*spring;
+        s.repelY+=(targetY-s.repelY)*spring;
+        x+=s.repelX;
+        y+=s.repelY;
+
+        ctx.globalAlpha=s.a*alphaStep;
+        ctx.fillStyle=s.warm?"#f6d887":"#fbf2d3";
+        const size=s.r;
+        ctx.fillRect(x,y,size,size);
       }
       ctx.globalAlpha=1;
       raf=requestAnimationFrame(frame);
     }
+
     function start(){
       if(raf||document.hidden)return;
-      running=true;last=performance.now();raf=requestAnimationFrame(frame);
+      running=true;
+      last=performance.now();
+      raf=requestAnimationFrame(frame);
     }
-    function stop(){running=false;if(raf){cancelAnimationFrame(raf);raf=0}}
-    resize();
-    if(!touch&&!reduced){
-      addEventListener("pointermove",e=>{pointer.x=e.clientX;pointer.y=e.clientY;pointer.active=true},{passive:true});
-      addEventListener("pointerleave",()=>{pointer.active=false},{passive:true});
+
+    function stop(){
+      running=false;
+      if(raf){
+        cancelAnimationFrame(raf);
+        raf=0;
+      }
     }
-    addEventListener("scroll",()=>{},{passive:true});
-    addEventListener("resize",resize,{passive:true});
+
+    refreshSize();
+    build();
+
+    if(!mobile&&!reduced){
+      addEventListener("pointermove",e=>{
+        pointerTarget.x=e.clientX;
+        pointerTarget.y=e.clientY;
+        pointerTarget.active=true;
+      },{passive:true});
+      addEventListener("pointerleave",()=>{pointerTarget.active=false},{passive:true});
+    }
+
+    addEventListener("resize",scheduleResize,{passive:true});
     document.addEventListener("visibilitychange",()=>document.hidden?stop():start());
     start();
   }
