@@ -1,125 +1,458 @@
-// ============================================================
-// DEWIFY — Google Sheets order checkout
-// Customer → Google Apps Script Web App → Google Sheet
-// No database credentials or private secrets are used in the browser.
-// ============================================================
-const WHATSAPP_NUMBER = "919422843899";
-const GOOGLE_APPS_SCRIPT_URL = window.DEWIFY_CONFIG?.GOOGLE_APPS_SCRIPT_URL || "";
+/* DEWIFY — lightweight storefront
+   Single bundle: catalog, cart, product detail, order form and starfield.
+*/
+(() => {
+  "use strict";
 
-// Titles are DEWIFY-native. Prices are provisional INR storefront prices;
-// destination-specific CJ shipping must be verified before live pricing.
-const PRODUCTS = [
-  {id:"dw-storage-vault",name:"FoldAway Storage Vault",category:"Utility",price:799,badge:"SMART PICK",kind:"organizer",sourceUrl:"https://cjdropshipping.com/product/foldable-clothes-storage-bag-large-capacity-organizer-with-handle-and-double-zipper-for-bedding-moving-travel-under-bed-storage-p-2505160457141629100.html",sku:"CJYD237778201AZ"},
-  {id:"dw-witchlight",name:"Witchlight Gothic Hat Lamp",category:"Utility",price:1499,badge:"LIMITED",kind:"lamp",sourceUrl:"https://cjdropshipping.com/product/witch-hat-lamps-creative-home-gothic-night-light-gift-witch-hat-light-ornament-halloween-home-ornament-decoration-p-2607040852081633100.html",sku:"CJYD296761901AZ"},
-  {id:"dw-heatcore-jacket",name:"HeatCore USB Heated Jacket",category:"Wear",price:2499,badge:"WINTER",kind:"hoodie",sourceUrl:"https://cjdropshipping.com/product/winter-heated-jacket-usb-electric-cotton-coat-zip-up-heater-thermal-clothing-heating-vest-for-men-p-1578267399776907264.html",sku:"CJYR158132801AZ"},
-  {id:"dw-moonglow-pendant",name:"MoonGlow Luminous Pendant",category:"Wear",price:699,badge:"GLOW",kind:"case",sourceUrl:"https://cjdropshipping.com/product/fashion-moon-natural-glowing-stone-healing-necklace-women-gift-charm-luminous-pendant-necklace-jewelry-p-F0403505-748E-4F3C-A9BB-70E390109230.html",sku:"CJZBLXLX00017-purple"},
-  {id:"dw-fruity-paws",name:"Fruity Paws Cozy Hoodie",category:"Utility",price:799,badge:"PET PICK",kind:"tee",sourceUrl:"https://cjdropshipping.com/product/cute-fruit-dog-clothes-for-small-dogs-hoodies-winter-warm-fleece-pet-clothing-puppy-cat-costume-coat-for-french-chihuahua-outfit-p-1403920038016192512.html",sku:"CJGD117239401AZ"},
-  {id:"dw-bunnyglow",name:"BunnyGlow Touch Night Light",category:"Utility",price:1299,badge:"SOFT GLOW",kind:"lamp",sourceUrl:"https://cjdropshipping.com/product/cute-led-night-light-touch-sensor-cartoon-kids-nightlights-big-face-rabbit-silicone-night-light-christmas-gift-bedside-lamp-home-decor-p-1770035341261541376.html",sku:"CJYD199189901AZ"},
-  {id:"dw-orbitmoon-lamp",name:"OrbitMoon Crystal Night Lamp",category:"Utility",price:899,badge:"AMBIENT",kind:"lamp",sourceUrl:"https://cjdropshipping.com/product/luminous-starry-sky-and-planets-moon-moon-crystal-ball-small-night-lamp-projection-ambience-light-creative-gift-new-strange-gift-p-1555129918592397312.html",sku:"CJJT153840401AZ"},
-  {id:"dw-temptrack-bottle",name:"TempTrack Insulated Bottle",category:"Utility",price:1099,badge:"DAILY USE",kind:"speaker",sourceUrl:"https://cjdropshipping.com/product/smart-digital-thermal-bottle-portable-coffee-mug-stainless-steel-water-bottle-in-car-insulated-cup-keep-cold-vacuum-flasks-450ml-p-1737828106674647040.html",sku:"CJJT192676801AZ"},
-  {id:"dw-cloudwarm-socks",name:"CloudWarm Over-Knee Socks",category:"Wear",price:899,badge:"COZY",kind:"cap",sourceUrl:"https://cjdropshipping.com/product/over-knee-high-fuzzy-long-socks-winter-warm-cold-leg-knee-joint-cold-proof-stockings-home-floor-sleeping-socks-p-1668434970181902336.html",sku:"CJYD177740901AZ"},
-  {id:"dw-ravenhide-watch",name:"RavenHide Retro Leather Watch",category:"Wear",price:1299,badge:"CLASSIC",kind:"case",sourceUrl:"https://cjdropshipping.com/product/accessories-foreign-trade-watches-retro-cowhide-watches-punk-watches-mens-wrist-watches-p-1391988614027677696.html",sku:"CJYD112291701AZ"},
-  {id:"dw-pup-match-vest",name:"PupMatch Sports Vest",category:"Utility",price:699,badge:"PET PICK",kind:"tee",sourceUrl:"https://cjdropshipping.com/product/hot-world-cup-ball-spring-and-summer-dog-vest-pet-supplies-p-CF1F5B6A-0BB3-4740-A3FA-803C6D6C2.html",sku:"CJJJCWGD00413-Red-XL"}
-];
+  const cfg = window.DEWIFY_CONFIG || {};
+  const API_URL = String(cfg.GOOGLE_APPS_SCRIPT_URL || "");
+  const SUPPORT_WA = String(cfg.WHATSAPP_NUMBER || "919422843899").replace(/\D/g, "");
+  const CART_KEY = "dewify-cart-v3";
 
-const CART_KEY="dewify-cart-v2";
-let cart=loadCart();
-let activeFilter="All";
-let lastOrder=null;
-const $=s=>document.querySelector(s);
-const $$=s=>[...document.querySelectorAll(s)];
+  const PRODUCTS = [
+    {id:"dw-storage-vault",name:"FoldAway Storage Vault",category:"Home",categoryLabel:"Home & Daily",price:799,badge:"SMART PICK",sku:"CJYD237778201AZ",sourceUrl:"https://cjdropshipping.com/product/foldable-clothes-storage-bag-large-capacity-organizer-with-handle-and-double-zipper-for-bedding-moving-travel-under-bed-storage-p-2505160457141629100.html",images:["https://maqsood.me/cdn/shop/files/Product_Content_77.jpg?v=1785268495","https://i.ebayimg.com/images/g/VYkAAeSwPQ9o70Sj/s-l1600.jpg","https://i5.walmartimages.com/asr/a768a3be-cfa1-4543-be3b-d4bd41afa22b.ea5dadef1a02b6a0039473215a545f99.jpeg?odnBg=FFFFFF&odnHeight=768&odnWidth=768"],description:"A foldable, large-capacity organizer for clothes, bedding, seasonal items, moving and travel.",highlights:["Large-capacity storage","Double-zipper opening","Reinforced carry handle","Folds away when empty"]},
+    {id:"dw-witchlight",name:"Witchlight Gothic Hat Lamp",category:"Home",categoryLabel:"Home & Daily",price:1499,badge:"LIMITED",sku:"CJYD296761901AZ",sourceUrl:"https://cjdropshipping.com/product/witch-hat-lamps-creative-home-gothic-night-light-gift-witch-hat-light-ornament-halloween-home-ornament-decoration-p-2607040852081633100.html",images:["https://oss-cf.cjdropshipping.com/product/2026/07/04/08/08fcf3b3-a6bf-4e84-b942-996b9b5d9f5d.jpeg","https://media.adeo.com/mkp/0ba7d37825817478bfa35ebd0ee2e46a/media.jpeg?fit=bounds&format=jpg&height=650&quality=80&width=650"],description:"A character-filled decorative lamp for shelves, bedside tables and gothic-inspired rooms.",highlights:["Statement décor piece","USB powered listing","Three style variants","Themed-room friendly"]},
+    {id:"dw-heatcore-jacket",name:"HeatCore USB Heated Jacket",category:"Wear",categoryLabel:"Wear",price:2499,badge:"WINTER",sku:"CJYR158132801AZ",sourceUrl:"https://cjdropshipping.com/product/winter-heated-jacket-usb-electric-cotton-coat-zip-up-heater-thermal-clothing-heating-vest-for-men-p-1578267399776907264.html",images:["https://cf.cjdropshipping.com/17000928/1725075714115506176.jpg","https://cf.cjdropshipping.com/17000928/1725075714283278336.jpg"],description:"A USB-powered heated jacket designed for cold commutes, travel and outdoor days.",highlights:["3 temperature settings","Carbon-fiber heating elements","Removable hood listing","S–6XL size range listing"]},
+    {id:"dw-moonglow-pendant",name:"MoonGlow Luminous Pendant",category:"Wear",categoryLabel:"Wear",price:699,badge:"GLOW",sku:"CJZBLXLX00017-purple",sourceUrl:"https://cjdropshipping.com/product/fashion-moon-natural-glowing-stone-healing-necklace-women-gift-charm-luminous-pendant-necklace-jewelry-p-F0403505-748E-4F3C-A9BB-70E390109230.html",images:["https://cf.cjdropshipping.com/16367616/1636808394162.jpg","https://liorvane.com/cdn/shop/files/545876677731.jpg"],description:"A luminous moon pendant designed to glow after exposure to light.",highlights:["Luminous stone pendant","Celestial-inspired design","Multiple colour options","Lightweight everyday accessory"]},
+    {id:"dw-fruity-paws",name:"Fruity Paws Cozy Hoodie",category:"Pet",categoryLabel:"Pet",price:799,badge:"PET PICK",sku:"CJGD117239401AZ",sourceUrl:"https://cjdropshipping.com/product/cute-fruit-dog-clothes-for-small-dogs-hoodies-winter-warm-fleece-pet-clothing-puppy-cat-costume-coat-for-french-chihuahua-outfit-p-1403920038016192512.html",images:["https://images.pet-friends.co.kr/storage/pet_friends/product/id/8/d/5/8/f/4/a/8d58f4aa400cf3ca2b8494f5d6a20b2c/10000/19ba6e25823b48338a8231aaaff13f24.jpg","https://i5.walmartimages.com/seo/Djunllk-Pet-Dog-T-Shirt-Small-Dogs-Clothes-Summer-Dog-Tshirt-Pet-Dog-Summer-New-Clothing-Cute-Thin-Five-Color-Fruit-Vestscasual-Unisex-Puppy-Shirts-D_6fc21b15-f0f8-4996-8747-1b8e911863b9.6384aeb62f5b7ea815648a2d8ee3a58a.jpeg"],description:"A playful fruit-inspired pet hoodie for small dogs and cats.",highlights:["7 style options listing","XS–2XL size range","Fruit-inspired designs","Designed for small pets"]},
+    {id:"dw-bunnyglow",name:"BunnyGlow Touch Night Light",category:"Home",categoryLabel:"Home & Daily",price:1299,badge:"SOFT GLOW",sku:"CJYD199189901AZ",sourceUrl:"https://cjdropshipping.com/product/cute-led-night-light-touch-sensor-cartoon-kids-nightlights-big-face-rabbit-silicone-night-light-christmas-gift-bedside-lamp-home-decor-p-1770035341261541376.html",images:["https://cf.cjdropshipping.com/17154720/2405120725050328100.jpg"],description:"A touch-controlled silicone bunny lamp made for bedside tables and gentle late-night lighting.",highlights:["Touch control","3 brightness levels","30-minute timer listing","USB rechargeable listing"]},
+    {id:"dw-orbitmoon-lamp",name:"OrbitMoon Crystal Night Lamp",category:"Home",categoryLabel:"Home & Daily",price:899,badge:"AMBIENT",sku:"CJJT153840401AZ",sourceUrl:"https://cjdropshipping.com/product/luminous-starry-sky-and-planets-moon-moon-crystal-ball-small-night-lamp-projection-ambience-light-creative-gift-new-strange-gift-p-1555129918592397312.html",images:["https://cf.cjdropshipping.com/17116704/2403290157100327000.jpg","https://eleganceuniverse.com/cdn/shop/files/0896832a-46ae-4d02-8242-ad2b3e08a62f.jpg?v=1702764669"],description:"A compact crystal-ball lamp with planetary and nebula-inspired designs.",highlights:["3D planetary look","Compact format","Multiple space designs","Gift-friendly display"]},
+    {id:"dw-temptrack-bottle",name:"TempTrack Insulated Bottle",category:"Home",categoryLabel:"Home & Daily",price:1099,badge:"DAILY USE",sku:"CJJT192676801AZ",sourceUrl:"https://cjdropshipping.com/product/smart-digital-thermal-bottle-portable-coffee-mug-stainless-steel-water-bottle-in-car-insulated-cup-keep-cold-vacuum-flasks-450ml-p-1737828106674647040.html",images:["https://cf.cjdropshipping.com/17032032/1738098783004266496.jpg"],description:"A 450 ml insulated bottle with a digital temperature display.",highlights:["Digital temperature display","316 stainless-steel liner listing","Hot/cold insulation listing","450 ml capacity"]},
+    {id:"dw-cloudwarm-socks",name:"CloudWarm Over-Knee Socks",category:"Wear",categoryLabel:"Wear",price:899,badge:"COZY",sku:"CJYD177740901AZ",sourceUrl:"https://cjdropshipping.com/product/over-knee-high-fuzzy-long-socks-winter-warm-cold-leg-knee-joint-cold-proof-stockings-home-floor-sleeping-socks-p-1668434970181902336.html",images:["https://cf.cjdropshipping.com/17051904/2401140356490329800.jpg","https://cf.cjdropshipping.com/17051904/2401140356500320300.jpg","https://cf.cjdropshipping.com/17051904/2401140356500321000.jpg"],description:"Long fuzzy socks for cold-weather lounging, sleeping and relaxing at home.",highlights:["Fuzzy warm feel","Long-leg coverage","Home and sleep friendly","Cold-weather essential"]},
+    {id:"dw-ravenhide-watch",name:"RavenHide Retro Leather Watch",category:"Wear",categoryLabel:"Wear",price:1299,badge:"CLASSIC",sku:"CJYD112291701AZ",sourceUrl:"https://cjdropshipping.com/product/accessories-foreign-trade-watches-retro-cowhide-watches-punk-watches-mens-wrist-watches-p-1391988614027677696.html",images:["https://cf.cjdropshipping.com/1620710794428.jpg?x-oss-process=image%2Fresize%2Cm_fill%2Cm_pad%2Cw_1200%2Ch_1200"],description:"A bold, antique-inspired electronic wristwatch with a large dial and retro strap.",highlights:["Retro aesthetic","Electronic movement listing","Approx. 46 mm dial listing","Bold everyday accessory"]},
+    {id:"dw-pup-match-vest",name:"PupMatch Sports Vest",category:"Pet",categoryLabel:"Pet",price:699,badge:"PET PICK",sku:"CJJJCWGD00413-Red-XL",sourceUrl:"https://cjdropshipping.com/product/hot-world-cup-ball-spring-and-summer-dog-vest-pet-supplies-p-CF1F5B6A-0BB3-4740-A3FA-803C6D6C2.html",images:["https://down-ph.img.susercontent.com/file/1a5e8dabc99b11192a5d558e76fa2998","https://furrinn.com/cdn/shop/files/IMG_4311.jpg?v=1749623987","https://ae01.alicdn.com/kf/S5c968d241dea4e50b0d8537c6a6f97bdJ/Dog-Vest-Summer-Breathable-Small-Dog-Mesh-Vest-Messi-Neymar.jpg"],description:"A lightweight sports-style pet vest for walks, warmer weather and playful outfits.",highlights:["Sport-inspired look","Red and black options","Multiple sizes listing","Lightweight pet layer"]}
+  ];
 
-function money(value){return new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(value);}
-function loadCart(){try{const stored=JSON.parse(localStorage.getItem(CART_KEY));if(!Array.isArray(stored))return[];return stored.filter(i=>PRODUCTS.some(p=>p.id===i.id)&&Number(i.qty)>0).map(i=>({id:i.id,qty:Math.min(99,Math.max(1,Number(i.qty)))}));}catch{return[];}}
-function saveCart(){localStorage.setItem(CART_KEY,JSON.stringify(cart));updateBagCount();}
-function getProduct(id){return PRODUCTS.find(p=>p.id===id);}
-function cartCount(){return cart.reduce((s,i)=>s+i.qty,0);}
-function cartTotal(){return cart.reduce((s,i)=>{const p=getProduct(i.id);return s+(p?p.price*i.qty:0);},0);}
-function updateBagCount(){const count=$("#bagCount");if(count)count.textContent=cartCount();}
+  const $ = (s,root=document) => root.querySelector(s);
+  const $$ = (s,root=document) => [...root.querySelectorAll(s)];
+  const money = value => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(value);
+  const proxy = (url,width) => "https://images.weserv.nl/?url="+encodeURIComponent(url)+"&w="+width+"&q=78&output=webp&fit=cover";
 
-function renderProducts(){
-  const visible=activeFilter==="All"?PRODUCTS:PRODUCTS.filter(p=>p.category===activeFilter);
-  $("#productGrid").innerHTML=visible.map(p=>`<article class="product-card reveal visible"><div class="product-visual" data-kind="${p.kind}">${p.badge?`<span class="product-tag">${p.badge}</span>`:""}<div class="visual-object" aria-hidden="true"></div></div><div class="product-info"><div class="product-meta"><span>${p.category}</span><span>DW / ${String(PRODUCTS.indexOf(p)+1).padStart(2,"0")}</span></div><h3 class="product-name">${p.name}</h3><div class="product-bottom"><span class="price">${money(p.price)}</span><button class="add-button" type="button" data-add="${p.id}">Add to bag</button></div></div></article>`).join("");
-}
-function addToCart(id){const existing=cart.find(i=>i.id===id);if(existing)existing.qty=Math.min(existing.qty+1,99);else cart.push({id,qty:1});saveCart();renderCart();showToast("Added to bag");}
-function changeQty(id,delta){const item=cart.find(i=>i.id===id);if(!item)return;item.qty+=delta;if(item.qty<=0)cart=cart.filter(i=>i.id!==id);saveCart();renderCart();renderCheckoutSummary();}
-function removeFromCart(id){cart=cart.filter(i=>i.id!==id);saveCart();renderCart();renderCheckoutSummary();}
-function clearBag(){cart=[];saveCart();renderCart();renderCheckoutSummary();showToast("Bag cleared");}
+  let cart = loadCart();
+  let activeFilter = "All";
+  let selectedProduct = null;
+  let lastOrder = null;
 
-function renderCart(){
-  const content=$("#cartContent"),footer=$("#cartFooter");
-  if(!cart.length){content.innerHTML=`<div class="empty-cart"><div><strong>Your bag is quiet.</strong><p>Start with something you will actually use.</p></div></div>`;footer.innerHTML="";return;}
-  content.innerHTML=cart.map(item=>{const p=getProduct(item.id);return `<div class="cart-line"><div class="mini-visual" data-kind="${p.kind}"><div class="visual-object" aria-hidden="true"></div></div><div class="cart-line-main"><p class="cart-name">${p.name}</p><span class="cart-price">${money(p.price)}</span><div class="qty" aria-label="Quantity controls"><button type="button" data-minus="${p.id}" aria-label="Decrease quantity">−</button><span>${item.qty}</span><button type="button" data-plus="${p.id}" aria-label="Increase quantity">+</button></div></div><button class="remove" type="button" data-remove="${p.id}">Remove</button></div>`;}).join("");
-  footer.innerHTML=`<div class="cart-total-row"><span>Total</span><strong>${money(cartTotal())}</strong></div><div class="cart-actions"><button class="clear-button" id="clearBag" type="button">Clear bag</button><button class="button button-light" id="checkoutButton" type="button">Checkout <span>↗</span></button></div>`;
-}
-function openBag(){$("#cartDrawer").classList.add("is-open");$("#cartDrawer").setAttribute("aria-hidden","false");document.body.classList.add("locked");}
-function closeBag(){$("#cartDrawer").classList.remove("is-open");$("#cartDrawer").setAttribute("aria-hidden","true");document.body.classList.remove("locked");}
-function openCheckout(){if(!cart.length){showToast("Your bag is empty");return;}closeBag();renderCheckoutSummary();$("#checkoutModal").classList.add("is-open");$("#checkoutModal").setAttribute("aria-hidden","false");document.body.classList.add("locked");setTimeout(()=>$("#customerName")?.focus(),150);}
-function closeCheckout(){$("#checkoutModal").classList.remove("is-open");$("#checkoutModal").setAttribute("aria-hidden","true");document.body.classList.remove("locked");}
-function renderCheckoutSummary(){$("#checkoutItems").innerHTML=cart.map(i=>{const p=getProduct(i.id);return `<div class="summary-item"><span>${p.name} × ${i.qty}</span><strong>${money(p.price*i.qty)}</strong></div>`;}).join("");$("#checkoutTotal").textContent=money(cartTotal());}
-function clientRequestId(){try{if(crypto.randomUUID)return crypto.randomUUID();}catch(_){}return `${Date.now()}-${Math.random().toString(36).slice(2)}`;}
-function validPhone(phone){const digits=phone.replace(/\D/g,"");return digits.length>=10&&digits.length<=15;}
+  function loadCart(){
+    try{
+      const data = JSON.parse(localStorage.getItem(CART_KEY)||"[]");
+      if(!Array.isArray(data)) return [];
+      return data
+        .filter(x=>PRODUCTS.some(p=>p.id===x.id))
+        .map(x=>({id:x.id,qty:Math.min(99,Math.max(1,Number(x.qty)||1))}));
+    }catch{return []}
+  }
+  function saveCart(){
+    try{localStorage.setItem(CART_KEY,JSON.stringify(cart));}catch(_){}
+    updateBagCount();
+  }
+  function product(id){return PRODUCTS.find(p=>p.id===id)||null}
+  function cartCount(){return cart.reduce((n,x)=>n+x.qty,0)}
+  function cartTotal(){return cart.reduce((n,x)=>{const p=product(x.id);return n+(p?p.price*x.qty:0)},0)}
+  function updateBagCount(){const el=$("#bagCount");if(el)el.textContent=cartCount()}
 
-function buildWhatsAppMessage(order){const lines=order.items.map(i=>`• ${i.name} × ${i.qty} — ${money(i.subtotal)}`).join("\n");return ["DEWIFY — NEW ORDER","",`Order ID: ${order.id}`,`Date: ${new Date(order.createdAt).toLocaleString("en-IN")}`,"",`Customer: ${order.customer.name}`,`Phone: ${order.customer.phone}`,"","DELIVERY ADDRESS:",order.customer.address,`${order.customer.city}, ${order.customer.state} ${order.customer.pincode}`,`Email: ${order.customer.email}`,"","ITEMS:",lines,"",`TOTAL: ${money(order.total)}`,"PAYMENT: ONLINE — PENDING","STATUS: NEW","","Payment is not collected in this version."].join("\n");}
+  function imageHtml(p,width=720){
+    const first=p.images[0];
+    return first
+      ? '<img class="product-image pending" src="'+proxy(first,width)+'" alt="'+escapeHtml(p.name)+' product image" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
+      : fallbackHtml(p);
+  }
+  function fallbackHtml(p){
+    return '<div class="product-fallback"><span>DEWIFY / PRODUCT</span><strong>'+escapeHtml(p.name)+'</strong></div>';
+  }
+  function escapeHtml(value){
+    return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  }
+  function bindImageFallback(root){
+    root.querySelectorAll("img").forEach(img=>{
+      if(img.dataset.bound==="1")return;
+      img.dataset.bound="1";
+      img.addEventListener("load",()=>img.classList.remove("pending"),{once:true,passive:true});
+      img.addEventListener("error",()=>{
+        const holder=img.parentElement;
+        if(holder&&!holder.dataset.failed){
+          holder.dataset.failed="1";
+          const id=holder.dataset.productId;
+          const p=product(id);
+          if(p && p.images.length>1){
+            const next=p.images.find(u=>u!==img.dataset.raw);
+            if(next){img.dataset.raw=next;img.src=proxy(next,img.dataset.width||720);return}
+          }
+          img.remove();
+          if(p)holder.insertAdjacentHTML("afterbegin",fallbackHtml(p));
+        }
+      },{passive:true});
+      img.dataset.raw=img.src;
+    });
+  }
 
-async function submitOrder(event){
-  event.preventDefault();
-  const error=$("#formError");error.textContent="";
-  const name=$("#customerName").value.trim(),phone=$("#customerPhone").value.trim(),email=$("#customerEmail").value.trim(),address=$("#customerAddress").value.trim(),city=$("#customerCity").value.trim(),state=$("#customerState").value.trim(),pincode=$("#customerPincode").value.trim();
-  if(!name){error.textContent="Please enter your full name.";$("#customerName").focus();return;}
-  if(!validPhone(phone)){error.textContent="Please enter a valid phone number.";$("#customerPhone").focus();return;}
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){error.textContent="Please enter a valid email address.";$("#customerEmail").focus();return;}
-  if(!address){error.textContent="Please enter the full delivery address.";$("#customerAddress").focus();return;}
-  if(!city){error.textContent="Please enter your city.";$("#customerCity").focus();return;}
-  if(!state){error.textContent="Please enter your state.";$("#customerState").focus();return;}
-  if(!/^\d{6}$/.test(pincode)){error.textContent="Please enter a valid 6-digit pincode.";$("#customerPincode").focus();return;}
-  if(!cart.length){error.textContent="Your bag is empty.";return;}
-  if(!GOOGLE_APPS_SCRIPT_URL||!GOOGLE_APPS_SCRIPT_URL.startsWith("https://script.google.com/macros/s/")){error.textContent="Order service is not configured yet. Please try again later.";return;}
+  function renderProducts(){
+    const grid=$("#productGrid");
+    const count=$("#resultsCount");
+    if(!grid)return;
+    const list=activeFilter==="All"?PRODUCTS:PRODUCTS.filter(p=>p.category===activeFilter);
+    grid.innerHTML=list.map((p,i)=>`
+      <article class="product-card" data-product-id="${p.id}" tabindex="0" aria-label="View ${escapeAttr(p.name)}">
+        <div class="product-visual" data-product-id="${p.id}">
+          ${p.badge?'<span class="product-tag">'+escapeHtml(p.badge)+"</span>":""}
+          ${imageHtml(p,720)}
+        </div>
+        <div class="product-info">
+          <div class="product-meta"><span>${p.categoryLabel}</span><span>DW / ${String(PRODUCTS.indexOf(p)+1).padStart(2,"0")}</span></div>
+          <h3 class="product-name">${escapeHtml(p.name)}</h3>
+          <div class="product-bottom">
+            <span class="price">${money(p.price)}</span>
+            <button class="add-button" data-add="${p.id}" type="button">Add to bag</button>
+          </div>
+        </div>
+      </article>
+    `).join("");
+    count.textContent=list.length+" "+(list.length===1?"drop":"drops");
+    bindImageFallback(grid);
+  }
+  function escapeAttr(v){return escapeHtml(v)}
+  function addToCart(id){
+    const item=cart.find(x=>x.id===id);
+    if(item)item.qty=Math.min(99,item.qty+1);
+    else cart.push({id,qty:1});
+    saveCart();renderCart();showToast("Added to bag");
+  }
+  function changeQty(id,delta){
+    const item=cart.find(x=>x.id===id);
+    if(!item)return;
+    item.qty+=delta;
+    if(item.qty<=0)cart=cart.filter(x=>x.id!==id);
+    saveCart();renderCart();renderCheckoutSummary();
+  }
+  function removeFromCart(id){
+    cart=cart.filter(x=>x.id!==id);
+    saveCart();renderCart();renderCheckoutSummary();
+  }
+  function renderCart(){
+    const content=$("#cartContent"),foot=$("#cartFooter");
+    if(!cart.length){
+      content.innerHTML='<div class="cart-empty"><strong>Your bag is quiet.</strong><p>Start with something you will actually use.</p></div>';
+      foot.innerHTML="";
+      return;
+    }
+    content.innerHTML=cart.map(item=>{
+      const p=product(item.id);
+      return '<div class="cart-line">'+
+        '<img class="cart-image" src="'+proxy(p.images[0],320)+'" alt="'+escapeHtml(p.name)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'+
+        '<div><p class="cart-name">'+escapeHtml(p.name)+'</p><span class="cart-price">'+money(p.price)+'</span>'+
+        '<div class="qty"><button type="button" data-minus="'+p.id+'" aria-label="Decrease quantity">−</button><span>'+item.qty+'</span><button type="button" data-plus="'+p.id+'" aria-label="Increase quantity">+</button></div></div>'+
+        '<button class="remove" type="button" data-remove="'+p.id+'">Remove</button>'+
+      '</div>';
+    }).join("");
+    foot.innerHTML='<div class="cart-total-row"><span>Total</span><strong>'+money(cartTotal())+'</strong></div>'+
+      '<div class="cart-actions"><button class="clear-button" id="clearBag" type="button">Clear</button><button class="button button-light" id="checkoutButton" type="button">Checkout <span>↗</span></button></div>';
+    bindImageFallback(content);
+  }
+  function openLayer(id){
+    const el=$("#"+id);
+    if(!el)return;
+    el.classList.add("is-open");el.setAttribute("aria-hidden","false");document.body.classList.add("locked");
+  }
+  function closeLayer(id){
+    const el=$("#"+id);
+    if(!el)return;
+    el.classList.remove("is-open");el.setAttribute("aria-hidden","true");
+    if(!$$(".drawer.is-open,.modal.is-open").length)document.body.classList.remove("locked");
+  }
+  function openDetail(id,pushHash=true){
+    const p=product(id);if(!p)return;
+    selectedProduct=p;
+    const body=$("#productDetailBody");
+    body.innerHTML=`
+      <div class="product-detail-grid">
+        <div class="detail-gallery">
+          <img id="detailMainImage" class="detail-main-image" src="${proxy(p.images[0],1200)}" alt="${escapeAttr(p.name)} product image" loading="eager" decoding="async" referrerpolicy="no-referrer">
+          <div class="detail-thumbs">
+            ${p.images.map((src,i)=>'<button class="detail-thumb '+(i===0?"active":"")+'" type="button" data-thumb="'+i+'"><img src="'+proxy(src,240)+'" alt="" loading="'+(i===0?"eager":"lazy")+'" decoding="async" referrerpolicy="no-referrer"></button>').join("")}
+          </div>
+        </div>
+        <div class="detail-copy">
+          <p class="eyebrow">${escapeHtml(p.categoryLabel)} / DEWIFY DROP</p>
+          <h1 id="detailTitle">${escapeHtml(p.name)}</h1>
+          <p class="detail-description">${escapeHtml(p.description)}</p>
+          <div class="detail-list">${p.highlights.map((x,i)=>'<div><b>'+String(i+1).padStart(2,"0")+'</b>&nbsp;&nbsp;'+escapeHtml(x)+'</div>').join("")}</div>
+          <div class="detail-buy"><strong>${money(p.price)}</strong><button class="button button-light" data-detail-add="${p.id}" type="button">Add to bag <span>↗</span></button></div>
+          <div class="detail-meta"><span>CATEGORY / ${escapeHtml(p.categoryLabel.toUpperCase())}</span><span>SKU / ${escapeHtml(p.sku)}</span><a href="${escapeAttr(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">VIEW SOURCE LISTING ↗</a></div>
+        </div>
+      </div>`;
+    openLayer("productModal");
+    bindImageFallback(body);
+    if(pushHash)history.replaceState(null,"","#product/"+encodeURIComponent(id));
+  }
+  function openBag(){openLayer("cartDrawer")}
+  function closeBag(){closeLayer("cartDrawer")}
+  function openCheckout(){
+    if(!cart.length){showToast("Your bag is empty");return}
+    closeBag();renderCheckoutSummary();openLayer("checkoutModal");setTimeout(()=>$("#customerName")?.focus(),30);
+  }
+  function renderCheckoutSummary(){
+    const items=$("#checkoutItems");
+    if(!items)return;
+    items.innerHTML=cart.map(i=>{
+      const p=product(i.id);
+      return '<div class="summary-item"><span>'+escapeHtml(p.name)+' × '+i.qty+'</span><strong>'+money(p.price*i.qty)+'</strong></div>';
+    }).join("");
+    $("#checkoutTotal").textContent=money(cartTotal());
+  }
+  function closeCheckout(){closeLayer("checkoutModal")}
+  function showSuccess(order){
+    lastOrder=order;
+    $("#successOrderId").textContent=order.id;
+    $("#successCustomer").textContent=order.customer.name;
+    $("#successTotal").textContent=money(order.total);
+    $("#successStatus").textContent=order.orderStatus||"NEW";
+    openLayer("successModal");
+  }
+  function closeSuccess(){closeLayer("successModal")}
 
-  const form=$("#checkoutForm"),button=form.querySelector('button[type="submit"]');
-  if(form.dataset.submitting==="true")return;form.dataset.submitting="true";
-  const originalText=button?.textContent||"Submit order request";
-  if(button){button.disabled=true;button.setAttribute("aria-busy","true");button.textContent="Submitting…";}
+  function clientRequestId(){
+    try{if(window.crypto?.randomUUID)return window.crypto.randomUUID()}catch(_){}
+    return Date.now()+"-"+Math.random().toString(36).slice(2);
+  }
+  function validPhone(value){const digits=String(value).replace(/\D/g,"");return digits.length>=10&&digits.length<=15}
+  function setFormError(message){const el=$("#formError");if(el)el.textContent=message}
+  async function submitOrder(event){
+    event.preventDefault();
+    setFormError("");
+    const values={
+      name:$("#customerName").value.trim(),
+      phone:$("#customerPhone").value.trim(),
+      email:$("#customerEmail").value.trim(),
+      address:$("#customerAddress").value.trim(),
+      city:$("#customerCity").value.trim(),
+      state:$("#customerState").value.trim(),
+      pincode:$("#customerPincode").value.trim()
+    };
+    if(!values.name)return setFormError("Please enter your full name.");
+    if(!validPhone(values.phone))return setFormError("Please enter a valid phone number.");
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))return setFormError("Please enter a valid email address.");
+    if(!values.address)return setFormError("Please enter the full delivery address.");
+    if(!values.city)return setFormError("Please enter your city.");
+    if(!values.state)return setFormError("Please enter your state.");
+    if(!/^\d{6}$/.test(values.pincode))return setFormError("Please enter a valid 6-digit pincode.");
+    if(!cart.length)return setFormError("Your bag is empty.");
+    if(!API_URL.startsWith("https://script.google.com/macros/s/"))return setFormError("Order service is not configured yet. Please try again later.");
 
-  const items=cart.map(i=>{const p=getProduct(i.id);return{id:p.id,name:p.name,price:p.price,qty:i.qty,subtotal:p.price*i.qty,sourceUrl:p.sourceUrl,sku:p.sku};});
-  const payload={clientRequestId:clientRequestId(),customer:{name,phone,email,address,city,state,pincode},items,total:items.reduce((s,i)=>s+i.subtotal,0),paymentMethod:"UPI"};
+    const button=$("#submitOrderButton");
+    if(button?.disabled)return;
+    if(button){button.disabled=true;button.textContent="Sending…";}
+    const payload={
+      clientRequestId:clientRequestId(),
+      customer:values,
+      items:cart.map(i=>{const p=product(i.id);return{id:p.id,name:p.name,price:p.price,qty:i.qty,subtotal:p.price*i.qty,sourceUrl:p.sourceUrl,sku:p.sku}}),
+      total:cartTotal(),
+      paymentMethod:"UPI"
+    };
+    try{
+      const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),redirect:"follow",cache:"no-store"});
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      const raw=await response.text();
+      let result;try{result=JSON.parse(raw)}catch{throw new Error("The order service returned an invalid response.")}
+      if(!result?.ok||!result.orderId)throw new Error(result?.error||"Could not create order.");
+      const order={id:result.orderId,createdAt:result.createdAt||new Date().toISOString(),customer:values,items:payload.items,total:payload.total,orderStatus:result.orderStatus||"NEW"};
+      closeCheckout();showSuccess(order);cart=[];saveCart();renderCart();$("#checkoutForm").reset();
+    }catch(error){
+      console.error("DEWIFY order submission failed",error);
+      setFormError(error?.message||"Could not create order.");
+    }finally{
+      if(button){button.disabled=false;button.textContent="Submit order request ↗";}
+    }
+  }
 
-  try{
-    const response=await fetch(GOOGLE_APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),redirect:"follow",cache:"no-store"});
-    if(!response.ok)throw new Error(`HTTP ${response.status}`);
-    const raw=await response.text();let result;
-    try{result=JSON.parse(raw);}catch{throw new Error(`Backend returned non-JSON response: ${raw.slice(0,180)}`);}
-    if(!result||result.ok!==true||!result.orderId)throw new Error(result?.error||"Invalid backend response");
+  function copyOrderDetails(){
+    if(!lastOrder)return;
+    const lines=[
+      "DEWIFY — ORDER",
+      "Order ID: "+lastOrder.id,
+      "Customer: "+lastOrder.customer.name,
+      "Phone: "+lastOrder.customer.phone,
+      "Email: "+lastOrder.customer.email,
+      "Address: "+lastOrder.customer.address,
+      lastOrder.customer.city+", "+lastOrder.customer.state+" "+lastOrder.customer.pincode,
+      "",
+      ...lastOrder.items.map(i=>i.name+" × "+i.qty+" — "+money(i.subtotal)),
+      "",
+      "Total: "+money(lastOrder.total),
+      "Status: "+(lastOrder.orderStatus||"NEW")
+    ];
+    navigator.clipboard?.writeText(lines.join("\n")).then(()=>showToast("Order details copied")).catch(()=>showToast("Copy unavailable"));
+  }
+  function showToast(text){
+    const el=$("#toast");if(!el)return;
+    el.textContent=text;el.classList.add("show");clearTimeout(showToast.timer);
+    showToast.timer=setTimeout(()=>el.classList.remove("show"),1900);
+  }
 
-    lastOrder={id:result.orderId,createdAt:result.createdAt||new Date().toISOString(),customer:payload.customer,items:payload.items,total:payload.total,paymentMethod:"UPI",paymentStatus:result.paymentStatus||"PENDING",orderStatus:result.orderStatus||"NEW"};
-    closeCheckout();openOrderSuccess(lastOrder);
-    const message=buildWhatsAppMessage(lastOrder),whatsappUrl=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,wa=$("#openWhatsAppAfterOrder");
-    if(wa)wa.onclick=()=>window.open(whatsappUrl,"_blank","noopener,noreferrer");
-    cart=[];saveCart();renderCart();form.reset();
-  }catch(e){console.error("DEWIFY order submission failed:",e);error.textContent=`Order failed: ${e?.message||"Unknown error"}`;}
-  finally{form.dataset.submitting="false";if(button){button.disabled=false;button.removeAttribute("aria-busy");button.textContent=originalText;}}
-}
+  function initEvents(){
+    $("#openBag")?.addEventListener("click",openBag);
+    $("#closeBag")?.addEventListener("click",closeBag);
+    $("#cartContent")?.addEventListener("click",e=>{
+      const plus=e.target.closest("[data-plus]"),minus=e.target.closest("[data-minus]"),remove=e.target.closest("[data-remove]");
+      if(plus)changeQty(plus.dataset.plus,1);
+      else if(minus)changeQty(minus.dataset.minus,-1);
+      else if(remove)removeFromCart(remove.dataset.remove);
+    });
+    $("#cartFooter")?.addEventListener("click",e=>{
+      if(e.target.closest("#clearBag")){cart=[];saveCart();renderCart();renderCheckoutSummary();showToast("Bag cleared")}
+      else if(e.target.closest("#checkoutButton"))openCheckout();
+    });
+    $("#productGrid")?.addEventListener("click",e=>{
+      const add=e.target.closest("[data-add]");
+      const card=e.target.closest("[data-product-id]");
+      if(add){e.stopPropagation();addToCart(add.dataset.add);return}
+      if(card)openDetail(card.dataset.productId);
+    });
+    $("#productGrid")?.addEventListener("keydown",e=>{
+      const card=e.target.closest("[data-product-id]");
+      if(card&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openDetail(card.dataset.productId)}
+    });
+    $("#filters")?.addEventListener("click",e=>{
+      const filter=e.target.closest("[data-filter]");if(!filter)return;
+      activeFilter=filter.dataset.filter;
+      $$(".filter").forEach(b=>b.classList.toggle("active",b===filter));
+      renderProducts();
+    });
+    $("#productModal")?.addEventListener("click",e=>{
+      if(e.target.closest("[data-close-detail]")){closeLayer("productModal");history.replaceState(null,"",location.pathname+location.search);return}
+      const thumb=e.target.closest("[data-thumb]");
+      if(thumb&&selectedProduct){
+        $$(".detail-thumb",$("#productModal")).forEach(x=>x.classList.remove("active"));
+        thumb.classList.add("active");
+        $("#detailMainImage").src=proxy(selectedProduct.images[Number(thumb.dataset.thumb)],1200);
+      }
+      const add=e.target.closest("[data-detail-add]");
+      if(add){addToCart(add.dataset.detailAdd);showToast("Added to bag");}
+    });
+    $$("[data-close-checkout]").forEach(el=>el.addEventListener("click",closeCheckout));
+    $("#checkoutForm")?.addEventListener("submit",submitOrder);
+    $("#successModal")?.addEventListener("click",e=>{if(e.target.closest("[data-close-success]"))closeSuccess()});
+    $("#copyOrderMessage")?.addEventListener("click",copyOrderDetails);
+    $("#supportLink")?.addEventListener("click",e=>{
+      e.preventDefault();
+      const msg=encodeURIComponent("Hi DEWIFY, I need help with an order.");
+      window.open("https://wa.me/"+SUPPORT_WA+"?text="+msg,"_blank","noopener,noreferrer");
+    });
+    document.addEventListener("keydown",e=>{
+      if(e.key!=="Escape")return;
+      if($("#productModal")?.classList.contains("is-open"))closeLayer("productModal");
+      else if($("#checkoutModal")?.classList.contains("is-open"))closeCheckout();
+      else if($("#cartDrawer")?.classList.contains("is-open"))closeBag();
+      else if($("#successModal")?.classList.contains("is-open"))closeSuccess();
+    });
+    window.addEventListener("hashchange",()=>{
+      const m=location.hash.match(/^#product\/(.+)$/);
+      if(m)openDetail(decodeURIComponent(m[1]),false);
+    },{passive:true});
+  }
 
-function openOrderSuccess(order){$("#successOrderId").textContent=order.id;$("#successCustomer").textContent=order.customer.name;$("#successTotal").textContent=money(order.total);$("#successStatus").textContent=order.orderStatus;$("#orderSuccess").classList.add("is-open");$("#orderSuccess").setAttribute("aria-hidden","false");document.body.classList.add("locked");}
-function closeOrderSuccess(){$("#orderSuccess").classList.remove("is-open");$("#orderSuccess").setAttribute("aria-hidden","true");document.body.classList.remove("locked");}
-function copyOrderMessage(){if(!lastOrder)return;const message=buildWhatsAppMessage(lastOrder);navigator.clipboard?.writeText(message).then(()=>showToast("Order message copied"),()=>showToast("Copy unavailable — WhatsApp is ready"));}
-function showToast(message){const toast=$("#toast");if(!toast)return;toast.textContent=message;toast.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>toast.classList.remove("show"),2200);}
-function initReveal(){const items=$$(".reveal");if(!("IntersectionObserver"in window)){items.forEach(i=>i.classList.add("visible"));return;}const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target);}}),{threshold:.08});items.forEach(i=>observer.observe(i));}
+  function initSupport(){
+    const link=$("#supportLink");
+    if(link)link.href="https://wa.me/"+SUPPORT_WA;
+  }
 
-document.addEventListener("click",event=>{
-  const add=event.target.closest("[data-add]"),plus=event.target.closest("[data-plus]"),minus=event.target.closest("[data-minus]"),remove=event.target.closest("[data-remove]"),filter=event.target.closest("[data-filter]");
-  if(add)addToCart(add.dataset.add);
-  if(plus)changeQty(plus.dataset.plus,1);
-  if(minus)changeQty(minus.dataset.minus,-1);
-  if(remove)removeFromCart(remove.dataset.remove);
-  if(filter){activeFilter=filter.dataset.filter;$$ (".filter").forEach(b=>b.classList.toggle("active",b===filter));renderProducts();}
-});
+  function init(){
+    renderProducts();renderCart();renderCheckoutSummary();updateBagCount();initEvents();initSupport();initStars();
+    const m=location.hash.match(/^#product\/(.+)$/);
+    if(m)openDetail(decodeURIComponent(m[1]),false);
+  }
 
-document.addEventListener("DOMContentLoaded",()=>{
-  renderProducts();renderCart();updateBagCount();initReveal();
-  $("#openBag")?.addEventListener("click",openBag);$("#closeBag")?.addEventListener("click",closeBag);$("#drawerBackdrop")?.addEventListener("click",closeBag);
-  $("#cartFooter")?.addEventListener("click",e=>{if(e.target.closest("#clearBag"))clearBag();if(e.target.closest("#checkoutButton"))openCheckout();});
-  $("#closeCheckout")?.addEventListener("click",closeCheckout);$("#modalBackdrop")?.addEventListener("click",closeCheckout);$("#checkoutForm")?.addEventListener("submit",submitOrder);
-  $("#closeOrderSuccess")?.addEventListener("click",closeOrderSuccess);$("#successBackdrop")?.addEventListener("click",closeOrderSuccess);$("#copyOrderMessage")?.addEventListener("click",copyOrderMessage);
-  document.addEventListener("keydown",event=>{if(event.key!=="Escape")return;closeBag();closeCheckout();closeOrderSuccess();});
-});
+  function initStars(){
+    const canvas=$("#starfield");
+    if(!canvas)return;
+    const ctx=canvas.getContext("2d",{alpha:true});
+    if(!ctx)return;
+
+    const reduced=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const touch=matchMedia?.("(pointer: coarse)")?.matches;
+    const mobile=window.innerWidth<700;
+    if(reduced){
+      canvas.style.opacity=".5";
+    }
+
+    let dpr=Math.min(window.devicePixelRatio||1,1.25);
+    let w=0,h=0;
+    let stars=[];
+    let raf=0,last=0,resizeTimer=0;
+    let pointer={x:-9999,y:-9999,active:false};
+    let running=true,scrollY=0,scrollSmooth=0;
+
+    function rebuild(){
+      const area=w*h;
+      const base=mobile?Math.floor(area/10000):Math.floor(area/7000);
+      const count=Math.max(mobile?110:170,Math.min(mobile?280:420,base));
+      stars=Array.from({length:count},()=>({
+        x:Math.random()*w,
+        y:Math.random()*Math.max(h,document.documentElement.scrollHeight||h),
+        r:Math.random()<.22?(0.9+Math.random()*.6):(0.45+Math.random()*.7),
+        a:Math.random()<.22?(0.72+Math.random()*.18):(0.32+Math.random()*.38),
+        tint:Math.random()<.18,
+        phase:Math.random()*Math.PI*2,
+        speed:4+Math.random()*5,
+        sway:2+Math.random()*4
+      }));
+    }
+    function resize(){
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(()=>{
+        dpr=Math.min(window.devicePixelRatio||1,1.25);
+        w=innerWidth;h=innerHeight;
+        canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        rebuild();
+      },90);
+    }
+    function frame(now){
+      if(!running){raf=0;return}
+      const dt=Math.min(32,Math.max(0,(now-last)||16.7));last=now;
+      const ease=1-Math.pow(.0009,dt/16.7);
+      scrollY=window.scrollY||0;
+      scrollSmooth+=(scrollY-scrollSmooth)*Math.min(1,dt*.012);
+
+      ctx.clearRect(0,0,w,h);
+      const radius=touch||reduced?0:120;
+      for(const s of stars){
+        const t=now*.00015+s.phase;
+        let x=s.x-(now*.0006*s.speed)%w+Math.sin(t)*s.sway;
+        if(x<0)x+=w;
+        let y=s.y-scrollSmooth+Math.sin(t*.78+s.phase)*s.sway*.3;
+        if(y<-3||y>h+3)continue;
+
+        if(radius&&pointer.active){
+          const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy);
+          if(d<radius&&d>.1){
+            const f=1-d/radius;
+            const k=f*f*(3-2*f);
+            x+=dx/d*k*12;y+=dy/d*k*12;
+          }
+        }
+        ctx.globalAlpha=s.a;
+        ctx.fillStyle=s.tint?"#f6d887":"#fbf2d3";
+        ctx.beginPath();ctx.arc(x,y,s.r,0,Math.PI*2);ctx.fill();
+      }
+      ctx.globalAlpha=1;
+      raf=requestAnimationFrame(frame);
+    }
+    function start(){
+      if(raf||document.hidden)return;
+      running=true;last=performance.now();raf=requestAnimationFrame(frame);
+    }
+    function stop(){running=false;if(raf){cancelAnimationFrame(raf);raf=0}}
+    resize();
+    if(!touch&&!reduced){
+      addEventListener("pointermove",e=>{pointer.x=e.clientX;pointer.y=e.clientY;pointer.active=true},{passive:true});
+      addEventListener("pointerleave",()=>{pointer.active=false},{passive:true});
+    }
+    addEventListener("scroll",()=>{},{passive:true});
+    addEventListener("resize",resize,{passive:true});
+    document.addEventListener("visibilitychange",()=>document.hidden?stop():start());
+    start();
+  }
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
+  else init();
+})();
