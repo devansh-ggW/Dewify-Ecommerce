@@ -1,15 +1,11 @@
 (() => {
   "use strict";
+
   const cfg = window.DEWIFY_CONFIG || {};
   const product = (cfg.products || []).find(p => p.id === "ai-money-arc");
-  const $ = (s) => document.querySelector(s);
+  const $ = (selector) => document.querySelector(selector);
   const token = String(cfg.PADDLE_CLIENT_TOKEN || "").trim();
   const priceId = String(product?.priceId || "").trim();
-
-  if (product) {
-    $("#productPrice").textContent = product.displayPrice || "View price at checkout";
-    $("#productName").textContent = product.name;
-  }
 
   const setStatus = (message) => {
     const el = $("#checkoutStatus");
@@ -24,7 +20,24 @@
     document.body.classList.remove("locked");
   };
 
-  if (window.Paddle && token && priceId) {
+  if (product) {
+    const price = $("#productPrice");
+    const name = $("#productName");
+    if (price) price.textContent = product.displayPrice || "View price at checkout";
+    if (name) name.textContent = product.name;
+  }
+
+  function init() {
+    if (!window.Paddle) {
+      setStatus("Paddle checkout could not load. Please refresh and try again.");
+      return;
+    }
+
+    if (!token || !priceId) {
+      setStatus("Checkout setup is incomplete.");
+      return;
+    }
+
     try {
       if (String(cfg.PADDLE_ENVIRONMENT || "production").toLowerCase() === "sandbox") {
         Paddle.Environment.set("sandbox");
@@ -33,7 +46,11 @@
       Paddle.Initialize({
         token,
         eventCallback: (event) => {
-          if (event?.name === "checkout.error" || event?.name === "checkout.payment.error" || event?.name === "checkout.warning") {
+          if (
+            event?.name === "checkout.error" ||
+            event?.name === "checkout.payment.error" ||
+            event?.name === "checkout.warning"
+          ) {
             const code = event?.code || "unknown_error";
             const detail = event?.detail || "Paddle could not complete this checkout.";
             console.error("Paddle checkout event:", event);
@@ -41,9 +58,8 @@
           }
 
           if (event?.name === "checkout.completed") {
-            const id = event.data?.transaction_id || "Completed";
             const out = $("#successTransaction");
-            if (out) out.textContent = id;
+            if (out) out.textContent = event.data?.transaction_id || "Completed";
 
             const modal = $("#successModal");
             if (modal) {
@@ -57,16 +73,21 @@
 
       setStatus("Secure checkout is ready.");
     } catch (error) {
-      console.error(error);
-      setStatus("Checkout could not be initialized.");
+      console.error("Paddle.Initialize failed:", error);
+      setStatus(`Checkout error: ${error?.message || "initialize_failed"}`);
     }
-  } else {
-    setStatus("Checkout setup is pending.");
   }
 
+  window.addEventListener("load", init, { once: true });
+
   $("#buyButton")?.addEventListener("click", () => {
-    if (!window.Paddle || !token || !priceId) {
-      setStatus("Checkout is not connected yet.");
+    if (!window.Paddle) {
+      setStatus("Paddle checkout is still loading. Please try again.");
+      return;
+    }
+
+    if (!token || !priceId) {
+      setStatus("Checkout setup is incomplete.");
       return;
     }
 
@@ -75,9 +96,7 @@
         items: [{ priceId, quantity: 1 }],
         settings: {
           displayMode: "overlay",
-          theme: "light",
-          locale: "en",
-          variant: "multi-page"
+          theme: "light"
         }
       });
     } catch (error) {
