@@ -39,7 +39,7 @@
             variant: "multi-page",
             theme: "light",
             locale: "en",
-            frameTarget: "checkoutContainer",
+            frameTarget: "checkout-container",
             frameInitialHeight: "700",
             frameStyle: "width:100%;min-width:312px;background:transparent;border:none;"
           }
