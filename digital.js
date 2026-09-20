@@ -24,6 +24,24 @@
     if (el && value) el.textContent = value;
   };
 
+  const downloadFilename = "AI MONEY ARC.zip";
+
+  const triggerNamedDownload = async (url, filename) => {
+    if (!url) throw new Error("missing_download_url");
+    const response = await fetch(url, { mode: "cors", credentials: "omit" });
+    if (!response.ok) throw new Error("download_http_" + response.status);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = objectUrl;
+    anchor.download = filename;
+    anchor.rel = "noopener";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+  };
+
   const setDownloadLinks = () => {
     if (!product?.downloadUrl) return;
 
@@ -225,12 +243,35 @@
     }
   });
 
-  $("#downloadBook, #downloadPersistent")?.addEventListener("click", (event) => {
-    const link = event.currentTarget;
-    if (!link?.dataset?.ready || link.getAttribute("href") === "#") {
+  $("#downloadBook, #downloadPersistent")?.forEach?.(() => {});
+
+  ["#downloadBook", "#downloadPersistent"].forEach(selector => {
+    $(selector)?.addEventListener("click", async (event) => {
       event.preventDefault();
-      setStatus("Your download is still being prepared. Please close and reopen the confirmation.");
-    }
+      const link = event.currentTarget;
+
+      if (!link?.dataset?.ready || !product?.downloadUrl) {
+        setStatus("Your download is still being prepared. Please close and reopen the confirmation.");
+        return;
+      }
+
+      link.dataset.downloading = "true";
+      link.setAttribute("aria-busy", "true");
+      link.textContent = "Preparing ZIP…";
+
+      try {
+        await triggerNamedDownload(product.downloadUrl, downloadFilename);
+        setStatus("Download started — " + downloadFilename);
+      } catch (error) {
+        console.warn("Named download failed, opening the file directly:", error);
+        window.open(product.downloadUrl, "_blank", "noopener");
+        setStatus("Your ZIP opened in a new tab. Save it as " + downloadFilename + ".");
+      } finally {
+        link.dataset.downloading = "false";
+        link.removeAttribute("aria-busy");
+        link.textContent = "Download AI MONEY ARC ↗";
+      }
+    });
   });
 
   $("#closeSuccess")?.addEventListener("click", closeSuccess);
