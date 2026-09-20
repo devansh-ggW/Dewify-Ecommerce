@@ -33,6 +33,13 @@
       Paddle.Initialize({
         token,
         eventCallback: (event) => {
+          if (event?.name === "checkout.error" || event?.name === "checkout.payment.error") {
+            const code = event?.code || "unknown_error";
+            const detail = event?.detail || "Paddle could not complete this checkout.";
+            console.error("Paddle checkout error:", event);
+            setStatus(`Checkout error: ${code}`);
+          }
+
           if (event?.name === "checkout.completed") {
             const id = event.data?.transaction_id || "Completed";
             const out = $("#successTransaction");
@@ -68,7 +75,8 @@
       settings: {
         displayMode: "overlay",
         theme: "light",
-        locale: "en"
+        locale: "en",
+        variant: "one-page"
       }
     });
   });
