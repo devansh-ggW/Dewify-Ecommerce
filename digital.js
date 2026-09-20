@@ -14,9 +14,7 @@
 
   const setDownloadLinks = () => {
     const book = $("#downloadBook");
-    const vault = $("#downloadVault");
     if (book && product?.downloadUrl) book.href = product.downloadUrl;
-    if (vault && product?.promptVaultDownloadUrl) vault.href = product.promptVaultDownloadUrl;
   };
 
   const closeSuccess = () => {
