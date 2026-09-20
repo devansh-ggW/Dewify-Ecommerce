@@ -19,7 +19,7 @@
       items: [{ priceId, quantity: 1 }]
     }).then(result => {
       const line = result?.data?.details?.lineItems?.[0];
-      const localized = line?.formattedTotals?.subtotal || line?.formattedUnitTotals?.subtotal;
+      const localized = line?.formattedTotals?.total || line?.formattedUnitTotals?.total || line?.formattedTotals?.subtotal || line?.formattedUnitTotals?.subtotal;
       if (localized) setText(product.id, localized);
     }).catch(error => {
       console.warn("Localized price preview failed:", error);
