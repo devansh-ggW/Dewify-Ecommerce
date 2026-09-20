@@ -32,7 +32,6 @@
 
       Paddle.Initialize({
         token,
-        checkout: { settings: checkoutSettings },
         eventCallback: (event) => {
           if (event?.name === "checkout.error" || event?.name === "checkout.payment.error" || event?.name === "checkout.warning") {
             const code = event?.code || "unknown_error";
@@ -72,15 +71,10 @@
     }
 
     try {
-      const inline = isMobileCheckout();
-      if (inline && checkoutContainer) {
-        checkoutContainer.classList.add("is-open");
-        checkoutContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
       Paddle.Checkout.open({
         items: [{ priceId, quantity: 1 }],
         settings: {
-          displayMode: inline ? "inline" : "overlay",
+          displayMode: "overlay",
           theme: "light",
           locale: "en",
           variant: "multi-page"
