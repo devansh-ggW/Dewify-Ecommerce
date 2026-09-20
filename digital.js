@@ -12,6 +12,13 @@
     if (el) el.textContent = message;
   };
 
+  const setDownloadLinks = () => {
+    const book = $("#downloadBook");
+    const vault = $("#downloadVault");
+    if (book && product?.downloadUrl) book.href = product.downloadUrl;
+    if (vault && product?.promptVaultDownloadUrl) vault.href = product.promptVaultDownloadUrl;
+  };
+
   const closeSuccess = () => {
     const modal = $("#successModal");
     if (!modal) return;
@@ -63,6 +70,7 @@
 
             const modal = $("#successModal");
             if (modal) {
+              setDownloadLinks();
               modal.classList.add("is-open");
               modal.setAttribute("aria-hidden", "false");
               document.body.classList.add("locked");
