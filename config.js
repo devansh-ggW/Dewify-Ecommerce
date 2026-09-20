@@ -10,11 +10,10 @@ window.DEWIFY_CONFIG = {
       version: "V1.0",
       category: "DIGITAL LEARNING",
       type: "One-time digital purchase",
-      format: "PDF ebook",
+      format: "PDF ebook + Prompt Vault",
       priceId: "pri_01m2yq2yg9pfdt2h1zt1y6gt59",
       displayPrice: "View price at checkout",
-      downloadUrl: "https://cdn.creativeclaw.co/u/9d6a7d83/zips/53c1e147-b684-4e07-85a8-e29bc854b8de.zip",
-      promptVaultDownloadUrl: "https://cdn.creativeclaw.co/u/9d6a7d83/zips/c1fe03b9-47f6-4c66-bc89-c68f402538ac.zip",
+      downloadUrl: "https://cdn.creativeclaw.co/u/9d6a7d83/zips/30c76bdc-724a-492c-926c-8e254c1cbb8c.zip",
       image: "assets/ai-money-arc-cover.svg",
       description: "A practical guide to learning AI, building real skills, understanding business, and turning ideas into action.",
       highlights: [
@@ -22,7 +21,7 @@ window.DEWIFY_CONFIG = {
         "AI + business fundamentals",
         "30-day implementation arc",
         "Discipline and execution system",
-        "Separate AI MONEY ARC Prompt Vault"
+        "Prompt Vault companion included in the same ZIP"
       ]
     }
   ]
