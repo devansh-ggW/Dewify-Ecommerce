@@ -1,9 +1,31 @@
-// DEWIFY Google Sheets configuration.
-// Replace only the Web App URL below. Never put Google credentials here.
 window.DEWIFY_CONFIG = {
-  GOOGLE_APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzt_qkckLmkAcAm10Wq1po9myzGh2SoPq-iQp01luZ_8drEobg4Z-LUMHpt13QR-Q0iQg/exec"
-};
+  brand: "DEWIFY",
+  supportEmail: "dewifystores@gmail.com",
 
-window.DEWIFY_CONFIGURED =
-  typeof window.DEWIFY_CONFIG.GOOGLE_APPS_SCRIPT_URL === "string" &&
-  window.DEWIFY_CONFIG.GOOGLE_APPS_SCRIPT_URL.startsWith("https://script.google.com/macros/s/");
+  // Paddle Billing frontend setup.
+  // Client-side tokens are intended for frontend use. Never put Paddle API keys here.
+  PADDLE_ENVIRONMENT: "production",
+  PADDLE_CLIENT_TOKEN: "",
+
+  products: [
+    {
+      id: "devcore",
+      name: "DEWIFY DevCore",
+      version: "V1.0.0",
+      category: "PC SOFTWARE",
+      type: "One-time digital purchase",
+      compatibility: "Windows PC",
+      priceId: "",
+      displayPrice: "View price at checkout",
+      image: "https://raw.githubusercontent.com/devansh-ggW/DEWIFY-GG/main/devcore.png",
+      description: "A lightweight developer workspace built for everyday coding without the weight of a full IDE.",
+      highlights: [
+        "Lightweight Windows app",
+        "Developer-focused workspace",
+        "Fast, simple workflow",
+        "Digital delivery after purchase"
+      ],
+      downloadUrl: "https://mediafire.com/file/wx1yt9lbubtoa2k/DevCore-+V1.0.0.zip/file"
+    }
+  ]
+};
