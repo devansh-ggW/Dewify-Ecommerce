@@ -70,15 +70,20 @@
       return;
     }
 
-    Paddle.Checkout.open({
-      items: [{ priceId, quantity: 1 }],
-      settings: {
-        displayMode: "overlay",
-        theme: "light",
-        locale: "en",
-        variant: "one-page"
-      }
-    });
+    try {
+      Paddle.Checkout.open({
+        items: [{ priceId, quantity: 1 }],
+        settings: {
+          displayMode: "overlay",
+          theme: "light",
+          locale: "en",
+          variant: "multi-page"
+        }
+      });
+    } catch (error) {
+      console.error("Paddle.Checkout.open failed:", error);
+      setStatus(`Checkout error: ${error?.message || "open_failed"}`);
+    }
   });
 
   $("#closeSuccess")?.addEventListener("click", closeSuccess);
