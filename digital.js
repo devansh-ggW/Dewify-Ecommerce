@@ -33,11 +33,11 @@
       Paddle.Initialize({
         token,
         eventCallback: (event) => {
-          if (event?.name === "checkout.error" || event?.name === "checkout.payment.error") {
+          if (event?.name === "checkout.error" || event?.name === "checkout.payment.error" || event?.name === "checkout.warning") {
             const code = event?.code || "unknown_error";
             const detail = event?.detail || "Paddle could not complete this checkout.";
-            console.error("Paddle checkout error:", event);
-            setStatus(`Checkout error: ${code}`);
+            console.error("Paddle checkout event:", event);
+            setStatus(`Paddle: ${code} — ${detail}`);
           }
 
           if (event?.name === "checkout.completed") {
