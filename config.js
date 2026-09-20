@@ -32,10 +32,10 @@ window.DEWIFY_CONFIG = {
       category: "DIGITAL PRODUCTS",
       type: "One-time digital purchase",
       format: "300 digital product resellable pack",
-      priceId: "",
+      priceId: "pri_01m2zmsr7t1nf6a2d8ydz0qxsz",
       basePriceUsd: 9.99,
       displayPrice: "$9.99",
-      downloadUrl: "https://raw.githubusercontent.com/devansh-ggW/Dewify-Ecommerce/main/300%20DIGITAL%20PRODUCTS%20VAULT.zip",
+      downloadUrl: "https://cdn.creativeclaw.co/u/9d6a7d83/zips/51e09d07-b204-4cc0-8269-62e915667708.zip",
       image: "assets/creator-vault-300-cover.svg",
       description: "A 300-product digital pack designed for creators who want a ready-made library of digital products to customize, package and resell where permitted by the included license terms.",
       highlights: [
