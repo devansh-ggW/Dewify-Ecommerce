@@ -32,8 +32,27 @@
         Paddle.Environment.set("sandbox");
       }
 
+      const mobile = isMobileCheckout();
+      const checkoutSettings = mobile
+        ? {
+            displayMode: "inline",
+            variant: "multi-page",
+            theme: "light",
+            locale: "en",
+            frameTarget: "checkoutContainer",
+            frameInitialHeight: "700",
+            frameStyle: "width:100%;min-width:312px;background:transparent;border:none;"
+          }
+        : {
+            displayMode: "overlay",
+            theme: "light",
+            locale: "en",
+            variant: "multi-page"
+          };
+
       Paddle.Initialize({
         token,
+        checkout: { settings: checkoutSettings },
         eventCallback: (event) => {
           if (event?.name === "checkout.error" || event?.name === "checkout.payment.error" || event?.name === "checkout.warning") {
             const code = event?.code || "unknown_error";
@@ -80,22 +99,12 @@
       }
       Paddle.Checkout.open({
         items: [{ priceId, quantity: 1 }],
-        settings: inline
-          ? {
-              displayMode: "inline",
-              frameTarget: "checkoutContainer",
-              frameInitialHeight: "700",
-              frameStyle: "width:100%;min-width:312px;background:transparent;border:none;",
-              theme: "light",
-              locale: "en",
-              variant: "multi-page"
-            }
-          : {
-              displayMode: "overlay",
-              theme: "light",
-              locale: "en",
-              variant: "multi-page"
-            }
+        settings: {
+          displayMode: inline ? "inline" : "overlay",
+          theme: "light",
+          locale: "en",
+          variant: "multi-page"
+        }
       });
     } catch (error) {
       console.error("Paddle.Checkout.open failed:", error);
