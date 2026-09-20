@@ -1,13 +1,26 @@
-# DEWIFY Store + Google Sheets Orders
+# DEWIFY Digital Store
 
-The storefront keeps the existing DEWIFY design, products, cart and animations.
+The DEWIFY storefront is now focused on digital products and lightweight software.
 
-Orders are submitted with `fetch()` to a Google Apps Script Web App. The Apps Script validates the payload, creates a unique Order ID, and appends the order to the `DEWIFY Orders` sheet.
+## Current product
 
-## Customer order flow
+- **DEWIFY DevCore** — V1.0.0
+- Type: one-time digital purchase
+- Platform: Windows
+- Delivery: digital access after successful checkout
 
-GitHub Pages → Google Apps Script → Google Sheet
+## Paddle setup
 
-Supabase has been removed from the customer storefront. No Google credentials are stored in frontend files.
+1. Create a Paddle client-side token.
+2. Create the Paddle product and price for each DEWIFY product.
+3. Put the client-side token in `config.js` as `PADDLE_CLIENT_TOKEN`.
+4. Put the corresponding `pri_...` price ID into the product's `priceId`.
+5. Keep Paddle API keys off the frontend.
 
-See `SETUP-GOOGLE-SHEETS.md` and `DEWIFY-APPS-SCRIPT.gs`.
+Paddle.js is initialized in `index.html`, and purchases are opened with `Paddle.Checkout.open()`.
+
+## Hosting
+
+This is a static GitHub Pages site. The custom domain is configured as `dewify.shop`.
+
+No physical shipping/order workflow is used by the current storefront.
