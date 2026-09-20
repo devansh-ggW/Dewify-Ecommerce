@@ -13,7 +13,7 @@ window.DEWIFY_CONFIG = {
       format: "PDF ebook",
       priceId: "pri_01m2yq2yg9pfdt2h1zt1y6gt59",
       displayPrice: "View price at checkout",
-      downloadUrl: "https://cdn.creativeclaw.co/u/9d6a7d83/zips/371e383e-cab2-43de-ae1a-d695071b88db.zip",
+      downloadUrl: "https://cdn.creativeclaw.co/u/9d6a7d83/zips/11367f3d-0e22-42d8-ab9f-82f33f353b9e.zip",
       promptVaultDownloadUrl: "https://cdn.creativeclaw.co/u/9d6a7d83/zips/d3026c25-76b1-43de-ae1a-d695071b88db.zip",
       image: "assets/ai-money-arc-cover.svg",
       description: "A practical guide to learning AI, building real skills, understanding business, and turning ideas into action.",
