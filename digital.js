@@ -67,7 +67,7 @@
       items: [{ priceId, quantity: 1 }],
       settings: {
         displayMode: "overlay",
-        theme: "dark",
+        theme: "light",
         locale: "en"
       }
     });
