@@ -5,20 +5,78 @@
   const product = (cfg.products || []).find(p => p.id === "creator-vault-300");
   const $ = selector => document.querySelector(selector);
   const token = String(cfg.PADDLE_CLIENT_TOKEN || "").trim();
+  const priceId = String(product?.priceId || "").trim();
+
+  let paddleReady = false;
+  let checkoutOpen = false;
 
   function setStatus(message) {
     const el = $("#checkoutStatus");
-    if (el) el.textContent = message;
+    if (el) {
+      el.textContent = message;
+      el.setAttribute("aria-live", "polite");
+    }
   }
 
   function setPrice(value) {
     const el = $("#productPrice");
-    if (el) el.textContent = value;
+    if (el && value) el.textContent = value;
   }
 
-  function initPaddle() {
-    if (!window.Paddle || !token) {
-      setStatus("Secure checkout is loading.");
+  function setDownloadLink() {
+    const link = $("#downloadVault");
+    if (link && product?.downloadUrl) {
+      link.href = product.downloadUrl;
+      link.removeAttribute("aria-disabled");
+      link.dataset.ready = "true";
+    }
+  }
+
+  function setBuyState(ready) {
+    const button = $("#buyButton");
+    if (!button) return;
+    button.disabled = !ready;
+    button.setAttribute("aria-disabled", String(!ready));
+    button.textContent = ready ? "Buy CREATOR VAULT 300 ↗" : "Preparing checkout…";
+    button.classList.toggle("is-loading", !ready);
+  }
+
+  function showSuccess(event) {
+    const modal = $("#successModal");
+    if (!modal) return;
+
+    const tx = $("#successTransaction");
+    if (tx) tx.textContent = event?.data?.transaction_id || "Completed";
+
+    setDownloadLink();
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("locked");
+
+    const download = $("#downloadVault");
+    window.setTimeout(() => download?.focus(), 40);
+  }
+
+  function closeSuccess() {
+    const modal = $("#successModal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("locked");
+  }
+
+  async function initPaddle() {
+    setBuyState(false);
+    setStatus("Loading local price & secure checkout…");
+
+    if (!window.Paddle) {
+      setStatus("Paddle checkout could not load. Please refresh and try again.");
+      return;
+    }
+
+    if (!token || !priceId) {
+      setStatus("Checkout setup is incomplete. Please contact support.");
       return;
     }
 
@@ -31,14 +89,13 @@
         token,
         eventCallback: event => {
           if (event?.name === "checkout.completed") {
-            const modal = $("#successModal");
-            const tx = $("#successTransaction");
-            if (tx) tx.textContent = event.data?.transaction_id || "Completed";
-            if (modal) {
-              modal.classList.add("is-open");
-              modal.setAttribute("aria-hidden", "false");
-              document.body.classList.add("locked");
-            }
+            checkoutOpen = false;
+            showSuccess(event);
+            return;
+          }
+
+          if (event?.name === "checkout.closed") {
+            checkoutOpen = false;
           }
 
           if (
@@ -46,50 +103,65 @@
             event?.name === "checkout.payment.error" ||
             event?.name === "checkout.warning"
           ) {
-            setStatus("Paddle: " + (event?.detail || event?.code || "Checkout could not complete."));
+            checkoutOpen = false;
+            console.error("Paddle checkout event:", event);
+            setStatus(
+              "Paddle: " +
+                (event?.detail || event?.code || "Checkout could not complete.")
+            );
+            setBuyState(true);
           }
         }
       });
 
-      const priceId = String(product?.priceId || "").trim();
+      paddleReady = true;
+      setBuyState(true);
 
-      if (!priceId) {
-        setStatus("Paddle price setup is pending. The listed base price is $9.99.");
-        return;
-      }
+      try {
+        const result = await Paddle.PricePreview({
+          items: [{ priceId, quantity: 1 }]
+        });
 
-      Paddle.PricePreview({
-        items: [{ priceId, quantity: 1 }]
-      }).then(result => {
         const line = result?.data?.details?.lineItems?.[0];
-        const localized = line?.formattedTotals?.subtotal || line?.formattedUnitTotals?.subtotal;
-        if (localized) setPrice(localized);
-        setStatus("Secure checkout is ready.");
-      }).catch(error => {
-        console.warn("Price preview failed:", error);
-        setStatus("Secure checkout is ready.");
-      });
+        const localized =
+          line?.formattedTotals?.total ||
+          line?.formattedUnitTotals?.total ||
+          line?.formattedTotals?.subtotal ||
+          line?.formattedUnitTotals?.subtotal;
 
+        if (localized) {
+          setPrice(localized);
+          setStatus("Local price loaded. Checkout is ready.");
+        } else {
+          setStatus("Checkout is ready. Final total is confirmed in Paddle.");
+        }
+      } catch (error) {
+        console.warn("Price preview failed:", error);
+        setStatus("Checkout is ready. Final tax and currency are confirmed in Paddle.");
+      }
     } catch (error) {
       console.error("Paddle initialization failed:", error);
-      setStatus("Checkout setup is pending.");
+      setStatus("Checkout error: " + (error?.message || "initialize_failed"));
     }
   }
 
-  function openCheckout() {
-    const priceId = String(product?.priceId || "").trim();
+  $("#buyButton")?.addEventListener("click", () => {
+    if (!paddleReady || !window.Paddle) {
+      setStatus("Checkout is still loading. Please try again in a moment.");
+      return;
+    }
 
     if (!priceId) {
-      setStatus("Add the CREATOR VAULT 300 Paddle price ID to enable checkout.");
+      setStatus("Checkout setup is incomplete. Please contact support.");
       return;
     }
 
-    if (!window.Paddle) {
-      setStatus("Paddle checkout is still loading.");
-      return;
-    }
+    if (checkoutOpen) return;
 
     try {
+      checkoutOpen = true;
+      setStatus("Opening secure checkout…");
+
       Paddle.Checkout.open({
         items: [{ priceId, quantity: 1 }],
         settings: {
@@ -99,22 +171,25 @@
         }
       });
     } catch (error) {
+      checkoutOpen = false;
       console.error("Paddle checkout failed:", error);
-      setStatus("Checkout could not be opened.");
+      setStatus("Checkout error: " + (error?.message || "open_failed"));
     }
-  }
+  });
 
-  function closeSuccess() {
-    const modal = $("#successModal");
-    if (!modal) return;
-    modal.classList.remove("is-open");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("locked");
-  }
+  $("#downloadVault")?.addEventListener("click", event => {
+    const link = event.currentTarget;
+    if (!link?.dataset?.ready || link.getAttribute("href") === "#") {
+      event.preventDefault();
+      setStatus("Your download is still being prepared. Please close and reopen the confirmation.");
+    }
+  });
 
-  $("#buyButton")?.addEventListener("click", openCheckout);
   $("#closeSuccess")?.addEventListener("click", closeSuccess);
   $("#successModal .scrim")?.addEventListener("click", closeSuccess);
+  window.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeSuccess();
+  });
 
-  initPaddle();
+  window.addEventListener("load", initPaddle, { once: true });
 })();
