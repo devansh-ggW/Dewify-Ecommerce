@@ -82,3 +82,7 @@
   .store-product-link .store-product-copy{padding:18px}
   .store-product-link .store-product-copy h3{font-size:clamp(34px,12vw,46px)}
 }
+
+/* Checkout loading state */
+.button:disabled,
+.button[aria-disabled="true"]{opacity:.55;cursor:wait;pointer-events:none}
