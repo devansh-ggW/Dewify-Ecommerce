@@ -188,3 +188,46 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
   html{scroll-behavior:auto}
   .button,.product-card,.product-art>img,.toast{transition:none}
 }
+
+/* DEWIFY mindset + next-drop layer */
+.coming-soon{z-index:2;padding-bottom:20px}
+.coming-inner{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:end;border:1px solid var(--line-strong);background:linear-gradient(145deg,rgba(22,22,22,.9),rgba(8,8,8,.78));padding:30px;border-radius:14px;box-shadow:0 22px 65px rgba(0,0,0,.25)}
+.coming-inner h2{margin:0;font-size:clamp(38px,5vw,66px);line-height:.9;letter-spacing:-.075em}
+.coming-inner h2 span{color:transparent;-webkit-text-stroke:1px rgba(244,242,236,.72)}
+.coming-inner>p{max-width:390px;margin:0;color:var(--muted);font-size:11px;line-height:1.75}
+.mindset-section{z-index:2;border-block:1px solid var(--line);background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.045),transparent 28%),rgba(8,8,8,.7)}
+.mindset-inner{padding-block:104px}
+.quote-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.quote-card{position:relative;min-height:230px;padding:22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(13,13,13,.72);overflow:hidden}
+.quote-card::before{content:"";position:absolute;width:130px;height:130px;border:1px solid rgba(244,242,236,.12);border-radius:50%;right:-40px;top:-45px}
+.quote-card:nth-child(2)::before{border-radius:18px;transform:rotate(36deg)}
+.quote-card:nth-child(3)::before{width:90px;height:90px;border-radius:0;transform:rotate(45deg)}
+.quote-card:nth-child(4)::before{width:160px;height:44px;border-radius:999px;transform:rotate(-25deg);right:-55px;top:28px}
+.quote-card>span,.quote-card small{position:relative;z-index:1;color:var(--dim);font:8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}
+.quote-card p{position:relative;z-index:1;margin:64px 0 34px;max-width:260px;font-size:19px;line-height:1.08;letter-spacing:-.045em}
+.quote-card small{display:block}
+.quote-feature{background:linear-gradient(145deg,#151515,#0c0c0c)}
+.quote-feature p{font-size:26px;max-width:310px}
+.quote-dark{background:#f4f2ec;color:#080808}
+.quote-dark>span,.quote-dark small{color:#686761}
+.quote-dark::before{border-color:rgba(8,8,8,.14)}
+.mindset-banner{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-top:12px;padding:25px;border:1px solid var(--line);background:rgba(16,16,16,.72);border-radius:12px}
+.mindset-banner>div{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mindset-banner span{color:var(--dim);font:8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em}
+.mindset-banner strong{font-size:18px;letter-spacing:-.04em}
+.legal-copy{max-width:760px;margin-top:55px}
+.legal-copy h2{margin:34px 0 8px;font-size:20px;letter-spacing:-.04em}
+.legal-copy p{margin:0;color:var(--muted);font-size:12px;line-height:1.75}
+@media(max-width:960px){
+  .quote-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .coming-inner{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .coming-soon{padding-bottom:10px}
+  .coming-inner{padding:22px;gap:20px}
+  .mindset-inner{padding-block:75px}
+  .quote-grid{grid-template-columns:1fr}
+  .quote-card{min-height:205px}
+  .quote-feature p{font-size:23px}
+  .mindset-banner{align-items:flex-start;flex-direction:column}
+}
