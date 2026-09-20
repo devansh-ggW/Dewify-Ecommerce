@@ -7,14 +7,38 @@
   const token = String(cfg.PADDLE_CLIENT_TOKEN || "").trim();
   const priceId = String(product?.priceId || "").trim();
 
+  let paddleReady = false;
+  let checkoutOpen = false;
+
   const setStatus = (message) => {
     const el = $("#checkoutStatus");
-    if (el) el.textContent = message;
+    if (el) {
+      el.textContent = message;
+      el.setAttribute("aria-live", "polite");
+    }
+  };
+
+  const setPrice = (value) => {
+    const el = $("#productPrice");
+    if (el && value) el.textContent = value;
   };
 
   const setDownloadLinks = () => {
     const book = $("#downloadBook");
-    if (book && product?.downloadUrl) book.href = product.downloadUrl;
+    if (book && product?.downloadUrl) {
+      book.href = product.downloadUrl;
+      book.removeAttribute("aria-disabled");
+      book.dataset.ready = "true";
+    }
+  };
+
+  const setBuyState = (ready) => {
+    const button = $("#buyButton");
+    if (!button) return;
+    button.disabled = !ready;
+    button.setAttribute("aria-disabled", String(!ready));
+    button.textContent = ready ? "Buy AI MONEY ARC ↗" : "Preparing checkout…";
+    button.classList.toggle("is-loading", !ready);
   };
 
   const setLocalizedPrice = async () => {
@@ -24,14 +48,21 @@
       const result = await Paddle.PricePreview({
         items: [{ priceId, quantity: 1 }]
       });
+
       const line = result?.data?.details?.lineItems?.[0];
-      const localized = line?.formattedTotals?.subtotal || line?.formattedUnitTotals?.subtotal;
+      const localized =
+        line?.formattedTotals?.total ||
+        line?.formattedUnitTotals?.total ||
+        line?.formattedTotals?.subtotal ||
+        line?.formattedUnitTotals?.subtotal;
+
       if (localized) {
-        const price = $("#productPrice");
-        if (price) price.textContent = localized;
+        setPrice(localized);
+        setStatus("Local price loaded. Checkout is ready.");
       }
     } catch (error) {
       console.warn("Localized price preview failed:", error);
+      setStatus("Checkout is ready. Final tax and currency are confirmed in Paddle.");
     }
   };
 
@@ -43,21 +74,40 @@
     document.body.classList.remove("locked");
   };
 
+  const showSuccess = (event) => {
+    const out = $("#successTransaction");
+    if (out) out.textContent = event?.data?.transaction_id || "Completed";
+
+    setDownloadLinks();
+
+    const modal = $("#successModal");
+    if (!modal) return;
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("locked");
+
+    const download = $("#downloadBook");
+    window.setTimeout(() => download?.focus(), 40);
+  };
+
   if (product) {
-    const price = $("#productPrice");
+    setPrice(product.displayPrice || "$9.99");
     const name = $("#productName");
-    if (price) price.textContent = product.displayPrice || "$9.99";
     if (name) name.textContent = product.name;
   }
 
   async function init() {
+    setBuyState(false);
+    setStatus("Loading local price & secure checkout…");
+
     if (!window.Paddle) {
       setStatus("Paddle checkout could not load. Please refresh and try again.");
       return;
     }
 
     if (!token || !priceId) {
-      setStatus("Checkout setup is incomplete.");
+      setStatus("Checkout setup is incomplete. Please contact support.");
       return;
     }
 
@@ -69,64 +119,80 @@
       Paddle.Initialize({
         token,
         eventCallback: (event) => {
+          if (event?.name === "checkout.completed") {
+            checkoutOpen = false;
+            showSuccess(event);
+            return;
+          }
+
+          if (event?.name === "checkout.closed") {
+            checkoutOpen = false;
+          }
+
           if (
             event?.name === "checkout.error" ||
             event?.name === "checkout.payment.error" ||
             event?.name === "checkout.warning"
           ) {
-            const code = event?.code || "unknown_error";
+            checkoutOpen = false;
+            const code = event?.code || "checkout_error";
             const detail = event?.detail || "Paddle could not complete this checkout.";
             console.error("Paddle checkout event:", event);
             setStatus(`Paddle: ${code} — ${detail}`);
-          }
-
-          if (event?.name === "checkout.completed") {
-            const out = $("#successTransaction");
-            if (out) out.textContent = event.data?.transaction_id || "Completed";
-
-            const modal = $("#successModal");
-            if (modal) {
-              setDownloadLinks();
-              modal.classList.add("is-open");
-              modal.setAttribute("aria-hidden", "false");
-              document.body.classList.add("locked");
-            }
+            setBuyState(true);
           }
         }
       });
 
+      paddleReady = true;
+      setBuyState(true);
       await setLocalizedPrice();
-      setStatus("Secure checkout is ready.");
+
+      if (!$("#checkoutStatus")?.textContent || $("#checkoutStatus").textContent.includes("Loading")) {
+        setStatus("Local price loaded. Checkout is ready.");
+      }
     } catch (error) {
       console.error("Paddle.Initialize failed:", error);
       setStatus(`Checkout error: ${error?.message || "initialize_failed"}`);
     }
   }
 
-  window.addEventListener("load", init, { once: true });
-
   $("#buyButton")?.addEventListener("click", () => {
-    if (!window.Paddle) {
-      setStatus("Paddle checkout is still loading. Please try again.");
+    if (!paddleReady || !window.Paddle) {
+      setStatus("Checkout is still loading. Please try again in a moment.");
       return;
     }
 
-    if (!token || !priceId) {
-      setStatus("Checkout setup is incomplete.");
+    if (!priceId) {
+      setStatus("Checkout setup is incomplete. Please contact support.");
       return;
     }
+
+    if (checkoutOpen) return;
 
     try {
+      checkoutOpen = true;
+      setStatus("Opening secure checkout…");
       Paddle.Checkout.open({
         items: [{ priceId, quantity: 1 }],
         settings: {
           displayMode: "overlay",
-          theme: "light"
+          theme: "light",
+          locale: "en"
         }
       });
     } catch (error) {
+      checkoutOpen = false;
       console.error("Paddle.Checkout.open failed:", error);
       setStatus(`Checkout error: ${error?.message || "open_failed"}`);
+    }
+  });
+
+  $("#downloadBook")?.addEventListener("click", (event) => {
+    const link = event.currentTarget;
+    if (!link?.dataset?.ready || link.getAttribute("href") === "#") {
+      event.preventDefault();
+      setStatus("Your download is still being prepared. Please close and reopen the confirmation.");
     }
   });
 
@@ -135,4 +201,6 @@
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeSuccess();
   });
+
+  window.addEventListener("load", init, { once: true });
 })();
