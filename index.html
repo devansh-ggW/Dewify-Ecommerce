@@ -48,14 +48,14 @@
       <aside class="hero-panel" aria-label="Store status">
         <div class="panel-top">
           <span class="eyebrow">STORE STATUS</span>
-          <span class="status-dot" id="statusDot"></span>
+          <span class="status-dot"></span>
         </div>
-        <div class="status-title" id="statusTitle">Preparing checkout</div>
-        <p id="statusCopy">Connect your Paddle client token and product price ID in <code>config.js</code> to enable live purchases.</p>
+        <div class="status-title">Simple checkout</div>
+        <p>Choose a product, review the details, then check out securely on its product page.</p>
         <div class="status-rows">
           <div><span>CATALOG</span><strong>1 FEATURED DROP</strong></div>
           <div><span>DELIVERY</span><strong>DIGITAL / INSTANT</strong></div>
-          <div><span>CHECKOUT</span><strong id="checkoutState">PADDLE / PENDING</strong></div>
+          <div><span>CHECKOUT</span><strong>PADDLE</strong></div>
         </div>
       </aside>
     </section>
@@ -79,7 +79,7 @@
             <p class="eyebrow">02 / DEWIFY MINDSET</p>
             <h2>Build. Ship. Repeat.</h2>
           </div>
-          <p class="section-note">A digital store for people who want to build useful things, sharpen their skills and stop waiting for the perfect moment.</p>
+          <p class="section-note">A digital store for people who want useful tools, sharper skills and less friction between idea and execution.</p>
         </div>
 
         <div class="quote-grid">
@@ -160,7 +160,7 @@
         </details>
         <details>
           <summary>Do I need a PayPal account to buy?<span>+</span></summary>
-          <p>No. Paddle displays the payment methods available for the customer's location and checkout session. The buyer chooses from the methods presented by Paddle.</p>
+          <p>No. The checkout shows the payment methods available for your location, and you choose from those options.</p>
         </details>
         <details>
           <summary>Are physical products sold here?<span>+</span></summary>
@@ -193,41 +193,6 @@
       </div>
       <span class="copyright">© 2026 DEWIFY</span>
     </div>
-  </footer>
-
-  <div class="modal" id="productModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-    <div class="scrim" data-close-modal></div>
-    <div class="detail-panel">
-      <div class="modal-head">
-        <div>
-          <p class="eyebrow">DEWIFY / DIGITAL PRODUCT</p>
-          <h2 id="detailTitle">Product</h2>
-        </div>
-        <button class="icon-button" data-close-modal type="button" aria-label="Close">×</button>
-      </div>
-      <div id="detailBody"></div>
-    </div>
-  </div>
-
-  <div class="modal" id="successModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="successTitle">
-    <div class="scrim"></div>
-    <div class="success-panel">
-      <div class="success-mark">✓</div>
-      <p class="eyebrow">DEWIFY / PAYMENT COMPLETE</p>
-      <h2 id="successTitle">You're in.</h2>
-      <p class="success-lead">Your Paddle checkout completed successfully.</p>
-      <div class="success-meta">
-        <div><span>PRODUCT</span><strong id="successProduct">—</strong></div>
-        <div><span>TRANSACTION</span><strong id="successTransaction">—</strong></div>
-      </div>
-      <div class="success-actions">
-        <a class="button button-light" id="downloadButton" href="#" target="_blank" rel="noopener noreferrer">Access product <span>↗</span></a>
-        <button class="button button-ghost" id="closeSuccess" type="button">Done</button>
-      </div>
-      <p class="success-note">Keep your Paddle receipt and transaction ID for support.</p>
-    </div>
-  </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div><script src="stars.js" defer></script>
+  </footer><script src="stars.js" defer></script>
 </body>
 </html>
