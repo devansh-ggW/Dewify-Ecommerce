@@ -1,31 +1,27 @@
 window.DEWIFY_CONFIG = {
   brand: "DEWIFY",
   supportEmail: "dewifystores@gmail.com",
-
-  // Paddle Billing frontend setup.
-  // Client-side tokens are intended for frontend use. Never put Paddle API keys here.
   PADDLE_ENVIRONMENT: "production",
   PADDLE_CLIENT_TOKEN: "",
-
   products: [
     {
-      id: "devcore",
-      name: "DEWIFY DevCore",
-      version: "V1.0.0",
-      category: "PC SOFTWARE",
+      id: "ai-money-arc",
+      name: "AI MONEY ARC",
+      version: "V1.0",
+      category: "DIGITAL LEARNING",
       type: "One-time digital purchase",
-      compatibility: "Windows PC",
+      format: "PDF ebook",
       priceId: "",
       displayPrice: "View price at checkout",
-      image: "https://raw.githubusercontent.com/devansh-ggW/DEWIFY-GG/main/devcore.png",
-      description: "A lightweight developer workspace built for everyday coding without the weight of a full IDE.",
+      image: "assets/ai-money-arc-cover.jpg",
+      description: "A practical guide to learning AI, building real skills, understanding business, and turning ideas into action.",
       highlights: [
-        "Lightweight Windows app",
-        "Developer-focused workspace",
-        "Fast, simple workflow",
-        "Digital delivery after purchase"
-      ],
-      downloadUrl: "https://mediafire.com/file/wx1yt9lbubtoa2k/DevCore-+V1.0.0.zip/file"
+        "140-page premium ebook",
+        "AI + business fundamentals",
+        "30-day implementation arc",
+        "Discipline and execution system",
+        "Separate AI MONEY ARC Prompt Vault"
+      ]
     }
   ]
 };
