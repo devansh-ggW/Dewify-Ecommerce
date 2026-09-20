@@ -9,6 +9,7 @@
 
   let paddleReady = false;
   let checkoutOpen = false;
+  const storageKey = "dewify:download-ready:ai-money-arc";
 
   const setStatus = (message) => {
     const el = $("#checkoutStatus");
@@ -24,11 +25,44 @@
   };
 
   const setDownloadLinks = () => {
-    const book = $("#downloadBook");
-    if (book && product?.downloadUrl) {
-      book.href = product.downloadUrl;
-      book.removeAttribute("aria-disabled");
-      book.dataset.ready = "true";
+    if (!product?.downloadUrl) return;
+
+    const links = ["#downloadBook", "#downloadPersistent"];
+    links.forEach(selector => {
+      const link = $(selector);
+      if (!link) return;
+      link.href = product.downloadUrl;
+      link.removeAttribute("aria-disabled");
+      link.dataset.ready = "true";
+    });
+  };
+
+  const rememberDownload = (transactionId) => {
+    try {
+      sessionStorage.setItem(storageKey, JSON.stringify({
+        transactionId: transactionId || "Completed",
+        ready: true
+      }));
+    } catch (error) {
+      console.warn("Could not remember download state:", error);
+    }
+  };
+
+  const showDownloadBar = () => {
+    const bar = $("#downloadBar");
+    const link = $("#downloadPersistent");
+    if (!bar || !link || !product?.downloadUrl) return;
+    setDownloadLinks();
+    bar.hidden = false;
+    link.setAttribute("aria-disabled", "false");
+  };
+
+  const restoreDownload = () => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+      if (saved?.ready) showDownloadBar();
+    } catch (error) {
+      console.warn("Could not restore download state:", error);
     }
   };
 
@@ -78,7 +112,10 @@
     const out = $("#successTransaction");
     if (out) out.textContent = event?.data?.transaction_id || "Completed";
 
+    const transactionId = event?.data?.transaction_id || "Completed";
+    rememberDownload(transactionId);
     setDownloadLinks();
+    showDownloadBar();
 
     const modal = $("#successModal");
     if (!modal) return;
@@ -188,7 +225,7 @@
     }
   });
 
-  $("#downloadBook")?.addEventListener("click", (event) => {
+  $("#downloadBook, #downloadPersistent")?.addEventListener("click", (event) => {
     const link = event.currentTarget;
     if (!link?.dataset?.ready || link.getAttribute("href") === "#") {
       event.preventDefault();
@@ -202,5 +239,6 @@
     if (event.key === "Escape") closeSuccess();
   });
 
+  restoreDownload();
   window.addEventListener("load", init, { once: true });
 })();
