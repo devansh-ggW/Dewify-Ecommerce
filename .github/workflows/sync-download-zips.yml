@@ -1,0 +1,40 @@
+name: Sync customer ZIP filenames
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sync-download-zips.yml"
+      - "config.js"
+
+permissions:
+  contents: write
+
+jobs:
+  sync-zips:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download customer ZIPs with clean filenames
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 "https://cdn.creativeclaw.co/u/9d6a7d83/zips/30c76bdc-724a-492c-926c-8e254c1cbb8c.zip" -o "AI MONEY ARC.zip"
+          curl -fL --retry 3 "https://cdn.creativeclaw.co/u/9d6a7d83/zips/51e09d07-b204-4cc0-8269-62e915667708.zip" -o "CREATOR VAULT 300.zip"
+
+      - name: Commit clean download files
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "AI MONEY ARC.zip" "CREATOR VAULT 300.zip"
+          if git diff --cached --quiet; then
+            echo "ZIP files are already up to date."
+            exit 0
+          fi
+          git commit -m "Add clean customer ZIP filenames [skip ci]"
+          git push
