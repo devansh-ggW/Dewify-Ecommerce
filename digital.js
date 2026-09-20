@@ -5,6 +5,8 @@
   const $ = (s) => document.querySelector(s);
   const token = String(cfg.PADDLE_CLIENT_TOKEN || "").trim();
   const priceId = String(product?.priceId || "").trim();
+  const checkoutContainer = $("#checkoutContainer");
+  const isMobileCheckout = () => window.matchMedia("(max-width: 760px)").matches || window.matchMedia("(pointer: coarse)").matches;
 
   if (product) {
     $("#productPrice").textContent = product.displayPrice || "View price at checkout";
@@ -71,14 +73,29 @@
     }
 
     try {
+      const inline = isMobileCheckout();
+      if (inline && checkoutContainer) {
+        checkoutContainer.classList.add("is-open");
+        checkoutContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
       Paddle.Checkout.open({
         items: [{ priceId, quantity: 1 }],
-        settings: {
-          displayMode: "overlay",
-          theme: "light",
-          locale: "en",
-          variant: "multi-page"
-        }
+        settings: inline
+          ? {
+              displayMode: "inline",
+              frameTarget: "checkoutContainer",
+              frameInitialHeight: "700",
+              frameStyle: "width:100%;min-width:312px;background:transparent;border:none;",
+              theme: "light",
+              locale: "en",
+              variant: "multi-page"
+            }
+          : {
+              displayMode: "overlay",
+              theme: "light",
+              locale: "en",
+              variant: "multi-page"
+            }
       });
     } catch (error) {
       console.error("Paddle.Checkout.open failed:", error);
