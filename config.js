@@ -13,7 +13,7 @@ window.DEWIFY_CONFIG = {
       format: "PDF ebook",
       priceId: "",
       displayPrice: "View price at checkout",
-      image: "assets/ai-money-arc-cover.svg",
+      image: "assets/ai-money-arc-cover.jpg",
       description: "A practical guide to learning AI, building real skills, understanding business, and turning ideas into action.",
       highlights: [
         "140-page premium ebook",
