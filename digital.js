@@ -5,8 +5,6 @@
   const $ = (s) => document.querySelector(s);
   const token = String(cfg.PADDLE_CLIENT_TOKEN || "").trim();
   const priceId = String(product?.priceId || "").trim();
-  const checkoutContainer = $("#checkoutContainer");
-  const isMobileCheckout = () => window.matchMedia("(max-width: 760px)").matches || window.matchMedia("(pointer: coarse)").matches;
 
   if (product) {
     $("#productPrice").textContent = product.displayPrice || "View price at checkout";
@@ -31,24 +29,6 @@
       if (String(cfg.PADDLE_ENVIRONMENT || "production").toLowerCase() === "sandbox") {
         Paddle.Environment.set("sandbox");
       }
-
-      const mobile = isMobileCheckout();
-      const checkoutSettings = mobile
-        ? {
-            displayMode: "inline",
-            variant: "multi-page",
-            theme: "light",
-            locale: "en",
-            frameTarget: "checkout-container",
-            frameInitialHeight: "700",
-            frameStyle: "width:100%;min-width:312px;background:transparent;border:none;"
-          }
-        : {
-            displayMode: "overlay",
-            theme: "light",
-            locale: "en",
-            variant: "multi-page"
-          };
 
       Paddle.Initialize({
         token,
