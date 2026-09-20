@@ -9,6 +9,7 @@
 
   let paddleReady = false;
   let checkoutOpen = false;
+  const storageKey = "dewify:download-ready:creator-vault-300";
 
   function setStatus(message) {
     const el = $("#checkoutStatus");
@@ -24,11 +25,43 @@
   }
 
   function setDownloadLink() {
-    const link = $("#downloadVault");
-    if (link && product?.downloadUrl) {
+    if (!product?.downloadUrl) return;
+
+    ["#downloadVault", "#downloadPersistent"].forEach(selector => {
+      const link = $(selector);
+      if (!link) return;
       link.href = product.downloadUrl;
       link.removeAttribute("aria-disabled");
       link.dataset.ready = "true";
+    });
+  }
+
+  function rememberDownload(transactionId) {
+    try {
+      sessionStorage.setItem(storageKey, JSON.stringify({
+        transactionId: transactionId || "Completed",
+        ready: true
+      }));
+    } catch (error) {
+      console.warn("Could not remember download state:", error);
+    }
+  }
+
+  function showDownloadBar() {
+    const bar = $("#downloadBar");
+    const link = $("#downloadPersistent");
+    if (!bar || !link || !product?.downloadUrl) return;
+    setDownloadLink();
+    bar.hidden = false;
+    link.setAttribute("aria-disabled", "false");
+  }
+
+  function restoreDownload() {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+      if (saved?.ready) showDownloadBar();
+    } catch (error) {
+      console.warn("Could not restore download state:", error);
     }
   }
 
@@ -48,7 +81,10 @@
     const tx = $("#successTransaction");
     if (tx) tx.textContent = event?.data?.transaction_id || "Completed";
 
+    const transactionId = event?.data?.transaction_id || "Completed";
+    rememberDownload(transactionId);
     setDownloadLink();
+    showDownloadBar();
 
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
@@ -177,7 +213,7 @@
     }
   });
 
-  $("#downloadVault")?.addEventListener("click", event => {
+  $("#downloadVault, #downloadPersistent")?.addEventListener("click", event => {
     const link = event.currentTarget;
     if (!link?.dataset?.ready || link.getAttribute("href") === "#") {
       event.preventDefault();
@@ -191,5 +227,6 @@
     if (event.key === "Escape") closeSuccess();
   });
 
+  restoreDownload();
   window.addEventListener("load", initPaddle, { once: true });
 })();
