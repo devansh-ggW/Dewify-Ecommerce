@@ -17,6 +17,24 @@
     if (book && product?.downloadUrl) book.href = product.downloadUrl;
   };
 
+  const setLocalizedPrice = async () => {
+    if (!window.Paddle || !priceId) return;
+
+    try {
+      const result = await Paddle.PricePreview({
+        items: [{ priceId, quantity: 1 }]
+      });
+      const line = result?.data?.details?.lineItems?.[0];
+      const localized = line?.formattedTotals?.subtotal || line?.formattedUnitTotals?.subtotal;
+      if (localized) {
+        const price = $("#productPrice");
+        if (price) price.textContent = localized;
+      }
+    } catch (error) {
+      console.warn("Localized price preview failed:", error);
+    }
+  };
+
   const closeSuccess = () => {
     const modal = $("#successModal");
     if (!modal) return;
@@ -28,11 +46,11 @@
   if (product) {
     const price = $("#productPrice");
     const name = $("#productName");
-    if (price) price.textContent = product.displayPrice || "View price at checkout";
+    if (price) price.textContent = product.displayPrice || "$9.99";
     if (name) name.textContent = product.name;
   }
 
-  function init() {
+  async function init() {
     if (!window.Paddle) {
       setStatus("Paddle checkout could not load. Please refresh and try again.");
       return;
@@ -77,6 +95,7 @@
         }
       });
 
+      await setLocalizedPrice();
       setStatus("Secure checkout is ready.");
     } catch (error) {
       console.error("Paddle.Initialize failed:", error);
