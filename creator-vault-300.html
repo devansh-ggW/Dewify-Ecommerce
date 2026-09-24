@@ -30,7 +30,10 @@
     .success-panel{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);z-index:71;width:min(560px,calc(100% - 24px));padding:30px;background:#0c0c0c;border:1px solid var(--line-strong);box-shadow:var(--shadow);display:none}
     .modal.is-open .success-panel{display:block}
     @media(max-width:800px){.vault-grid{grid-template-columns:1fr;gap:38px}.vault-cover{position:static;max-width:390px;margin:0 auto}.vault-list{grid-template-columns:1fr}.vault-price{align-items:stretch;flex-direction:column}}
-  </style>
+  
+    .download-locked{opacity:.72}
+    .download-locked .is-download-locked,.download-locked a[aria-disabled="true"]{background:#6a6a6a!important;color:#d8d8d8!important;border-color:#6a6a6a!important;cursor:not-allowed!important;pointer-events:auto}
+</style>
 </head>
 <body>
 <canvas id="starfield" aria-hidden="true"></canvas>
@@ -53,13 +56,13 @@
         <button class="button button-light" id="buyButton" type="button">Buy CREATOR VAULT 300 ↗</button>
       </div>
 
-      <div class="purchase-download-bar" id="downloadBar" hidden>
+      <div class="purchase-download-bar download-locked" id="downloadBar">
         <div>
-          <span>DOWNLOAD READY</span>
-          <strong>Your CREATOR VAULT 300 ZIP is ready.</strong>
-          <p>Keep this tab open while you download. You can also close the confirmation and use this download button.</p>
+          <span id="downloadStateLabel">DOWNLOAD LOCKED</span>
+          <strong id="downloadStateTitle">Pay to unlock your download.</strong>
+          <p id="downloadStateCopy">Complete your purchase to unlock the CREATOR VAULT 300 ZIP download.</p>
         </div>
-        <a class="button button-light" id="downloadPersistent" href="#" download="CREATOR VAULT 300.zip" download="CREATOR VAULT 300.zip" target="_blank" rel="noopener" aria-disabled="true">Download ZIP ↗</a>
+        <a class="button button-light" id="downloadPersistent" href="#" download="CREATOR VAULT 300.zip" download="CREATOR VAULT 300.zip" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1">Pay to unlock download</a>
       </div>
 
       <section class="vault-section">
@@ -96,7 +99,7 @@
   <h2>You're in.</h2>
   <p class="success-lead">Your purchase is complete.</p>
   <div class="success-meta"><div><span>TRANSACTION</span><strong id="successTransaction">—</strong></div><div><span>PRODUCT</span><strong>CREATOR VAULT 300</strong></div></div>
-  <div class="success-actions"><a class="button button-light" id="downloadVault" href="#" download="CREATOR VAULT 300.zip" download="CREATOR VAULT 300.zip" target="_blank" rel="noopener">Download CREATOR VAULT 300 ↗</a><button class="button button-ghost" id="closeSuccess" type="button">Close</button></div>
+  <div class="success-actions"><a class="button button-light is-download-locked" id="downloadVault" href="#" download="CREATOR VAULT 300.zip" aria-disabled="true" tabindex="-1" download="CREATOR VAULT 300.zip" target="_blank" rel="noopener">Download CREATOR VAULT 300 ↗</a><button class="button button-ghost" id="closeSuccess" type="button">Close</button></div>
 </div></div>
 
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js" defer></script>
