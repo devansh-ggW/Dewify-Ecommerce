@@ -90,5 +90,27 @@ window.DEWIFY_CONFIG = {
         "Review included license terms before resale"
       ]
     }
+    {
+      id: "creator-crate-100",
+      productId: "pro_01m39m52mtc6qmjertkx1cwng0",
+      name: "CREATOR CRATE 100",
+      version: "DROP 05",
+      category: "DIGITAL PRODUCTS",
+      type: "One-time digital purchase",
+      format: "50 website templates + 50 design templates",
+      priceId: "pri_01m39m6ajene2ch68yskfkftzm",
+      basePriceUsd: null,
+      displayPrice: "Local price",
+      downloadUrl: "CREATOR_CRATE_100.zip",
+      image: "assets/creator-crate-100-cover.svg",
+      description: "A compact creator crate with 100 editable templates: 50 standalone website templates and 50 editable design templates.",
+      highlights: [
+        "50 single-file website templates",
+        "50 editable design templates",
+        "HTML + CSS + JavaScript included in website files",
+        "Business, events, celebrations, food, beauty and more",
+        "Instant digital ZIP delivery"
+      ]
+    },
   ]
 };
