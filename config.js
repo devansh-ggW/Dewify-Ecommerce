@@ -5,6 +5,28 @@ window.DEWIFY_CONFIG = {
   PADDLE_CLIENT_TOKEN: "live_9fcd118aea6146c1a0052a9298a",
   products: [
     {
+      id: "creator-bundle-500",
+      productId: "pro_01m39jyhw68mjchksmtqtaye5j",
+      name: "CREATOR BUNDLE 500",
+      version: "DROP 04",
+      category: "DIGITAL PRODUCTS",
+      type: "One-time digital purchase",
+      format: "250 website templates + 250 design templates",
+      priceId: "pri_01m39k067cwm6sfv1ygzzdrcjq",
+      basePriceUsd: null,
+      displayPrice: "Local price",
+      downloadUrl: "CREATOR_BUNDLE_500.zip",
+      image: "assets/creator-bundle-500-cover.svg",
+      description: "A creator-ready bundle of 500 editable templates: 250 standalone website templates and 250 editable design templates for businesses, events, celebrations, food, beauty and more.",
+      highlights: [
+        "250 single-file website templates",
+        "250 editable design templates",
+        "HTML + CSS + JavaScript included in website files",
+        "Business, event, celebration, food and beauty categories",
+        "Instant digital ZIP delivery"
+      ]
+    },
+    {
       id: "ai-money-arc",
       name: "AI MONEY ARC",
       version: "V1.0",
