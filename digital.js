@@ -9,8 +9,21 @@
 
   let paddleReady = false;
   let checkoutOpen = false;
-  const storageKey = "dewify:download-ready:ai-money-arc";
-  const progressKey = "dewify:progress:ai-money-arc";
+  const deviceKey = "dewify:device-id";
+  const deviceId = (() => {
+    try {
+      let id = localStorage.getItem(deviceKey);
+      if (!id) {
+        id = (crypto?.randomUUID?.() || ("dewify-" + Date.now() + "-" + Math.random().toString(36).slice(2)));
+        localStorage.setItem(deviceKey, id);
+      }
+      return id;
+    } catch (_) {
+      return "temporary-device";
+    }
+  })();
+  const storageKey = "dewify:download-ready:ai-money-arc:" + deviceId;
+  const progressKey = "dewify:progress:ai-money-arc:" + deviceId;
 
   const setStatus = (message) => {
     const el = $("#checkoutStatus");
