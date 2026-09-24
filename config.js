@@ -26,6 +26,28 @@ window.DEWIFY_CONFIG = {
       ]
     },
     {
+      id: "creator-crate-100",
+      productId: "pro_01m39m52mtc6qmjertkx1cwng0",
+      name: "CREATOR CRATE 100",
+      version: "DROP 05",
+      category: "DIGITAL PRODUCTS",
+      type: "One-time digital purchase",
+      format: "50 website templates + 50 design templates",
+      priceId: "pri_01m39m6ajene2ch68yskfkftzm",
+      basePriceUsd: null,
+      displayPrice: "Local price",
+      downloadUrl: "CREATOR_CRATE_100.zip",
+      image: "assets/creator-crate-100-cover.svg",
+      description: "A compact creator crate with 100 editable templates: 50 standalone website templates and 50 editable design templates.",
+      highlights: [
+        "50 single-file website templates",
+        "50 editable design templates",
+        "HTML + CSS + JavaScript included in website files",
+        "Business, events, celebrations, food, beauty and more",
+        "Instant digital ZIP delivery"
+      ]
+    },
+    {
       id: "creator-vault-300",
       name: "CREATOR VAULT 300",
       version: "DROP 02",
@@ -44,28 +66,6 @@ window.DEWIFY_CONFIG = {
         "Ready-to-customize library",
         "Instant ZIP delivery",
         "Review included license terms before resale"
-      ]
-    },
-    {
-      id: "creator-arsenal-1000",
-      productId: "pro_01m39gv9nym8krspztnfnqfm3y",
-      name: "CREATOR ARSENAL 1000",
-      version: "DROP 03",
-      category: "DIGITAL PRODUCTS",
-      type: "One-time digital purchase",
-      format: "500 website templates + 500 design templates",
-      priceId: "pri_01m39gxn8k1ytp2efs880wm899",
-      basePriceUsd: 7.99,
-      displayPrice: "$7.99",
-      downloadUrl: "DEWIFY_CREATOR_VAULT_1000.zip",
-      image: "assets/creator-arsenal-1000-cover.svg",
-      description: "A creator-ready arsenal of 1,000 editable templates for businesses, weddings, celebrations, food, beauty, events and more.",
-      highlights: [
-        "500 single-file website templates",
-        "500 editable design templates",
-        "HTML + CSS + JavaScript included in every website file",
-        "Business, weddings, celebrations, food, beauty and event categories",
-        "Instant digital ZIP delivery"
       ]
     },
     {
@@ -91,28 +91,6 @@ window.DEWIFY_CONFIG = {
       ]
     },
     {
-      id: "creator-crate-100",
-      productId: "pro_01m39m52mtc6qmjertkx1cwng0",
-      name: "CREATOR CRATE 100",
-      version: "DROP 05",
-      category: "DIGITAL PRODUCTS",
-      type: "One-time digital purchase",
-      format: "50 website templates + 50 design templates",
-      priceId: "pri_01m39m6ajene2ch68yskfkftzm",
-      basePriceUsd: null,
-      displayPrice: "Local price",
-      downloadUrl: "CREATOR_CRATE_100.zip",
-      image: "assets/creator-crate-100-cover.svg",
-      description: "A compact creator crate with 100 editable templates: 50 standalone website templates and 50 editable design templates.",
-      highlights: [
-        "50 single-file website templates",
-        "50 editable design templates",
-        "HTML + CSS + JavaScript included in website files",
-        "Business, events, celebrations, food, beauty and more",
-        "Instant digital ZIP delivery"
-      ]
-    },
-    {
       id: "creator-stash-700",
       productId: "pro_01m39m7m260rfj92k09tdc70c8",
       name: "CREATOR STASH 700",
@@ -133,6 +111,27 @@ window.DEWIFY_CONFIG = {
         "Responsive websites with embedded CSS and JavaScript",
         "Instant digital ZIP delivery"
       ]
-    }
-  ]
+    },
+    {
+      id: "creator-arsenal-1000",
+      productId: "pro_01m39gv9nym8krspztnfnqfm3y",
+      name: "CREATOR ARSENAL 1000",
+      version: "DROP 03",
+      category: "DIGITAL PRODUCTS",
+      type: "One-time digital purchase",
+      format: "500 website templates + 500 design templates",
+      priceId: "pri_01m39gxn8k1ytp2efs880wm899",
+      basePriceUsd: 7.99,
+      displayPrice: "$7.99",
+      downloadUrl: "DEWIFY_CREATOR_VAULT_1000.zip",
+      image: "assets/creator-arsenal-1000-cover.svg",
+      description: "A creator-ready arsenal of 1,000 editable templates for businesses, weddings, celebrations, food, beauty, events and more.",
+      highlights: [
+        "500 single-file website templates",
+        "500 editable design templates",
+        "HTML + CSS + JavaScript included in every website file",
+        "Business, weddings, celebrations, food, beauty and event categories",
+        "Instant digital ZIP delivery"
+      ]
+    }  ]
 };
