@@ -5,28 +5,6 @@ window.DEWIFY_CONFIG = {
   PADDLE_CLIENT_TOKEN: "live_9fcd118aea6146c1a0052a9298a",
   products: [
     {
-      id: "creator-bundle-500",
-      productId: "pro_01m39jyhw68mjchksmtqtaye5j",
-      name: "CREATOR BUNDLE 500",
-      version: "DROP 04",
-      category: "DIGITAL PRODUCTS",
-      type: "One-time digital purchase",
-      format: "250 website templates + 250 design templates",
-      priceId: "pri_01m39k067cwm6sfv1ygzzdrcjq",
-      basePriceUsd: null,
-      displayPrice: "Local price",
-      downloadUrl: "CREATOR_BUNDLE_500.zip",
-      image: "assets/creator-bundle-500-cover.svg",
-      description: "A creator-ready bundle of 500 editable templates: 250 standalone website templates and 250 editable design templates for businesses, events, celebrations, food, beauty and more.",
-      highlights: [
-        "250 single-file website templates",
-        "250 editable design templates",
-        "HTML + CSS + JavaScript included in website files",
-        "Business, event, celebration, food and beauty categories",
-        "Instant digital ZIP delivery"
-      ]
-    },
-    {
       id: "ai-money-arc",
       name: "AI MONEY ARC",
       version: "V1.0",
@@ -45,6 +23,27 @@ window.DEWIFY_CONFIG = {
         "30-day implementation arc",
         "Discipline and execution system",
         "Prompt Vault companion included in the same ZIP"
+      ]
+    },
+    {
+      id: "creator-vault-300",
+      name: "CREATOR VAULT 300",
+      version: "DROP 02",
+      category: "DIGITAL PRODUCTS",
+      type: "One-time digital purchase",
+      format: "300 digital product resellable pack",
+      priceId: "pri_01m2zmsr7t1nf6a2d8ydz0qxsz",
+      basePriceUsd: 3.99,
+      displayPrice: "$3.99",
+      downloadUrl: "CREATOR%20VAULT%20300.zip",
+      image: "assets/creator-vault-300-cover.svg",
+      description: "A 300-product digital pack designed for creators who want a ready-made library of digital products to customize, package and resell where permitted by the included license terms.",
+      highlights: [
+        "300 digital product assets",
+        "Resellable product pack",
+        "Ready-to-customize library",
+        "Instant ZIP delivery",
+        "Review included license terms before resale"
       ]
     },
     {
@@ -70,26 +69,27 @@ window.DEWIFY_CONFIG = {
       ]
     },
     {
-      id: "creator-vault-300",
-      name: "CREATOR VAULT 300",
-      version: "DROP 02",
+      id: "creator-bundle-500",
+      productId: "pro_01m39jyhw68mjchksmtqtaye5j",
+      name: "CREATOR BUNDLE 500",
+      version: "DROP 04",
       category: "DIGITAL PRODUCTS",
       type: "One-time digital purchase",
-      format: "300 digital product resellable pack",
-      priceId: "pri_01m2zmsr7t1nf6a2d8ydz0qxsz",
-      basePriceUsd: 3.99,
-      displayPrice: "$3.99",
-      downloadUrl: "CREATOR%20VAULT%20300.zip",
-      image: "assets/creator-vault-300-cover.svg",
-      description: "A 300-product digital pack designed for creators who want a ready-made library of digital products to customize, package and resell where permitted by the included license terms.",
+      format: "250 website templates + 250 design templates",
+      priceId: "pri_01m39k067cwm6sfv1ygzzdrcjq",
+      basePriceUsd: null,
+      displayPrice: "Local price",
+      downloadUrl: "CREATOR_BUNDLE_500.zip",
+      image: "assets/creator-bundle-500-cover.svg",
+      description: "A creator-ready bundle of 500 editable templates: 250 standalone website templates and 250 editable design templates for businesses, events, celebrations, food, beauty and more.",
       highlights: [
-        "300 digital product assets",
-        "Resellable product pack",
-        "Ready-to-customize library",
-        "Instant ZIP delivery",
-        "Review included license terms before resale"
+        "250 single-file website templates",
+        "250 editable design templates",
+        "HTML + CSS + JavaScript included in website files",
+        "Business, event, celebration, food and beauty categories",
+        "Instant digital ZIP delivery"
       ]
-    }
+    },
     {
       id: "creator-crate-100",
       productId: "pro_01m39m52mtc6qmjertkx1cwng0",
@@ -112,5 +112,27 @@ window.DEWIFY_CONFIG = {
         "Instant digital ZIP delivery"
       ]
     },
+    {
+      id: "creator-stash-700",
+      productId: "pro_01m39m7m260rfj92k09tdc70c8",
+      name: "CREATOR STASH 700",
+      version: "DROP 06",
+      category: "DIGITAL PRODUCTS",
+      type: "One-time digital purchase",
+      format: "350 website templates + 350 design templates",
+      priceId: "pri_01m39m9dxebwxnhrqpcmmtgck5",
+      basePriceUsd: null,
+      displayPrice: "Local price",
+      downloadUrl: "CREATOR_STASH_700.zip",
+      image: "assets/creator-stash-700-cover.svg",
+      description: "A large creator stash with 700 templates: 350 single-file website templates and 350 editable SVG design templates across business, weddings, celebrations, food, beauty, events and more.",
+      highlights: [
+        "350 single-file website templates",
+        "350 editable SVG design templates",
+        "No frameworks, npm or build process for website templates",
+        "Responsive websites with embedded CSS and JavaScript",
+        "Instant digital ZIP delivery"
+      ]
+    }
   ]
 };
