@@ -10,6 +10,7 @@
   let paddleReady = false;
   let checkoutOpen = false;
   const storageKey = "dewify:download-ready:ai-money-arc";
+  const progressKey = "dewify:progress:ai-money-arc";
 
   const setStatus = (message) => {
     const el = $("#checkoutStatus");
@@ -25,6 +26,27 @@
   };
 
   const downloadFilename = "AI MONEY ARC.zip";
+
+  const saveProgress = () => {
+    try {
+      localStorage.setItem(progressKey, JSON.stringify({
+        scrollY: Math.max(0, Math.round(window.scrollY || 0)),
+        updatedAt: Date.now()
+      }));
+    } catch (error) {
+      console.warn("Could not save reading progress:", error);
+    }
+  };
+
+  const restoreProgress = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(progressKey) || "null");
+      if (!Number.isFinite(saved?.scrollY) || saved.scrollY <= 0) return;
+      window.setTimeout(() => window.scrollTo({ top: saved.scrollY, behavior: "auto" }), 250);
+    } catch (error) {
+      console.warn("Could not restore reading progress:", error);
+    }
+  };
 
   const triggerNamedDownload = async (url, filename) => {
     if (!url) throw new Error("missing_download_url");
@@ -84,7 +106,7 @@
 
   const rememberDownload = (transactionId) => {
     try {
-      sessionStorage.setItem(storageKey, JSON.stringify({
+      localStorage.setItem(storageKey, JSON.stringify({
         transactionId: transactionId || "Completed",
         ready: true
       }));
@@ -104,7 +126,7 @@
 
   const restoreDownload = () => {
     try {
-      const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
       if (saved?.ready) showDownloadBar();
       else setDownloadLocked();
     } catch (error) {
@@ -311,5 +333,12 @@
 
   setDownloadLocked();
   restoreDownload();
+  restoreProgress();
+  let progressTimer = 0;
+  window.addEventListener("scroll", () => {
+    window.clearTimeout(progressTimer);
+    progressTimer = window.setTimeout(saveProgress, 250);
+  }, { passive: true });
+  window.addEventListener("beforeunload", saveProgress);
   window.addEventListener("load", init, { once: true });
 })();
