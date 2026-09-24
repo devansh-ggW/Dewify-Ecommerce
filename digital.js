@@ -42,17 +42,44 @@
     window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
   };
 
+  const setDownloadLocked = () => {
+    ["#downloadBook", "#downloadPersistent"].forEach(selector => {
+      const link = $(selector);
+      if (!link) return;
+      link.removeAttribute("href");
+      link.setAttribute("aria-disabled", "true");
+      link.setAttribute("tabindex", "-1");
+      link.dataset.ready = "false";
+      link.classList.add("is-download-locked");
+    });
+
+    const label = $("#downloadStateLabel");
+    const title = $("#downloadStateTitle");
+    const copy = $("#downloadStateCopy");
+    if (label) label.textContent = "DOWNLOAD LOCKED";
+    if (title) title.textContent = "Pay to unlock your download.";
+    if (copy) copy.textContent = "Complete your purchase to unlock the AI MONEY ARC ZIP download.";
+  };
+
   const setDownloadLinks = () => {
     if (!product?.downloadUrl) return;
 
-    const links = ["#downloadBook", "#downloadPersistent"];
-    links.forEach(selector => {
+    ["#downloadBook", "#downloadPersistent"].forEach(selector => {
       const link = $(selector);
       if (!link) return;
       link.href = product.downloadUrl;
       link.removeAttribute("aria-disabled");
+      link.removeAttribute("tabindex");
       link.dataset.ready = "true";
+      link.classList.remove("is-download-locked");
     });
+
+    const label = $("#downloadStateLabel");
+    const title = $("#downloadStateTitle");
+    const copy = $("#downloadStateCopy");
+    if (label) label.textContent = "DOWNLOAD READY";
+    if (title) title.textContent = "Your AI MONEY ARC ZIP is ready.";
+    if (copy) copy.textContent = "Your payment is confirmed. Your download is unlocked.";
   };
 
   const rememberDownload = (transactionId) => {
@@ -69,7 +96,7 @@
   const showDownloadBar = () => {
     const bar = $("#downloadBar");
     const link = $("#downloadPersistent");
-    if (!bar || !link || !product?.downloadUrl) return;
+    if (!bar || !link) return;
     setDownloadLinks();
     bar.hidden = false;
     link.setAttribute("aria-disabled", "false");
@@ -79,8 +106,10 @@
     try {
       const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
       if (saved?.ready) showDownloadBar();
+      else setDownloadLocked();
     } catch (error) {
       console.warn("Could not restore download state:", error);
+      setDownloadLocked();
     }
   };
 
@@ -250,8 +279,8 @@
       event.preventDefault();
       const link = event.currentTarget;
 
-      if (!link?.dataset?.ready || !product?.downloadUrl) {
-        setStatus("Your download is still being prepared. Please close and reopen the confirmation.");
+      if (link?.dataset?.ready !== "true" || !product?.downloadUrl) {
+        setStatus("Please complete your purchase to unlock the download.");
         return;
       }
 
@@ -280,6 +309,7 @@
     if (event.key === "Escape") closeSuccess();
   });
 
+  setDownloadLocked();
   restoreDownload();
   window.addEventListener("load", init, { once: true });
 })();
