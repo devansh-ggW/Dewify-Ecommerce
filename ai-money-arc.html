@@ -30,7 +30,10 @@
     .success-panel{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);z-index:71;width:min(560px,calc(100% - 24px));padding:30px;background:#0c0c0c;border:1px solid var(--line-strong);box-shadow:var(--shadow);display:none}
     .modal.is-open .success-panel{display:block}
     @media(max-width:800px){.arc-grid{grid-template-columns:1fr;gap:38px}.arc-cover{position:static;max-width:390px;margin:0 auto}.arc-list{grid-template-columns:1fr}.arc-price{align-items:stretch;flex-direction:column}}
-  </style>
+  
+    .download-locked{opacity:.72}
+    .download-locked .is-download-locked,.download-locked a[aria-disabled="true"]{background:#6a6a6a!important;color:#d8d8d8!important;border-color:#6a6a6a!important;cursor:not-allowed!important;pointer-events:auto}
+</style>
 </head>
 <body>
 <canvas id="starfield" aria-hidden="true"></canvas>
@@ -55,13 +58,13 @@
         <button class="button button-light" id="buyButton" type="button">Buy AI MONEY ARC ↗</button>
       </div>
 
-      <div class="purchase-download-bar" id="downloadBar" hidden>
+      <div class="purchase-download-bar download-locked" id="downloadBar">
         <div>
           <span>DOWNLOAD READY</span>
           <strong>Your AI MONEY ARC files are ready.</strong>
-          <p>Keep this tab open while you download. You can also close the confirmation and use this download button.</p>
+          <p id="downloadStateCopy">Complete your purchase to unlock the AI MONEY ARC ZIP download.</p>
         </div>
-        <a class="button button-light" id="downloadPersistent" href="#" download="AI MONEY ARC.zip" target="_blank" rel="noopener" aria-disabled="true">Download ZIP ↗</a>
+        <a class="button button-light" id="downloadPersistent" href="#" download="AI MONEY ARC.zip" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1">Pay to unlock download</a>
       </div>
 
       <section class="arc-section">
@@ -121,7 +124,7 @@
   <p class="success-lead">Your purchase is complete. Everything is packed into one ZIP.</p>
   <div class="success-meta"><div><span>TRANSACTION</span><strong id="successTransaction">—</strong></div><div><span>PRODUCT</span><strong id="productName">AI MONEY ARC</strong></div></div>
   <div class="success-actions">
-    <a class="button button-light" id="downloadBook" href="#" download="AI MONEY ARC.zip" target="_blank" rel="noopener">Download AI MONEY ARC ↗</a>
+    <a class="button button-light is-download-locked" id="downloadBook" href="#" download="AI MONEY ARC.zip" aria-disabled="true" tabindex="-1" target="_blank" rel="noopener">Download AI MONEY ARC ↗</a>
     <button class="button button-ghost" id="closeSuccess" type="button">Close</button>
   </div>
   <p class="success-note">The ZIP contains both <strong>AI MONEY ARC.pdf</strong> and <strong>AI MONEY ARC - Prompt Vault.pdf</strong>.</p>
