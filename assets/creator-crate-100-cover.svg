@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536">
+  <rect width="1024" height="1536" fill="#080808"/>
+  <rect x="42" y="42" width="940" height="1452" rx="12" fill="none" stroke="#d8d8d8" stroke-opacity=".32"/>
+  <path d="M84 320H940M84 1216H940" stroke="#6f56c9" stroke-opacity=".45"/>
+  <text x="84" y="118" fill="#8e8e8e" font-family="Arial,Helvetica,sans-serif" font-size="22" letter-spacing="8">DEWIFY / DIGITAL DROP 05</text>
+  <text x="84" y="470" fill="#f4f4f4" font-family="Arial,Helvetica,sans-serif" font-size="112" font-weight="700" letter-spacing="-5">CREATOR</text>
+  <text x="84" y="590" fill="#f4f4f4" font-family="Arial,Helvetica,sans-serif" font-size="112" font-weight="700" letter-spacing="-5">CRATE</text>
+  <text x="84" y="730" fill="#6f56c9" font-family="Arial,Helvetica,sans-serif" font-size="150" font-weight="700" letter-spacing="-6">100</text>
+  <text x="84" y="808" fill="#bcbcbc" font-family="Arial,Helvetica,sans-serif" font-size="24" letter-spacing="5">50 WEBSITES  /  50 DESIGNS</text>
+  <g transform="translate(84 930)">
+    <rect width="856" height="180" fill="#111111" stroke="#232323"/>
+    <text x="30" y="52" fill="#8e8e8e" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="3">WHAT'S INSIDE</text>
+    <text x="30" y="103" fill="#efefef" font-family="Arial,Helvetica,sans-serif" font-size="28">Standalone websites + editable design templates</text>
+    <text x="30" y="145" fill="#8e8e8e" font-family="Arial,Helvetica,sans-serif" font-size="20">Business • Events • Celebrations • Food • Beauty • More</text>
+  </g>
+  <text x="84" y="1416" fill="#707070" font-family="Arial,Helvetica,sans-serif" font-size="20" letter-spacing="4">LEARN / BUILD / SHIP</text>
+</svg>
