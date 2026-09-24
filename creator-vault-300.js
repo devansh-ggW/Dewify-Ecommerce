@@ -10,7 +10,29 @@
   let paddleReady = false;
   let checkoutOpen = false;
   const storageKey = "dewify:download-ready:creator-vault-300";
+  const progressKey = "dewify:progress:creator-vault-300";
   const downloadFilename = "CREATOR VAULT 300.zip";
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(progressKey, JSON.stringify({
+        scrollY: Math.max(0, Math.round(window.scrollY || 0)),
+        updatedAt: Date.now()
+      }));
+    } catch (error) {
+      console.warn("Could not save reading progress:", error);
+    }
+  }
+
+  function restoreProgress() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(progressKey) || "null");
+      if (!Number.isFinite(saved?.scrollY) || saved.scrollY <= 0) return;
+      window.setTimeout(() => window.scrollTo({ top: saved.scrollY, behavior: "auto" }), 250);
+    } catch (error) {
+      console.warn("Could not restore reading progress:", error);
+    }
+  }
 
   async function triggerNamedDownload(url, filename) {
     if (!url) throw new Error("missing_download_url");
@@ -83,7 +105,7 @@
 
   function rememberDownload(transactionId) {
     try {
-      sessionStorage.setItem(storageKey, JSON.stringify({
+      localStorage.setItem(storageKey, JSON.stringify({
         transactionId: transactionId || "Completed",
         ready: true
       }));
@@ -103,7 +125,7 @@
 
   function restoreDownload() {
     try {
-      const saved = JSON.parse(sessionStorage.getItem(storageKey) || "null");
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
       if (saved?.ready) showDownloadBar();
       else setDownloadLocked();
     } catch (error) {
@@ -297,5 +319,12 @@
 
   setDownloadLocked();
   restoreDownload();
+  restoreProgress();
+  let progressTimer = 0;
+  window.addEventListener("scroll", () => {
+    window.clearTimeout(progressTimer);
+    progressTimer = window.setTimeout(saveProgress, 250);
+  }, { passive: true });
+  window.addEventListener("beforeunload", saveProgress);
   window.addEventListener("load", initPaddle, { once: true });
 })();
