@@ -9,8 +9,21 @@
 
   let paddleReady = false;
   let checkoutOpen = false;
-  const storageKey = "dewify:download-ready:creator-vault-300";
-  const progressKey = "dewify:progress:creator-vault-300";
+  const deviceKey = "dewify:device-id";
+  const deviceId = (() => {
+    try {
+      let id = localStorage.getItem(deviceKey);
+      if (!id) {
+        id = (crypto?.randomUUID?.() || ("dewify-" + Date.now() + "-" + Math.random().toString(36).slice(2)));
+        localStorage.setItem(deviceKey, id);
+      }
+      return id;
+    } catch (_) {
+      return "temporary-device";
+    }
+  })();
+  const storageKey = "dewify:download-ready:creator-vault-300:" + deviceId;
+  const progressKey = "dewify:progress:creator-vault-300:" + deviceId;
   const downloadFilename = "CREATOR VAULT 300.zip";
 
   function saveProgress() {
