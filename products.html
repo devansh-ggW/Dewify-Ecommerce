@@ -5,227 +5,180 @@
   <link rel="icon" href="/favicon.ico?v=20260920" type="image/x-icon" sizes="any">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#070707">
-  <meta name="description" content="DEWIFY learning products and digital resources.">
-  <title>DEWIFY — Store</title>
+  <meta name="description" content="Browse DEWIFY ebooks, creator packs, templates and digital resources.">
+  <title>DEWIFY — Products</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .products-hero{padding-bottom:34px}
+    .store-tools{position:sticky;top:10px;z-index:20;display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 auto 34px;padding:12px;border:1px solid var(--line);background:rgba(7,7,7,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+    .filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
+    .filter-tab{border:1px solid var(--line);background:transparent;color:var(--dim);padding:10px 14px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+    .filter-tab:hover,.filter-tab.active{border-color:var(--text);color:var(--text);background:rgba(255,255,255,.04)}
+    .product-search{width:min(270px,42vw);border:1px solid var(--line);background:#0b0b0b;color:var(--text);padding:11px 13px;outline:none;font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
+    .product-search:focus{border-color:var(--text)}
+    .catalog-section{padding-top:12px}
+    .catalog-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:18px}
+    .catalog-head h2{margin:0}
+    .catalog-count{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+    .product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .catalog-card{display:flex;flex-direction:column;min-width:0;border:1px solid var(--line);background:rgba(12,12,12,.78);transition:transform .2s ease,border-color .2s ease,background .2s ease}
+    .catalog-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.32);background:#101010}
+    .catalog-cover{aspect-ratio:1/1.12;overflow:hidden;background:#090909;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+    .catalog-cover img,.catalog-cover svg{width:100%;height:100%;object-fit:cover;display:block}
+    .catalog-copy{display:flex;flex:1;flex-direction:column;padding:18px}
+    .catalog-meta{display:flex;justify-content:space-between;gap:10px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em;text-transform:uppercase}
+    .catalog-copy h3{margin:10px 0 8px;font-size:22px;letter-spacing:-.03em}
+    .catalog-copy p{margin:0;color:var(--dim);font-size:13px;line-height:1.65}
+    .catalog-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:20px}
+    .catalog-price{font:700 16px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
+    .catalog-button{white-space:nowrap}
+    .empty-state{display:none;border:1px dashed var(--line);padding:38px;text-align:center;color:var(--dim)}
+    .catalog-card.is-hidden{display:none}
+    .catalog-info{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:42px}
+    .catalog-info>div{background:#0a0a0a;padding:18px}.catalog-info span{display:block;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em}.catalog-info strong{display:block;margin-top:7px;font-size:14px}
+    @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.catalog-info{grid-template-columns:1fr}.store-tools{position:static}}
+    @media(max-width:620px){.store-tools{align-items:stretch;flex-direction:column}.product-search{width:100%}.product-grid{grid-template-columns:1fr}.catalog-head{align-items:start;flex-direction:column;gap:8px}.catalog-copy h3{font-size:20px}}
+  </style>
 </head>
 <body>
 <canvas id="starfield" aria-hidden="true"></canvas>
 
 <header class="site-header">
   <div class="container nav">
-    <a class="brand" href="index.html">DEWIFY</a>
-    <nav class="nav-links">
-      <a href="index.html#mindset">Mindset</a>
-      <a href="index.html#how">How it works</a>
-      <a href="index.html#faq">FAQ</a>
+    <a class="brand" href="index.html" aria-label="DEWIFY home">DEWIFY</a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="products.html" aria-current="page">Shop</a>
+      <a href="categories.html">Categories</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="faq.html">FAQ</a>
     </nav>
-    <span class="store-pill">STORE / LEARNING</span>
+    <span class="store-pill">DIGITAL STORE</span>
   </div>
 </header>
 
 <main>
-  <section class="page-hero container">
-    <p class="eyebrow">DEWIFY / LEARNING STORE</p>
-    <h1>Learn skills.<br><span>Build more.</span></h1>
-    <p>Practical digital products designed to help you understand useful skills, practice them, and turn knowledge into real projects.</p>
+  <section class="page-hero products-hero container">
+    <p class="eyebrow">DEWIFY / DIGITAL STORE</p>
+    <h1>Pick a product.<br><span>Get to work.</span></h1>
+    <p>Browse ebooks, creator packs and practical digital resources without digging through one giant list. Filter by type or search by name.</p>
   </section>
 
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">01 / LIVE DROP</p>
-        <h2>AI MONEY ARC.</h2>
+  <section class="container catalog-section" aria-label="Product catalog">
+    <div class="store-tools">
+      <div class="filter-tabs" role="group" aria-label="Filter products">
+        <button class="filter-tab active" type="button" data-filter="all">All</button>
+        <button class="filter-tab" type="button" data-filter="ebooks">Ebooks</button>
+        <button class="filter-tab" type="button" data-filter="creator">Creator packs</button>
       </div>
-      <p class="section-note">A practical digital learning book about AI, business, skills, discipline and turning ideas into real action.<br><span style="display:inline-block;margin-top:8px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em">INSTANT DIGITAL DELIVERY AFTER PAYMENT</span></p>
+      <input class="product-search" id="product-search" type="search" placeholder="Search products..." aria-label="Search products">
     </div>
 
-    <a class="product-card store-product-link" href="ai-money-arc.html" aria-label="Open AI MONEY ARC product page">
-      <div class="arc-cover-art"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" role="img" aria-label="AI MONEY ARC by Marco Vex cover">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7f2e9"/><stop offset=".55" stop-color="#c8963d"/><stop offset="1" stop-color="#f0d89b"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="9"/></filter><pattern id="grain" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="6" cy="8" r=".8" fill="#fff" opacity=".025"/><circle cx="25" cy="29" r=".7" fill="#fff" opacity=".02"/></pattern></defs>
-<rect width="1024" height="1536" fill="#080807"/><rect width="1024" height="1536" fill="url(#grain)"/>
-<path d="M20 0v1536" stroke="#2b2925" stroke-width="22"/><path d="M34 0v1536" stroke="#8b774f" stroke-opacity=".18"/>
-<rect x="51" y="52" width="922" height="1432" fill="none" stroke="#b98a43" stroke-opacity=".88"/>
-<text x="512" y="90" text-anchor="middle" fill="#eee9df" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="12">LEARN / BUILD / EARN / GROW</text>
-<line x1="512" y1="120" x2="512" y2="164" stroke="#b98a43" stroke-width="2"/>
-<text x="512" y="278" text-anchor="middle" fill="#f0ede6" font-family="Georgia,serif" font-size="34" letter-spacing="18">THE</text>
-<text x="512" y="420" text-anchor="middle" fill="#f5f2ec" font-family="Georgia,serif" font-size="112" letter-spacing="2">AI MONEY</text>
-<text x="512" y="547" text-anchor="middle" fill="url(#g)" font-family="Georgia,serif" font-size="132" letter-spacing="12">ARC</text>
-<text x="512" y="664" text-anchor="middle" fill="#ede9e0" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="7">THE COMPLETE GUIDE TO LEARNING AI,</text>
-<text x="512" y="704" text-anchor="middle" fill="#ede9e0" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="7">BUILDING REAL SKILLS, AND CREATING</text>
-<text x="512" y="744" text-anchor="middle" fill="#ede9e0" font-family="Arial,Helvetica,sans-serif" font-size="18" letter-spacing="7">INCOME IN THE MODERN WORLD.</text>
-<path d="M430 976 L478 928 L511 959 L595 870" fill="none" stroke="url(#g)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter"/><path d="M571 871 l26 -1 -7 25" fill="none" stroke="url(#g)" stroke-width="7"/>
-<path d="M410 1002 L614 807" stroke="#d8ad60" stroke-width="12" opacity=".13" filter="url(#glow)"/>
-<line x1="512" y1="1080" x2="512" y2="1176" stroke="#b98a43" stroke-width="2"/>
-<text x="512" y="1288" text-anchor="middle" fill="#d9bf87" font-family="Arial,Helvetica,sans-serif" font-size="16" letter-spacing="8">BY</text>
-<text x="512" y="1346" text-anchor="middle" fill="url(#g)" font-family="Georgia,serif" font-size="34" letter-spacing="10">MARCO VEX</text>
-<line x1="512" y1="1390" x2="512" y2="1465" stroke="#b98a43" stroke-width="2"/>
-</svg></div>
-      <div class="product-copy store-product-copy">
-        <div class="product-meta"><span>DIGITAL LEARNING</span><span>DROP 01</span></div>
-        <h3>AI MONEY ARC</h3>
-        <p>Learn AI. Understand business. Build real skills. Develop discipline. The ebook combines practical lessons, exercises, a 30-day implementation arc, and a method for turning knowledge into action.</p>
-        <div class="product-bottom store-product-bottom">
-          <strong data-price-product="ai-money-arc">$2.99</strong>
-          <span class="button button-light buy-button">View product ↗</span>
+    <div class="catalog-head">
+      <div>
+        <p class="eyebrow">CURRENT COLLECTION</p>
+        <h2>Digital products.</h2>
+      </div>
+      <span class="catalog-count" id="catalog-count">6 products</span>
+    </div>
+
+    <div class="product-grid" id="product-grid">
+      <a class="catalog-card" href="ai-money-arc.html" data-category="ebooks" data-name="ai money arc ebook ai money learning business">
+        <div class="catalog-cover">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" role="img" aria-label="AI MONEY ARC by Marco Vex cover">
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7f2e9"/><stop offset=".55" stop-color="#c8963d"/><stop offset="1" stop-color="#f0d89b"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="9"/></filter></defs>
+            <rect width="1024" height="1536" fill="#080807"/><rect x="51" y="52" width="922" height="1432" fill="none" stroke="#b98a43"/>
+            <text x="512" y="90" text-anchor="middle" fill="#eee9df" font-family="Arial" font-size="18" letter-spacing="12">LEARN / BUILD / EARN / GROW</text>
+            <text x="512" y="278" text-anchor="middle" fill="#f0ede6" font-family="Georgia" font-size="34" letter-spacing="18">THE</text>
+            <text x="512" y="420" text-anchor="middle" fill="#f5f2ec" font-family="Georgia" font-size="112">AI MONEY</text>
+            <text x="512" y="547" text-anchor="middle" fill="url(#g)" font-family="Georgia" font-size="132" letter-spacing="12">ARC</text>
+            <text x="512" y="664" text-anchor="middle" fill="#ede9e0" font-family="Arial" font-size="18" letter-spacing="6">THE COMPLETE GUIDE TO LEARNING AI</text>
+            <text x="512" y="704" text-anchor="middle" fill="#ede9e0" font-family="Arial" font-size="18" letter-spacing="6">BUILDING REAL SKILLS, AND CREATING</text>
+            <text x="512" y="744" text-anchor="middle" fill="#ede9e0" font-family="Arial" font-size="18" letter-spacing="6">INCOME IN THE MODERN WORLD.</text>
+            <path d="M430 976 L478 928 L511 959 L595 870" fill="none" stroke="url(#g)" stroke-width="7"/><path d="M410 1002 L614 807" stroke="#d8ad60" stroke-width="12" opacity=".13" filter="url(#glow)"/>
+            <text x="512" y="1288" text-anchor="middle" fill="#d9bf87" font-family="Arial" font-size="16" letter-spacing="8">BY</text><text x="512" y="1346" text-anchor="middle" fill="url(#g)" font-family="Georgia" font-size="34" letter-spacing="10">MARCO VEX</text>
+          </svg>
         </div>
-      </div>
-    </a>
-  </section>
-
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">02 / NEW DROP</p>
-        <h2>CREATOR CRATE 100.</h2>
-      </div>
-      <p class="section-note">A compact creator crate with 100 editable templates: 50 single-file websites and 50 design templates for businesses, events, celebrations, food, beauty and more.<br><span style="display:inline-block;margin-top:8px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em">INSTANT DIGITAL DELIVERY AFTER PAYMENT</span></p>
-    </div>
-    <a class="product-card store-product-link" href="creator-crate-100.html" aria-label="Open CREATOR CRATE 100 product page">
-      <div class="arc-cover-art">
-        <img src="assets/creator-crate-100-cover.svg" alt="CREATOR CRATE 100 cover" loading="lazy" decoding="async">
-      </div>
-      <div class="product-copy store-product-copy">
-        <div class="product-meta"><span>DIGITAL PRODUCTS</span><span>DROP 2</span></div>
-        <h3>CREATOR CRATE 100</h3>
-        <p>50 self-contained website templates plus 50 editable design templates in one compact creator-ready bundle.</p>
-        <div class="product-bottom store-product-bottom">
-          <strong data-price-product="creator-crate-100">Local price</strong>
-          <span class="button button-light buy-button">View product ↗</span>
+        <div class="catalog-copy">
+          <div class="catalog-meta"><span>Ebook</span><span>Drop 01</span></div>
+          <h3>AI MONEY ARC</h3>
+          <p>AI, business, skills, discipline and a 30-day implementation arc for turning knowledge into action.</p>
+          <div class="catalog-footer"><strong class="catalog-price">$2.99</strong><span class="button button-light catalog-button">View product ↗</span></div>
         </div>
-      </div>
-    </a>
-  </section>
+      </a>
 
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">03 / LIVE DROP</p>
-        <h2>CREATOR VAULT 300.</h2>
-      </div>
-      <p class="section-note">A 300-product digital pack for creators building, packaging and reselling digital products under the included license terms.<br><span style="display:inline-block;margin-top:8px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em">INSTANT DIGITAL DELIVERY AFTER PAYMENT</span></p>
+      <a class="catalog-card" href="creator-crate-100.html" data-category="creator" data-name="creator crate 100 templates websites designs">
+        <div class="catalog-cover"><img src="assets/creator-crate-100-cover.svg" alt="CREATOR CRATE 100 cover" loading="lazy" decoding="async"></div>
+        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>100 assets</span></div><h3>CREATOR CRATE 100</h3><p>50 self-contained website templates plus 50 editable design templates in one compact creator pack.</p><div class="catalog-footer"><strong class="catalog-price">Local price</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
+      </a>
+
+      <a class="catalog-card" href="creator-vault-300.html" data-category="creator" data-name="creator vault 300 digital products resell">
+        <div class="catalog-cover"><img src="assets/creator-vault-300-cover.svg" alt="CREATOR VAULT 300 cover" loading="lazy" decoding="async"></div>
+        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>300 products</span></div><h3>CREATOR VAULT 300</h3><p>A 300-product library for creators building, packaging and reselling digital products under the included license terms.</p><div class="catalog-footer"><strong class="catalog-price">$3.99</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
+      </a>
+
+      <a class="catalog-card" href="creator-bundle-500.html" data-category="creator" data-name="creator bundle 500 templates websites designs">
+        <div class="catalog-cover"><img src="assets/creator-bundle-500-cover.svg" alt="CREATOR BUNDLE 500 cover" loading="lazy" decoding="async"></div>
+        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>500 assets</span></div><h3>CREATOR BUNDLE 500</h3><p>250 self-contained website templates plus 250 editable design templates in one creator-ready bundle.</p><div class="catalog-footer"><strong class="catalog-price">Local price</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
+      </a>
+
+      <a class="catalog-card" href="creator-stash-700.html" data-category="creator" data-name="creator stash 700 templates websites svg designs">
+        <div class="catalog-cover"><img src="assets/creator-stash-700-cover.svg" alt="CREATOR STASH 700 cover" loading="lazy" decoding="async"></div>
+        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>700 assets</span></div><h3>CREATOR STASH 700</h3><p>350 self-contained website templates plus 350 editable SVG design templates in one large stash.</p><div class="catalog-footer"><strong class="catalog-price">Local price</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
+      </a>
+
+      <a class="catalog-card" href="creator-arsenal-1000.html" data-category="creator" data-name="creator arsenal 1000 templates websites designs">
+        <div class="catalog-cover"><img src="assets/creator-arsenal-1000-cover.svg" alt="CREATOR ARSENAL 1000 cover" loading="lazy" decoding="async"></div>
+        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>1,000 assets</span></div><h3>CREATOR ARSENAL 1000</h3><p>500 self-contained website templates plus 500 design templates for businesses, events and more.</p><div class="catalog-footer"><strong class="catalog-price">$7.99</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
+      </a>
     </div>
 
-    <a class="product-card store-product-link" href="creator-vault-300.html" aria-label="Open CREATOR VAULT 300 product page">
-      <div class="arc-cover-art">
-        <img src="assets/creator-vault-300-cover.svg" alt="CREATOR VAULT 300 cover" loading="lazy" decoding="async">
-      </div>
-      <div class="product-copy store-product-copy">
-        <div class="product-meta"><span>DIGITAL PRODUCTS</span><span>DROP 3</span></div>
-        <h3>CREATOR VAULT 300</h3>
-        <p>300 digital products in one creator pack. Customize, package and use them as a starting library for your own digital-product operation.</p>
-        <div class="product-bottom store-product-bottom">
-          <strong data-price-product="creator-vault-300">$3.99</strong>
-          <span class="button button-light buy-button">View product ↗</span>
-        </div>
-      </div>
-    </a>
-  </section>
+    <div class="empty-state" id="empty-state">No products match that search.</div>
 
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">04 / NEW DROP</p>
-        <h2>CREATOR BUNDLE 500.</h2>
-      </div>
-      <p class="section-note">500 editable templates in one creator bundle: 250 single-file websites and 250 design templates for businesses, events, celebrations, food, beauty and more.<br><span style="display:inline-block;margin-top:8px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em">INSTANT DIGITAL DELIVERY AFTER PAYMENT</span></p>
-    </div>
-
-    <a class="product-card store-product-link" href="creator-bundle-500.html" aria-label="Open CREATOR BUNDLE 500 product page">
-      <div class="arc-cover-art">
-        <img src="assets/creator-bundle-500-cover.svg" alt="CREATOR BUNDLE 500 cover" loading="lazy" decoding="async">
-      </div>
-      <div class="product-copy store-product-copy">
-        <div class="product-meta"><span>DIGITAL PRODUCTS</span><span>DROP 4</span></div>
-        <h3>CREATOR BUNDLE 500</h3>
-        <p>250 self-contained website templates plus 250 editable design templates, packaged as one creator-ready digital bundle.</p>
-        <div class="product-bottom store-product-bottom">
-          <strong data-price-product="creator-bundle-500">Local price</strong>
-          <span class="button button-light buy-button">View product ↗</span>
-        </div>
-      </div>
-    </a>
-  </section>
-
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">05 / NEW DROP</p>
-        <h2>CREATOR STASH 700.</h2>
-      </div>
-      <p class="section-note">700 editable templates in one creator stash: 350 single-file websites and 350 editable SVG design templates spanning business, weddings, celebrations, food, beauty, events and more.<br><span style="display:inline-block;margin-top:8px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em">INSTANT DIGITAL DELIVERY AFTER PAYMENT</span></p>
-    </div>
-    <a class="product-card store-product-link" href="creator-stash-700.html" aria-label="Open CREATOR STASH 700 product page">
-      <div class="arc-cover-art">
-        <img src="assets/creator-stash-700-cover.svg" alt="CREATOR STASH 700 cover" loading="lazy" decoding="async">
-      </div>
-      <div class="product-copy store-product-copy">
-        <div class="product-meta"><span>DIGITAL PRODUCTS</span><span>DROP 5</span></div>
-        <h3>CREATOR STASH 700</h3>
-        <p>350 self-contained website templates plus 350 editable SVG design templates in one large creator-ready stash.</p>
-        <div class="product-bottom store-product-bottom">
-          <strong data-price-product="creator-stash-700">Local price</strong>
-          <span class="button button-light buy-button">View product ↗</span>
-        </div>
-      </div>
-    </a>
-  </section>
-
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">06 / NEW DROP</p>
-        <h2>CREATOR ARSENAL 1000.</h2>
-      </div>
-      <p class="section-note">1,000 editable templates in one creator-ready arsenal: 500 single-file websites and 500 design templates for businesses, weddings, celebrations, food, beauty, events and more.<br><span style="display:inline-block;margin-top:8px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em">INSTANT DIGITAL DELIVERY AFTER PAYMENT</span></p>
-    </div>
-
-    <a class="product-card store-product-link" href="creator-arsenal-1000.html" aria-label="Open CREATOR ARSENAL 1000 product page">
-      <div class="arc-cover-art">
-        <img src="assets/creator-arsenal-1000-cover.svg" alt="CREATOR ARSENAL 1000 cover" loading="lazy" decoding="async">
-      </div>
-      <div class="product-copy store-product-copy">
-        <div class="product-meta"><span>DIGITAL PRODUCTS</span><span>DROP 6</span></div>
-        <h3>CREATOR ARSENAL 1000</h3>
-        <p>500 self-contained website templates plus 500 editable design templates for businesses, weddings, celebrations, food, beauty, events and more.</p>
-        <div class="product-bottom store-product-bottom">
-          <strong data-price-product="creator-arsenal-1000">$7.99</strong>
-          <span class="button button-light buy-button">View product ↗</span>
-        </div>
-      </div>
-    </a>
-  </section>
-
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">07 / LEARNING PATHS</p>
-        <h2>Skills worth building.</h2>
-      </div>
-      <p class="section-note">More practical products will follow across business, money fundamentals, AI and modern technology.</p>
-    </div>
-    <div class="coming-list coming-list-wide">
-      <div><span>PATH / 01</span><strong>BUILDING</strong><small>Learn how to create real projects</small></div>
-      <div><span>PATH / 02</span><strong>BUSINESS</strong><small>Understand products, customers and value</small></div>
-      <div><span>PATH / 03</span><strong>MONEY</strong><small>Learn practical income and business fundamentals</small></div>
-      <div><span>PATH / 04</span><strong>AI &amp; TECH</strong><small>Build useful skills with modern tools</small></div>
+    <div class="catalog-info" aria-label="Store information">
+      <div><span>FORMAT</span><strong>Digital downloads</strong></div>
+      <div><span>ACCESS</span><strong>Open a product page</strong></div>
+      <div><span>DELIVERY</span><strong>Instant after payment</strong></div>
     </div>
   </section>
 
+  <section class="section container" style="padding-bottom:80px">
+    <div class="coming-inner">
+      <div><p class="eyebrow">NEXT / DEWIFY</p><h2>More products.<br><span>Cleaner browsing.</span></h2></div>
+      <div><p>New ebooks can be added to the Ebooks category without rebuilding the page. Creator packs stay grouped separately so the store can grow without turning into a wall of cards.</p><a class="button button-light" href="categories.html">Browse categories ↗</a></div>
+    </div>
+  </section>
 </main>
 
 <footer class="footer">
   <div class="container footer-inner">
-    <div><a class="brand" href="index.html">DEWIFY</a><p>Learn. Build. Repeat.</p></div>
-    <div class="footer-links"><a href="index.html">Home</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refund-policy.html">Refund Policy</a></div>
+    <div><a class="brand" href="index.html">DEWIFY</a><p>Digital products, upgraded.</p></div>
+    <div class="footer-links"><a href="products.html">Shop</a><a href="categories.html">Categories</a><a href="how-it-works.html">How it works</a><a href="faq.html">FAQ</a><a href="terms.html">Terms</a><a href="refund-policy.html">Refund Policy</a><a href="privacy.html">Privacy</a></div>
     <div class="footer-contact"><span class="eyebrow">SUPPORT</span><a href="mailto:dewifystores@gmail.com">dewifystores@gmail.com ↗</a></div>
     <span class="copyright">© 2026 DEWIFY</span>
   </div>
 </footer>
 
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js" defer></script>
-<script src="config.js?v=20260924-10" defer></script>
-<script src="localized-pricing.js?v=20260924-2" defer></script>
-<script src="stars.js?v=20260924-2" defer></script>
+<script>
+(function(){
+  const buttons=[...document.querySelectorAll('.filter-tab')];
+  const cards=[...document.querySelectorAll('.catalog-card')];
+  const search=document.getElementById('product-search');
+  const count=document.getElementById('catalog-count');
+  const empty=document.getElementById('empty-state');
+  let filter='all';
+  function render(){
+    const q=search.value.trim().toLowerCase(); let visible=0;
+    cards.forEach(card=>{const matchFilter=filter==='all'||card.dataset.category===filter;const matchSearch=!q||card.dataset.name.includes(q);const show=matchFilter&&matchSearch;card.classList.toggle('is-hidden',!show);if(show)visible++;});
+    count.textContent=visible+' product'+(visible===1?'':'s'); empty.style.display=visible?'none':'block';
+  }
+  buttons.forEach(btn=>btn.addEventListener('click',()=>{filter=btn.dataset.filter;buttons.forEach(b=>b.classList.toggle('active',b===btn));render();}));
+  search.addEventListener('input',render); render();
+
+  const canvas=document.getElementById('starfield'); const ctx=canvas.getContext('2d'); let stars=[];
+  function resize(){canvas.width=innerWidth;canvas.height=innerHeight;stars=Array.from({length:Math.min(110,Math.floor(innerWidth/12))},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.1+.2,a:Math.random()*.55+.1}));}
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);for(const s of stars){ctx.globalAlpha=s.a;ctx.fillStyle='#fff';ctx.fillRect(s.x,s.y,s.r,s.r);}requestAnimationFrame(draw);}
+  addEventListener('resize',resize,{passive:true});resize();draw();
+})();
+</script>
 </body>
 </html>
