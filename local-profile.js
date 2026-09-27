@@ -258,7 +258,7 @@
             <div class="dewify-avatar-adjuster-head">
               <div>
                 <p>Adjust picture</p>
-                <span>Position the image inside the circle.</span>
+                <span>Use the sliders to position the image inside the circle.</span>
               </div>
               <button type="button" class="dewify-avatar-reset">Reset</button>
             </div>
@@ -444,7 +444,6 @@
       avatarZoomValue.textContent = Math.round(profile.avatarZoom * 100) + "%";
       avatarXValue.textContent = Math.round(profile.avatarX) + "%";
       avatarYValue.textContent = Math.round(profile.avatarY) + "%";
-      adjustAvatar.style.cursor = profile.avatar ? "grab" : "default";
     };
 
     const updateAvatarAdjustments = () => {
@@ -460,52 +459,6 @@
     [avatarZoom, avatarX, avatarY].forEach((input) => {
       input.addEventListener("input", updateAvatarAdjustments);
     });
-
-    let draggingAvatar = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let dragOriginX = 50;
-    let dragOriginY = 50;
-
-    const clamp = (value) => Math.min(100, Math.max(0, value));
-
-    adjustAvatar.addEventListener("pointerdown", (event) => {
-      if (!profile.avatar) return;
-      draggingAvatar = true;
-      dragStartX = event.clientX;
-      dragStartY = event.clientY;
-      dragOriginX = Number(avatarX.value);
-      dragOriginY = Number(avatarY.value);
-      adjustAvatar.setPointerCapture?.(event.pointerId);
-      adjustAvatar.style.cursor = "grabbing";
-      event.preventDefault();
-    });
-
-    adjustAvatar.addEventListener("pointermove", (event) => {
-      if (!draggingAvatar) return;
-
-      const zoom = Math.max(1, Number(avatarZoom.value) || 1);
-      const size = Math.max(1, adjustAvatar.clientWidth || 1);
-      const travel = Math.max(18, size * Math.max(0.18, (zoom - 1) * 0.8));
-
-      const dx = event.clientX - dragStartX;
-      const dy = event.clientY - dragStartY;
-
-      avatarX.value = String(clamp(dragOriginX - (dx / travel) * 50));
-      avatarY.value = String(clamp(dragOriginY - (dy / travel) * 50));
-      updateAvatarAdjustments();
-      event.preventDefault();
-    });
-
-    const stopAvatarDrag = () => {
-      if (!draggingAvatar) return;
-      draggingAvatar = false;
-      adjustAvatar.style.cursor = profile.avatar ? "grab" : "default";
-    };
-
-    adjustAvatar.addEventListener("pointerup", stopAvatarDrag);
-    adjustAvatar.addEventListener("pointercancel", stopAvatarDrag);
-    adjustAvatar.addEventListener("lostpointercapture", stopAvatarDrag);
 
     avatarReset.addEventListener("click", () => {
       avatarZoom.value = "1";
@@ -528,7 +481,6 @@
         avatarRemove.hidden = false;
         avatarAdjuster.hidden = false;
         updateAvatarAdjustments();
-        adjustAvatar.style.cursor = "grab";
         status.textContent = "Picture ready. Adjust it below, then save the profile.";
       } catch {
         status.textContent = "That image could not be used.";
