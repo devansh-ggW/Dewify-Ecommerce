@@ -197,16 +197,21 @@
     event.preventDefault();
     const title = $("#productTitle").value.trim();
     const description = $("#productDescription").value.trim();
-    if (!title || !description) { showToast("Add a title and description first."); return; }
+    const price = $("#productPrice").value.trim();
     const existing = editingId ? (await dbGetAll()).find(p => p.id === editingId) : null;
     const imageFile = $("#productImage").files[0];
     const zipFile = $("#productZip").files[0];
+    if (!title || !description) { showToast("Add a title and description first."); return; }
+    if (!price || !Number.isFinite(Number(price)) || Number(price) < 0) { $("#productPrice").focus(); showToast("Add a valid product price."); return; }
+    if (!imageFile && !existing?.imageBlob) { showToast("Add a product image so customers can recognize it."); return; }
+    if (!zipFile && !existing?.zipBlob) { showToast("Add the ZIP customers will receive."); return; }
+    if (imageFile && !["image/png", "image/jpeg", "image/webp"].includes(imageFile.type)) { showToast("Use a PNG, JPG or WebP product image."); return; }
     if (zipFile && !zipFile.name.toLowerCase().endsWith(".zip")) { showToast("The digital product must be a ZIP file."); return; }
     const product = {
       id: editingId || `product-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       title,
       description,
-      price: $("#productPrice").value.trim(),
+      price,
       currency: $("#productCurrency").value,
       imageBlob: imageFile || existing?.imageBlob || null,
       imageName: imageFile?.name || existing?.imageName || "",
