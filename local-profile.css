@@ -539,8 +539,8 @@
   display:grid;
   place-items:center;
   width:100%;
-  min-height:300px;
-  padding:22px;
+  min-height:228px;
+  padding:10px;
   overflow:hidden;
   border:1px solid rgba(255,255,255,.08);
   border-radius:10px;
@@ -549,12 +549,14 @@
     repeating-conic-gradient(from 45deg,#101010 0deg 25deg,#0c0c0c 25deg 50deg);
 }
 .dewify-profile-avatar-adjust {
-  width:230px;
-  height:230px;
+  width:190px;
+  height:190px;
   border:2px solid rgba(255,255,255,.28);
+  position:relative;
   touch-action:none;
   cursor:grab;
   user-select:none;
+  overflow:hidden;
   box-shadow:0 12px 30px rgba(0,0,0,.35);
 }
 .dewify-avatar-range {
@@ -608,18 +610,27 @@
 }
 @media(max-width:620px) {
   .dewify-profile-avatar-adjust {
-    width:190px;
-    height:190px;
+    width:176px;
+    height:176px;
   }
   .dewify-avatar-adjust-preview {
-    min-height:250px;
-    padding:18px;
+    min-height:208px;
+    padding:8px;
   }
 }
 
 .dewify-profile-avatar-adjust img {
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  object-fit:cover;
+  object-position:50% 50%;
   will-change: transform;
-  pointer-events: none;
+  pointer-events:none;
 }
 .dewify-avatar-adjust-preview::after {
   content:"Drag the image to reposition it";
