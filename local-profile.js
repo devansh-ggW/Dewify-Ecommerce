@@ -75,32 +75,31 @@
       const img = document.createElement("img");
       img.src = profile.avatar;
       img.alt = "";
-      img.style.objectPosition = "50% 50%";
-      img.style.transform = "scale(" + String(Number(profile.avatarZoom) || 1) + ")";
-      img.style.transformOrigin = "center";
       img.draggable = false;
       element.replaceChildren(img);
+      applyAvatarPosition(element, profile);
     } else {
       element.innerHTML = '<span>' + initials(profile) + '</span>';
     }
     element.setAttribute("aria-label", displayName(profile) + " profile");
   };
 
-  const applyAdjustPreview = (element, profile) => {
+  const applyAvatarPosition = (element, profile) => {
     if (!element) return;
     const img = element.querySelector("img");
     if (!img) return;
+
     const zoom = Math.min(3, Math.max(1, Number(profile.avatarZoom) || 1));
     const x = Math.min(100, Math.max(0, Number(profile.avatarX) || 50));
     const y = Math.min(100, Math.max(0, Number(profile.avatarY) || 50));
-    const width = element.clientWidth || 1;
-    const height = element.clientHeight || 1;
-    const extraX = width * (zoom - 1);
-    const extraY = height * (zoom - 1);
-    const tx = ((50 - x) / 50) * (extraX / 2);
-    const ty = ((50 - y) / 50) * (extraY / 2);
-    img.style.objectPosition = "50% 50%";
-    img.style.transform = "translate(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px) scale(" + zoom + ")";
+
+    img.style.width = (zoom * 100) + "%";
+    img.style.height = (zoom * 100) + "%";
+    img.style.maxWidth = "none";
+    img.style.maxHeight = "none";
+    img.style.objectFit = "cover";
+    img.style.objectPosition = x + "% " + y + "%";
+    img.style.transform = "translate3d(0,0,0)";
     img.style.transformOrigin = "center";
   };
 
@@ -430,6 +429,15 @@
       setEditMode(false);
     });
 
+    const applyAllAvatarPreviews = () => {
+      renderAvatar(editAvatar, profile, true);
+      renderAvatar(adjustAvatar, profile, true);
+      avatarZoomValue.textContent = Math.round(profile.avatarZoom * 100) + "%";
+      avatarXValue.textContent = Math.round(profile.avatarX) + "%";
+      avatarYValue.textContent = Math.round(profile.avatarY) + "%";
+      adjustAvatar.style.cursor = profile.avatar ? "grab" : "default";
+    };
+
     const updateAvatarAdjustments = () => {
       profile = {
         ...profile,
@@ -437,12 +445,7 @@
         avatarX: Number(avatarX.value),
         avatarY: Number(avatarY.value)
       };
-      renderAvatar(editAvatar, profile, true);
-      renderAvatar(adjustAvatar, profile, true);
-      applyAdjustPreview(adjustAvatar, profile);
-      avatarZoomValue.textContent = Math.round(profile.avatarZoom * 100) + "%";
-      avatarXValue.textContent = Math.round(profile.avatarX) + "%";
-      avatarYValue.textContent = Math.round(profile.avatarY) + "%";
+      applyAllAvatarPreviews();
     };
 
     [avatarZoom, avatarX, avatarY].forEach((input) => {
@@ -450,58 +453,56 @@
     });
 
     let draggingAvatar = false;
-    let lastPointerX = 0;
-    let lastPointerY = 0;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragOriginX = 50;
+    let dragOriginY = 50;
 
-    const dragAvatarStart = (event) => {
-      if (!profile.avatar || Number(avatarZoom.value) <= 1) return;
+    const clamp = (value) => Math.min(100, Math.max(0, value));
+
+    adjustAvatar.addEventListener("pointerdown", (event) => {
+      if (!profile.avatar) return;
       draggingAvatar = true;
-      lastPointerX = event.clientX;
-      lastPointerY = event.clientY;
+      dragStartX = event.clientX;
+      dragStartY = event.clientY;
+      dragOriginX = Number(avatarX.value);
+      dragOriginY = Number(avatarY.value);
       adjustAvatar.setPointerCapture?.(event.pointerId);
       adjustAvatar.style.cursor = "grabbing";
       event.preventDefault();
-    };
+    });
 
-    const dragAvatarMove = (event) => {
+    adjustAvatar.addEventListener("pointermove", (event) => {
       if (!draggingAvatar) return;
+
       const zoom = Math.max(1, Number(avatarZoom.value) || 1);
-      const width = adjustAvatar.clientWidth || 1;
-      const height = adjustAvatar.clientHeight || 1;
-      const extraX = Math.max(1, width * (zoom - 1));
-      const extraY = Math.max(1, height * (zoom - 1));
-      const dx = event.clientX - lastPointerX;
-      const dy = event.clientY - lastPointerY;
-      profile = {
-        ...profile,
-        avatarX: Math.min(100, Math.max(0, Number(avatarX.value) - (dx / extraX) * 100)),
-        avatarY: Math.min(100, Math.max(0, Number(avatarY.value) - (dy / extraY) * 100))
-      };
-      avatarX.value = String(profile.avatarX);
-      avatarY.value = String(profile.avatarY);
-      lastPointerX = event.clientX;
-      lastPointerY = event.clientY;
+      const size = Math.max(1, adjustAvatar.clientWidth || 1);
+      const travel = Math.max(18, size * Math.max(0.18, (zoom - 1) * 0.8));
+
+      const dx = event.clientX - dragStartX;
+      const dy = event.clientY - dragStartY;
+
+      avatarX.value = String(clamp(dragOriginX - (dx / travel) * 50));
+      avatarY.value = String(clamp(dragOriginY - (dy / travel) * 50));
       updateAvatarAdjustments();
       event.preventDefault();
-    };
+    });
 
-    const dragAvatarEnd = () => {
+    const stopAvatarDrag = () => {
+      if (!draggingAvatar) return;
       draggingAvatar = false;
-      adjustAvatar.style.cursor = profile.avatar && Number(avatarZoom.value) > 1 ? "grab" : "default";
+      adjustAvatar.style.cursor = profile.avatar ? "grab" : "default";
     };
 
-    adjustAvatar.addEventListener("pointerdown", dragAvatarStart);
-    adjustAvatar.addEventListener("pointermove", dragAvatarMove);
-    adjustAvatar.addEventListener("pointerup", dragAvatarEnd);
-    adjustAvatar.addEventListener("pointercancel", dragAvatarEnd);
-    adjustAvatar.addEventListener("lostpointercapture", dragAvatarEnd);
+    adjustAvatar.addEventListener("pointerup", stopAvatarDrag);
+    adjustAvatar.addEventListener("pointercancel", stopAvatarDrag);
+    adjustAvatar.addEventListener("lostpointercapture", stopAvatarDrag);
 
     avatarReset.addEventListener("click", () => {
       avatarZoom.value = "1";
       avatarX.value = "50";
       avatarY.value = "50";
       updateAvatarAdjustments();
-      adjustAvatar.style.cursor = profile.avatar ? "grab" : "default";
     });
 
     avatarInput.addEventListener("change", async () => {
