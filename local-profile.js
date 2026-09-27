@@ -137,6 +137,25 @@
     if (existingPill) existingPill.replaceWith(trigger);
     else nav?.appendChild(trigger);
 
+    const dropdown = document.createElement("div");
+    dropdown.className = "dewify-profile-dropdown";
+    dropdown.setAttribute("aria-hidden", "true");
+    dropdown.innerHTML = `
+      <div class="dewify-profile-dropdown-summary">
+        <div class="dewify-profile-avatar dewify-profile-avatar-dropdown"></div>
+        <div>
+          <strong data-dropdown-name>Local profile</strong>
+          <span data-dropdown-status>No profile saved yet</span>
+        </div>
+      </div>
+      <div class="dewify-profile-dropdown-menu">
+        <button type="button" data-profile-action="view"><span>View profile</span><small>Open saved details</small></button>
+        <button type="button" data-profile-action="edit"><span>Edit profile</span><small>Change your details</small></button>
+      </div>
+      <p class="dewify-profile-dropdown-note">Stored only in this browser on this device.</p>
+    `;
+    trigger.appendChild(dropdown);
+
     const backdrop = document.createElement("div");
     backdrop.id = "dewify-local-profile-backdrop";
 
@@ -240,8 +259,13 @@
     };
 
     const navAvatar = trigger.querySelector(".dewify-profile-avatar-nav");
+    const dropdownAvatar = dropdown.querySelector(".dewify-profile-avatar-dropdown");
+    const dropdownName = dropdown.querySelector("[data-dropdown-name]");
+    const dropdownStatus = dropdown.querySelector("[data-dropdown-status]");
     const viewAvatar = panel.querySelector("[data-profile-avatar]");
     const editAvatar = panel.querySelector("[data-edit-avatar]");
+    const dropdownView = dropdown.querySelector('[data-profile-action="view"]');
+    const dropdownEdit = dropdown.querySelector('[data-profile-action="edit"]');
 
     const fillForm = () => {
       Object.entries(fields).forEach(([key, input]) => { input.value = profile[key] || ""; });
@@ -251,10 +275,15 @@
 
     const renderView = () => {
       renderAvatar(navAvatar, profile);
+      renderAvatar(dropdownAvatar, profile);
       renderAvatar(viewAvatar, profile, true);
-      trigger.querySelector(".dewify-profile-nav-copy strong").textContent = "View profile";
+      trigger.querySelector(".dewify-profile-nav-copy strong").textContent = hasProfile(profile) ? "View profile" : "Set up profile";
       trigger.title = hasProfile(profile)
         ? "Your profile is saved in this browser"
+        : "Create your local profile";
+      if (dropdownName) dropdownName.textContent = displayName(profile);
+      if (dropdownStatus) dropdownStatus.textContent = hasProfile(profile)
+        ? "Local profile is active"
         : "No profile saved yet";
 
       const name = panel.querySelector("[data-profile-name]");
@@ -279,25 +308,43 @@
       }
     };
 
-    const open = () => {
+    const openPanel = (editMode = false) => {
       renderView();
-      setEditMode(false);
+      setEditMode(editMode);
       panel.classList.add("is-open");
       backdrop.classList.add("is-open");
       panel.setAttribute("aria-hidden", "false");
-      trigger.setAttribute("aria-expanded", "true");
+      dropdown.classList.remove("is-open");
+      dropdown.setAttribute("aria-hidden", "true");
     };
 
-    const hide = () => {
+    const toggleDropdown = () => {
+      const next = !dropdown.classList.contains("is-open");
+      dropdown.classList.toggle("is-open", next);
+      dropdown.setAttribute("aria-hidden", String(!next));
+      trigger.setAttribute("aria-expanded", String(next));
+    };
+
+    const hidePanel = () => {
       panel.classList.remove("is-open");
       backdrop.classList.remove("is-open");
       panel.setAttribute("aria-hidden", "true");
+    };
+
+    const hideDropdown = () => {
+      dropdown.classList.remove("is-open");
+      dropdown.setAttribute("aria-hidden", "true");
       trigger.setAttribute("aria-expanded", "false");
     };
 
-    trigger.addEventListener("click", open);
-    close.addEventListener("click", hide);
-    backdrop.addEventListener("click", hide);
+    trigger.addEventListener("click", (event) => {
+      if (event.target.closest(".dewify-profile-dropdown")) return;
+      toggleDropdown();
+    });
+    dropdownView.addEventListener("click", () => openPanel(false));
+    dropdownEdit.addEventListener("click", () => openPanel(true));
+    close.addEventListener("click", hidePanel);
+    backdrop.addEventListener("click", hidePanel);
     edit.addEventListener("click", () => setEditMode(true));
     cancel.addEventListener("click", () => {
       status.textContent = "";
@@ -352,13 +399,23 @@
         renderView();
         setEditMode(false);
         status.textContent = "";
+        hideDropdown();
       } catch {
         status.textContent = "Could not clear local profile storage.";
       }
     });
 
+    document.addEventListener("click", (event) => {
+      if (!trigger.contains(event.target)) hideDropdown();
+    });
+
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && panel.classList.contains("is-open")) hide();
+      if (event.key !== "Escape") return;
+      if (panel.classList.contains("is-open")) {
+        hidePanel();
+        return;
+      }
+      hideDropdown();
     });
 
     renderView();
