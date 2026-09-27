@@ -77,7 +77,20 @@
       img.alt = "";
       img.draggable = false;
       element.replaceChildren(img);
-      applyAvatarPosition(element, profile);
+      if (element.matches(".dewify-profile-avatar-adjust")) {
+        applyAvatarPosition(element, profile);
+      } else {
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.maxWidth = "none";
+        img.style.maxHeight = "none";
+        img.style.objectFit = "cover";
+        img.style.objectPosition = "50% 50%";
+        img.style.left = "0";
+        img.style.top = "0";
+        img.style.transform = "none";
+        img.style.transformOrigin = "center";
+      }
     } else {
       element.innerHTML = '<span>' + initials(profile) + '</span>';
     }
