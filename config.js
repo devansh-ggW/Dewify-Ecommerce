@@ -17,13 +17,7 @@ window.DEWIFY_CONFIG = {
       downloadUrl: "AI%20MONEY%20ARC.zip",
       image: "assets/ai-money-arc-cover.svg",
       description: "A practical guide to learning AI, building real skills, understanding business, and turning ideas into action.",
-      highlights: [
-        "140-page premium ebook",
-        "AI + business fundamentals",
-        "30-day implementation arc",
-        "Discipline and execution system",
-        "Prompt Vault companion included in the same ZIP"
-      ]
+      highlights: ["140-page premium ebook","AI + business fundamentals","30-day implementation arc","Discipline and execution system","Prompt Vault companion included in the same ZIP"]
     },
     {
       id: "creator-crate-100",
@@ -39,13 +33,7 @@ window.DEWIFY_CONFIG = {
       downloadUrl: "CREATOR_CRATE_100.zip",
       image: "assets/creator-crate-100-cover.svg",
       description: "A compact creator crate with 100 editable templates: 50 standalone website templates and 50 editable design templates.",
-      highlights: [
-        "50 single-file website templates",
-        "50 editable design templates",
-        "HTML + CSS + JavaScript included in website files",
-        "Business, events, celebrations, food, beauty and more",
-        "Instant digital ZIP delivery"
-      ]
+      highlights: ["50 single-file website templates","50 editable design templates","HTML + CSS + JavaScript included in website files","Business, events, celebrations, food, beauty and more","Instant digital ZIP delivery"]
     },
     {
       id: "creator-vault-300",
@@ -60,13 +48,7 @@ window.DEWIFY_CONFIG = {
       downloadUrl: "CREATOR%20VAULT%20300.zip",
       image: "assets/creator-vault-300-cover.svg",
       description: "A 300-product digital pack designed for creators who want a ready-made library of digital products to customize, package and resell where permitted by the included license terms.",
-      highlights: [
-        "300 digital product assets",
-        "Resellable product pack",
-        "Ready-to-customize library",
-        "Instant ZIP delivery",
-        "Review included license terms before resale"
-      ]
+      highlights: ["300 digital product assets","Resellable product pack","Ready-to-customize library","Instant ZIP delivery","Review included license terms before resale"]
     },
     {
       id: "creator-bundle-500",
@@ -82,13 +64,7 @@ window.DEWIFY_CONFIG = {
       downloadUrl: "CREATOR_BUNDLE_500.zip",
       image: "assets/creator-bundle-500-cover.svg",
       description: "A creator-ready bundle of 500 editable templates: 250 standalone website templates and 250 editable design templates for businesses, events, celebrations, food, beauty and more.",
-      highlights: [
-        "250 single-file website templates",
-        "250 editable design templates",
-        "HTML + CSS + JavaScript included in website files",
-        "Business, event, celebration, food and beauty categories",
-        "Instant digital ZIP delivery"
-      ]
+      highlights: ["250 single-file website templates","250 editable design templates","HTML + CSS + JavaScript included in website files","Business, event, celebration, food and beauty categories","Instant digital ZIP delivery"]
     },
     {
       id: "creator-stash-700",
@@ -104,13 +80,7 @@ window.DEWIFY_CONFIG = {
       downloadUrl: "CREATOR_STASH_700.zip",
       image: "assets/creator-stash-700-cover.svg",
       description: "A large creator stash with 700 templates: 350 single-file website templates and 350 editable SVG design templates across business, weddings, celebrations, food, beauty, events and more.",
-      highlights: [
-        "350 single-file website templates",
-        "350 editable SVG design templates",
-        "No frameworks, npm or build process for website templates",
-        "Responsive websites with embedded CSS and JavaScript",
-        "Instant digital ZIP delivery"
-      ]
+      highlights: ["350 single-file website templates","350 editable SVG design templates","No frameworks, npm or build process for website templates","Responsive websites with embedded CSS and JavaScript","Instant digital ZIP delivery"]
     },
     {
       id: "creator-arsenal-1000",
@@ -123,15 +93,10 @@ window.DEWIFY_CONFIG = {
       priceId: "pri_01m39gxn8k1ytp2efs880wm899",
       basePriceUsd: 7.99,
       displayPrice: "$7.99",
-      downloadUrl: "DEWIFY_CREATOR_VAULT_1000.zip",
+      downloadUrl: "",
       image: "assets/creator-arsenal-1000-cover.svg",
       description: "A creator-ready arsenal of 1,000 editable templates for businesses, weddings, celebrations, food, beauty, events and more.",
-      highlights: [
-        "500 single-file website templates",
-        "500 editable design templates",
-        "HTML + CSS + JavaScript included in every website file",
-        "Business, weddings, celebrations, food, beauty and event categories",
-        "Instant digital ZIP delivery"
-      ]
-    }  ]
+      highlights: ["500 single-file website templates","500 editable design templates","HTML + CSS + JavaScript included in every website file","Business, weddings, celebrations, food, beauty and event categories","Download unavailable until the delivery ZIP is uploaded"]
+    }
+  ]
 };
