@@ -75,14 +75,33 @@
       const img = document.createElement("img");
       img.src = profile.avatar;
       img.alt = "";
-      img.style.objectPosition = String((Number(profile.avatarX) || 50)) + "% " + String((Number(profile.avatarY) || 50)) + "%";
+      img.style.objectPosition = "50% 50%";
       img.style.transform = "scale(" + String(Number(profile.avatarZoom) || 1) + ")";
+      img.style.transformOrigin = "center";
       img.draggable = false;
       element.replaceChildren(img);
     } else {
       element.innerHTML = '<span>' + initials(profile) + '</span>';
     }
     element.setAttribute("aria-label", displayName(profile) + " profile");
+  };
+
+  const applyAdjustPreview = (element, profile) => {
+    if (!element) return;
+    const img = element.querySelector("img");
+    if (!img) return;
+    const zoom = Math.min(3, Math.max(1, Number(profile.avatarZoom) || 1));
+    const x = Math.min(100, Math.max(0, Number(profile.avatarX) || 50));
+    const y = Math.min(100, Math.max(0, Number(profile.avatarY) || 50));
+    const width = element.clientWidth || 1;
+    const height = element.clientHeight || 1;
+    const extraX = width * (zoom - 1);
+    const extraY = height * (zoom - 1);
+    const tx = ((50 - x) / 50) * (extraX / 2);
+    const ty = ((50 - y) / 50) * (extraY / 2);
+    img.style.objectPosition = "50% 50%";
+    img.style.transform = "translate(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px) scale(" + zoom + ")";
+    img.style.transformOrigin = "center";
   };
 
   const resizeImage = (file) =>
@@ -420,6 +439,7 @@
       };
       renderAvatar(editAvatar, profile, true);
       renderAvatar(adjustAvatar, profile, true);
+      applyAdjustPreview(adjustAvatar, profile);
       avatarZoomValue.textContent = Math.round(profile.avatarZoom * 100) + "%";
       avatarXValue.textContent = Math.round(profile.avatarX) + "%";
       avatarYValue.textContent = Math.round(profile.avatarY) + "%";
@@ -429,11 +449,59 @@
       input.addEventListener("input", updateAvatarAdjustments);
     });
 
+    let draggingAvatar = false;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
+
+    const dragAvatarStart = (event) => {
+      if (!profile.avatar || Number(avatarZoom.value) <= 1) return;
+      draggingAvatar = true;
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+      adjustAvatar.setPointerCapture?.(event.pointerId);
+      adjustAvatar.style.cursor = "grabbing";
+      event.preventDefault();
+    };
+
+    const dragAvatarMove = (event) => {
+      if (!draggingAvatar) return;
+      const zoom = Math.max(1, Number(avatarZoom.value) || 1);
+      const width = adjustAvatar.clientWidth || 1;
+      const height = adjustAvatar.clientHeight || 1;
+      const extraX = Math.max(1, width * (zoom - 1));
+      const extraY = Math.max(1, height * (zoom - 1));
+      const dx = event.clientX - lastPointerX;
+      const dy = event.clientY - lastPointerY;
+      profile = {
+        ...profile,
+        avatarX: Math.min(100, Math.max(0, Number(avatarX.value) - (dx / extraX) * 100)),
+        avatarY: Math.min(100, Math.max(0, Number(avatarY.value) - (dy / extraY) * 100))
+      };
+      avatarX.value = String(profile.avatarX);
+      avatarY.value = String(profile.avatarY);
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+      updateAvatarAdjustments();
+      event.preventDefault();
+    };
+
+    const dragAvatarEnd = () => {
+      draggingAvatar = false;
+      adjustAvatar.style.cursor = profile.avatar && Number(avatarZoom.value) > 1 ? "grab" : "default";
+    };
+
+    adjustAvatar.addEventListener("pointerdown", dragAvatarStart);
+    adjustAvatar.addEventListener("pointermove", dragAvatarMove);
+    adjustAvatar.addEventListener("pointerup", dragAvatarEnd);
+    adjustAvatar.addEventListener("pointercancel", dragAvatarEnd);
+    adjustAvatar.addEventListener("lostpointercapture", dragAvatarEnd);
+
     avatarReset.addEventListener("click", () => {
       avatarZoom.value = "1";
       avatarX.value = "50";
       avatarY.value = "50";
       updateAvatarAdjustments();
+      adjustAvatar.style.cursor = profile.avatar ? "grab" : "default";
     });
 
     avatarInput.addEventListener("change", async () => {
@@ -450,6 +518,7 @@
         avatarRemove.hidden = false;
         avatarAdjuster.hidden = false;
         updateAvatarAdjustments();
+        adjustAvatar.style.cursor = "grab";
         status.textContent = "Picture ready. Adjust it below, then save the profile.";
       } catch {
         status.textContent = "That image could not be used.";
