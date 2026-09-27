@@ -539,7 +539,7 @@
   display:grid;
   place-items:center;
   width:100%;
-  min-height:270px;
+  min-height:228px;
   padding:10px;
   overflow:hidden;
   border:1px solid rgba(255,255,255,.08);
@@ -549,8 +549,8 @@
     repeating-conic-gradient(from 45deg,#101010 0deg 25deg,#0c0c0c 25deg 50deg);
 }
 .dewify-profile-avatar-adjust {
-  width:240px;
-  height:240px;
+  width:212px;
+  height:212px;
   border:2px solid rgba(255,255,255,.28);
   position:relative;
   overflow:hidden;
@@ -607,11 +607,11 @@
 }
 @media(max-width:620px) {
   .dewify-profile-avatar-adjust {
-    width:215px;
-    height:215px;
+    width:198px;
+    height:198px;
   }
   .dewify-avatar-adjust-preview {
-    min-height:240px;
+    min-height:208px;
     padding:8px;
   }
 }
