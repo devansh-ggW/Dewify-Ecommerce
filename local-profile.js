@@ -100,15 +100,15 @@
     const tx = ((50 - x) / 50) * maxPanX;
     const ty = ((50 - y) / 50) * maxPanY;
 
-    img.style.width = (zoom * 100) + "%";
-    img.style.height = (zoom * 100) + "%";
+    img.style.width = "100%";
+    img.style.height = "100%";
     img.style.maxWidth = "none";
     img.style.maxHeight = "none";
     img.style.objectFit = "cover";
-    img.style.objectPosition = x + "% " + y + "%";
+    img.style.objectPosition = "50% 50%";
     img.style.left = "50%";
     img.style.top = "50%";
-    img.style.transform = "translate(calc(-50% + " + tx.toFixed(2) + "px),calc(-50% + " + ty.toFixed(2) + "px))";
+    img.style.transform = "translate(calc(-50% + " + tx.toFixed(2) + "px),calc(-50% + " + ty.toFixed(2) + "px)) scale(" + zoom.toFixed(3) + ")";
     img.style.transformOrigin = "center";
   };
 
@@ -258,7 +258,7 @@
             <div class="dewify-avatar-adjuster-head">
               <div>
                 <p>Adjust picture</p>
-                <span>Use the sliders to position the image inside the circle.</span>
+                <span>Use the sliders to position your picture inside the circle.</span>
               </div>
               <button type="button" class="dewify-avatar-reset">Reset</button>
             </div>
