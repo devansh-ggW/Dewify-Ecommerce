@@ -17,6 +17,8 @@
   let currentView = "design";
   let selectedSectionId = "hero";
   let selectedElementId = null;
+  let selectedImageElementIds = [];
+  let selectedMediaIds = [];
   let editingProductId = null;
   let canvasZoom = 0.9;
   let saveTimer = null;
@@ -25,6 +27,15 @@
   let currentImagePreviewUrl = null;
 
   const palette = {
+    colorPalettes: {
+      mono: {name:"Monochrome", background:"#f4f2ec", surface:"#ffffff", text:"#171717", muted:"#6b6962", accent:"#171717"},
+      violet: {name:"Violet", background:"#0b0814", surface:"#171120", text:"#f6f2ff", muted:"#aaa0bc", accent:"#9a7cff"},
+      ocean: {name:"Ocean", background:"#071219", surface:"#0d1d26", text:"#eff9ff", muted:"#9ab1bc", accent:"#59b8df"},
+      forest: {name:"Forest", background:"#07100c", surface:"#0e1b14", text:"#eef7f0", muted:"#9ab0a1", accent:"#74d99a"},
+      sunset: {name:"Sunset", background:"#160b08", surface:"#241410", text:"#fff4ed", muted:"#c5a99d", accent:"#f0a56e"},
+      paper: {name:"Paper", background:"#eee7db", surface:"#fbf8f1", text:"#191612", muted:"#6e655d", accent:"#7a533b"}
+    },
+    fonts:["Inter","Arial","Georgia","Times New Roman","Verdana","Trebuchet MS","Courier New"],
     backgrounds: ["#070707","#101010","#171717","#f4f2ec","#ffffff","#0a0f1d","#eee7db","#f6f6f4","#1a1025","#0e1714"],
     text: ["#f4f2ec","#171717","#d9d7d0","#6c6a63","#ffffff"],
     accents: ["#9a7cff","#6ca7ff","#75d69a","#f0bf7b","#d987b9","#f4f2ec","#181818"],
@@ -53,6 +64,8 @@
     cookiePolicy: false,
     designPreset: "starfield",
     productLayout: "grid",
+    paletteName: "violet",
+    paletteName: "violet",
     sections: [
       { id:"header", type:"header", name:"Header", enabled:true, background:"#070707", text:"#f4f2ec", accent:"#9a7cff", elements:[
         {id:"header-brand",type:"text",variant:"brand",text:"YOUR STORE"}
@@ -138,6 +151,18 @@
       elements: Array.isArray(sec.elements) ? sec.elements : []
     })) : clone(base.sections);
     merged.version = VERSION;
+    merged.paletteName = merged.paletteName || "violet";
+    merged.sections = merged.sections.map(sec => ({
+      ...sec,
+      elements: sec.elements.map(el => ({
+        ...el,
+        fontFamily: el.fontFamily || "Inter",
+        fontSize: el.fontSize || "",
+        fontWeight: el.fontWeight || "",
+        textAlign: el.textAlign || "",
+        color: el.color || ""
+      }))
+    }));
     return merged;
   }
 
@@ -273,6 +298,62 @@
     });
   }
 
+  async function renderMediaLibrary(){
+    const grid = $("#wbMediaGrid");
+    const assets = (await dbGetAll(ASSET_STORE)).filter(a => a.kind === "editor-image");
+    $("#wbMediaCount").textContent = assets.length + " image" + (assets.length === 1 ? "" : "s");
+    if(!assets.length){
+      grid.innerHTML = '<div class="wb-media-empty">Upload several images and manage them from one place.</div>';
+      return;
+    }
+    grid.innerHTML = assets.map(asset =>
+      '<label class="wb-media-card ' + (selectedMediaIds.includes(asset.id) ? "is-selected" : "") + '">' +
+        '<img alt="" data-media-image="' + escAttr(asset.id) + '">' +
+        '<input class="wb-media-check" type="checkbox" ' + (selectedMediaIds.includes(asset.id) ? "checked" : "") + ' data-media-check="' + escAttr(asset.id) + '">' +
+      '</label>'
+    ).join("");
+    for(const asset of assets){
+      const img = $('[data-media-image="' + CSS.escape(asset.id) + '"]');
+      if(img) img.src = await blobToDataURL(asset.blob);
+    }
+    $("[data-media-check]").forEach(check => check.addEventListener("change", () => {
+      if(check.checked) selectedMediaIds.push(check.dataset.mediaCheck);
+      else selectedMediaIds = selectedMediaIds.filter(id => id !== check.dataset.mediaCheck);
+      check.closest(".wb-media-card")?.classList.toggle("is-selected",check.checked);
+      $("#wbMediaCount").textContent = assets.length + " image" + (assets.length === 1 ? "" : "s") + " · " + selectedMediaIds.length + " selected";
+    }));
+  }
+
+  async function uploadMediaFiles(files){
+    const valid = Array.from(files || []).filter(file => ["image/png","image/jpeg","image/webp"].includes(file.type) && file.size <= 10*1024*1024);
+    if(!valid.length){ toast("Choose PNG, JPG or WebP images under 10 MB."); return; }
+    for(const file of valid){
+      await dbPut(ASSET_STORE,{id:uniqueId("asset"),kind:"editor-image",name:file.name,blob:file,updatedAt:Date.now()});
+    }
+    selectedMediaIds = [];
+    await renderMediaLibrary();
+    toast(valid.length + " image" + (valid.length === 1 ? "" : "s") + " added to Media.");
+  }
+
+  async function addSelectedMediaToSection(){
+    const section = selectedSection();
+    if(!section){ toast("Select a section first."); return; }
+    if(!selectedMediaIds.length){ toast("Select one or more images first."); return; }
+    const ids = [...selectedMediaIds];
+    for(const assetId of ids){
+      const element = {id:uniqueId("el"),type:"image",assetId,imageFit:"cover",imageRadius:"12px",imageWidth:"100%"};
+      section.elements.push(element);
+      selectedElementId = element.id;
+      selectedSectionId = section.id;
+    }
+    selectedImageElementIds = section.elements.filter(e => ids.includes(e.assetId)).map(e => e.id).slice(-ids.length);
+    selectedMediaIds = [];
+    schedulePersist();
+    await renderMediaLibrary();
+    renderAll();
+    toast(ids.length + " images added to " + section.name + ".");
+  }
+
   function renderSectionList(){
     const list = $("#wbSectionList");
     list.innerHTML = state.sections.map((s,i) =>
@@ -309,6 +390,17 @@
 
   function editableMarkup(sectionId, element){
     const cls = "wb-element wb-editable";
+    const fontFamily = element.fontFamily || "Inter";
+    const fontSize = element.fontSize ? element.fontSize + "px" : "";
+    const fontWeight = element.fontWeight || "";
+    const textAlign = element.textAlign || "";
+    const color = element.color || "";
+    const inlineStyle = ' style="' +
+      (fontFamily ? 'font-family:' + escAttr(fontFamily) + ';' : '') +
+      (fontSize ? 'font-size:' + escAttr(fontSize) + ';' : '') +
+      (fontWeight ? 'font-weight:' + escAttr(fontWeight) + ';' : '') +
+      (textAlign ? 'text-align:' + escAttr(textAlign) + ';' : '') +
+      (color ? 'color:' + escAttr(color) + ';' : '') + '"';
     const content = escText(element.text || "");
     const extra = element.variant === "heading" ? " wb-section-heading" :
       element.variant === "title" ? " wb-section-title" :
@@ -319,7 +411,7 @@
       element.variant === "title" ? "h2" :
       element.variant === "copy" ? "p" :
       element.variant === "eyebrow" ? "div" : "span";
-    return '<' + tag + ' contenteditable="true" spellcheck="false" class="' + cls + extra + '" data-editable="1" data-section-id="' + escAttr(sectionId) + '" data-element-id="' + escAttr(element.id) + '" data-placeholder="Click to edit">' + content + '</' + tag + '>';
+    return '<' + tag + ' contenteditable="true" spellcheck="false" class="' + cls + extra + '" data-editable="1" data-section-id="' + escAttr(sectionId) + '" data-element-id="' + escAttr(element.id) + '" data-placeholder="Click to edit"' + inlineStyle + '>' + content + '</' + tag + '>';
   }
 
   async function assetUrl(assetId){
@@ -331,7 +423,13 @@
 
   function buttonMarkup(sectionId, element){
     const variant = element.variant === "outline" ? "" : "filled";
-    return '<a href="' + escAttr(element.href || "#products") + '" class="wb-site-button ' + variant + ' wb-element wb-editable" data-element-id="' + escAttr(element.id) + '" data-section-id="' + escAttr(sectionId) + '" data-button-edit="1" contenteditable="true" spellcheck="false">' + escText(element.text || "Button") + '</a>';
+    const inlineStyle = ' style="' +
+      'font-family:' + escAttr(element.fontFamily || "Inter") + ';' +
+      (element.fontSize ? 'font-size:' + escAttr(element.fontSize) + 'px;' : '') +
+      (element.fontWeight ? 'font-weight:' + escAttr(element.fontWeight) + ';' : '') +
+      (element.textAlign ? 'text-align:' + escAttr(element.textAlign) + ';' : '') +
+      (element.color ? 'color:' + escAttr(element.color) + ';' : '') + '"';
+    return '<a href="' + escAttr(element.href || "#products") + '" class="wb-site-button ' + variant + ' wb-element wb-editable" data-element-id="' + escAttr(element.id) + '" data-section-id="' + escAttr(sectionId) + '" data-button-edit="1" contenteditable="true" spellcheck="false"' + inlineStyle + '>' + escText(element.text || "Button") + '</a>';
   }
 
   function dividerMarkup(sectionId, element){
@@ -345,7 +443,10 @@
     if(element.type === "image"){
       const url = await assetUrl(element.assetId);
       if(!url) return '<div class="wb-element wb-element-properties" data-element-id="' + escAttr(element.id) + '">Image missing</div>';
-      return '<div class="wb-inline-image-wrap"><img class="wb-inline-image wb-element" src="' + escAttr(url) + '" alt="" data-element-id="' + escAttr(element.id) + '" data-section-id="' + escAttr(section.id) + '" data-image-edit="1"></div>';
+      const fit = element.imageFit || "cover";
+      const radius = element.imageRadius || "12px";
+      const width = element.imageWidth || "100%";
+      return '<div class="wb-inline-image-wrap"><img class="wb-inline-image wb-element" style="width:' + escAttr(width) + ';object-fit:' + escAttr(fit) + ';border-radius:' + escAttr(radius) + '" src="' + escAttr(url) + '" alt="" data-element-id="' + escAttr(element.id) + '" data-section-id="' + escAttr(section.id) + '" data-image-edit="1"></div>';
     }
     return "";
   }
@@ -458,6 +559,7 @@
         event.stopPropagation();
         selectedElementId = el.dataset.elementId;
         selectedSectionId = el.dataset.sectionId;
+        selectedImageElementIds = [el.dataset.elementId];
         renderInspector();
       });
     });
@@ -465,7 +567,10 @@
 
   function renderAll(){
     renderSectionList();
-    renderCanvas().then(renderInspector);
+    renderCanvas().then(() => {
+      renderInspector();
+      return renderMediaLibrary();
+    });
     updateViewControls();
   }
 
@@ -484,6 +589,7 @@
         inspectorPalette("BACKGROUND",section,"background",palette.backgrounds) +
         inspectorPalette("TEXT",section,"text",palette.text) +
         inspectorPalette("ACCENT",section,"accent",palette.accents) +
+        inspectorColorPalette(section) +
         '<div class="wb-inspector-block"><div class="wb-inspector-label">DESIGN PRESET</div>' +
           '<div class="wb-preset-grid">' + Object.keys(palette.presets).map(name =>
             '<button class="wb-preset ' + (state.designPreset === name ? "is-active" : "") + '" type="button" data-preset="' + name + '"><strong>' + escText(palette.presets[name].name) + '</strong><small>Use this across the storefront.</small></button>'
@@ -510,6 +616,16 @@
     bindInspectorEvents();
   }
 
+
+  function inspectorColorPalette(section){
+    return '<div class="wb-inspector-block"><div class="wb-inspector-label">COLOR PALETTE</div><div class="wb-preset-grid">' +
+      Object.keys(palette.colorPalettes).map(name => {
+        const p = palette.colorPalettes[name];
+        return '<button class="wb-preset ' + (state.paletteName === name ? "is-active" : "") + '" type="button" data-color-palette="' + name + '">' +
+          '<strong>' + escText(p.name) + '</strong><small>' + p.background + ' · ' + p.accent + '</small></button>';
+      }).join("") + '</div></div>';
+  }
+
   function inspectorPalette(label,section,key,colors){
     return '<div class="wb-inspector-block"><div class="wb-inspector-row"><span class="wb-inspector-label">' + label + '</span><code>' + escText(section[key]) + '</code></div>' +
       '<div class="wb-palette">' + colors.map(color => '<button class="wb-swatch ' + (section[key].toLowerCase()===color.toLowerCase() ? "is-active" : "") + '" style="background:' + escAttr(color) + '" type="button" data-color-key="' + key + '" data-color="' + escAttr(color) + '" title="' + escAttr(color) + '" aria-label="' + escAttr(color) + '"></button>').join("") + '</div>' +
@@ -518,18 +634,57 @@
   }
 
   function renderElementInspector(root,section,element){
-    const title = element.type === "image" ? "Image" : element.type === "button" ? "Button" : element.type === "divider" ? "Divider" : "Text";
+    const title = element.type === "button" ? "Button" : element.type === "divider" ? "Divider" : "Text";
+    if(element.type === "image") return renderImageInspector(root,section,element);
+    const font = element.fontFamily || "Inter";
+    const size = element.fontSize || "";
+    const weight = element.fontWeight || "";
+    const align = element.textAlign || "left";
+    const color = element.color || section.text || "#181818";
     root.innerHTML =
       '<div class="wb-inspector-head"><span class="wb-kicker">ELEMENT / ' + title.toUpperCase() + '</span><h3>' + escText(section.name) + '</h3></div>' +
       '<div class="wb-inspector-body">' +
-        '<div class="wb-inspector-block"><div class="wb-inspector-label">SELECTED</div><div class="wb-element-properties"><p>' +
-          (element.type === "text" || element.type === "button" ? "Click the text directly on the canvas and type. Changes save automatically." :
-           element.type === "image" ? "This image is stored only in this browser." :
-           "A visual divider has no editable text.") +
-        '</p></div></div>' +
+        '<div class="wb-inspector-block"><div class="wb-inspector-label">TEXT STYLE</div>' +
+          '<div class="wb-font-row"><select class="wb-font-select" data-font-family>' +
+            palette.fonts.map(f => '<option value="' + escAttr(f) + '" ' + (font===f ? "selected" : "") + '>' + escText(f) + '</option>').join("") +
+          '</select><input class="wb-font-select" type="number" min="8" max="120" value="' + escAttr(size) + '" placeholder="Size" data-font-size></div>' +
+          '<div class="wb-font-row-three"><select class="wb-inspector-select" data-font-weight><option value="" ' + (!weight ? "selected" : "") + '>Default</option><option value="400" ' + (weight==="400" ? "selected" : "") + '>Regular</option><option value="600" ' + (weight==="600" ? "selected" : "") + '>Semibold</option><option value="700" ' + (weight==="700" ? "selected" : "") + '>Bold</option></select><input class="wb-inspector-select" type="color" value="' + escAttr(color) + '" data-element-color><span class="wb-color-code">' + escText(color) + '</span></div>' +
+          '<div class="wb-align-row">' + ["left","center","right"].map(a => '<button class="wb-align-button ' + (align===a ? "is-active" : "") + '" type="button" data-text-align="' + a + '">' + a + '</button>').join("") + '</div>' +
+        '</div>' +
+        '<div class="wb-inspector-block"><div class="wb-inspector-label">SELECTED</div><div class="wb-element-properties"><p>Click the text directly on the canvas and type. Changes save automatically.</p></div></div>' +
         (element.type === "image" ? '<div class="wb-inspector-block"><div class="wb-inspector-label">IMAGE</div><div class="wb-inspector-actions"><button class="wb-mini-button" type="button" id="wbReplaceElementImage">Replace image</button><button class="wb-mini-button danger" type="button" id="wbDeleteElement">Delete</button></div></div>' :
          '<div class="wb-inspector-block"><div class="wb-inspector-label">ELEMENT</div><div class="wb-inspector-actions"><button class="wb-mini-button danger" type="button" id="wbDeleteElement">Delete element</button></div></div>') +
         (element.type === "button" ? '<div class="wb-inspector-block"><div class="wb-inspector-label">BUTTON STYLE</div><div class="wb-inspector-actions"><button class="wb-mini-button ' + (element.variant === "filled" ? "active" : "") + '" type="button" data-button-style="filled">Filled</button><button class="wb-mini-button ' + (element.variant === "outline" ? "active" : "") + '" type="button" data-button-style="outline">Outline</button></div></div>' : '') +
+      '</div>';
+    bindInspectorEvents();
+  }
+
+
+  function renderImageInspector(root,section,element){
+    const allImages = [];
+    for(const sec of state.sections) for(const el of sec.elements) if(el.type === "image") allImages.push({section:sec,element:el});
+    const selectedCount = selectedImageElementIds.length || 1;
+    root.innerHTML =
+      '<div class="wb-inspector-head"><span class="wb-kicker">ELEMENT / IMAGE</span><h3>' + escText(section.name) + '</h3></div>' +
+      '<div class="wb-inspector-body">' +
+        '<div class="wb-inspector-block"><div class="wb-inspector-label">IMAGE CONTROLS</div>' +
+          '<div class="wb-image-fit-row">' +
+            ['cover','contain','fill'].map(v => '<button class="wb-image-option ' + ((element.imageFit||"cover")===v ? "is-active" : "") + '" type="button" data-image-fit="' + v + '">' + v + '</button>').join("") +
+          '</div>' +
+          '<div class="wb-radius-row">' +
+            ['0px','8px','20px'].map(v => '<button class="wb-image-option ' + ((element.imageRadius||"12px")===v ? "is-active" : "") + '" type="button" data-image-radius="' + v + '">' + v + '</button>').join("") +
+          '</div>' +
+        '</div>' +
+        '<div class="wb-inspector-block"><div class="wb-inspector-label">IMAGES ON PAGE · ' + selectedCount + ' SELECTED</div>' +
+          '<div class="wb-batch-bar"><strong>Edit multiple images</strong><span>Tick several images below, then apply fit or corner settings to all of them.</span></div>' +
+          '<div class="wb-image-element-list">' + allImages.map(item =>
+            '<label class="wb-image-element-row"><input type="checkbox" data-image-element-check="' + escAttr(item.element.id) + '" ' + (selectedImageElementIds.includes(item.element.id) ? "checked" : "") + '><span>' + escText(item.section.name) + '</span><small>' + escText(item.element.id.slice(-5)) + '</small></label>'
+          ).join("") + '</div>' +
+        '</div>' +
+        '<div class="wb-inspector-block"><div class="wb-inspector-label">IMAGE</div><div class="wb-inspector-actions">' +
+          '<button class="wb-mini-button" type="button" id="wbReplaceElementImage">Replace image</button>' +
+          '<button class="wb-mini-button danger" type="button" id="wbDeleteElement">Delete selected</button>' +
+        '</div></div>' +
       '</div>';
     bindInspectorEvents();
   }
@@ -548,8 +703,21 @@
       renderCanvas();
       renderInspector();
     }));
-    $$("[data-preset]").forEach(btn => btn.addEventListener("click",() => {
+    $("[data-preset]").forEach(btn => btn.addEventListener("click",() => {
       applyPresetToSections(btn.dataset.preset);
+      schedulePersist();
+      renderAll();
+    }));
+    $("[data-color-palette]").forEach(btn => btn.addEventListener("click",() => {
+      const p = palette.colorPalettes[btn.dataset.colorPalette];
+      if(!p) return;
+      state.paletteName = btn.dataset.colorPalette;
+      const section = selectedSection();
+      if(section){
+        section.background = p.background;
+        section.text = p.text;
+        section.accent = p.accent;
+      }
       schedulePersist();
       renderAll();
     }));
@@ -573,13 +741,77 @@
       pendingImageTargetId = selectedElementId;
       $("#wbElementImageInput").click();
     });
-    $$("[data-button-style]").forEach(btn => btn.addEventListener("click",() => {
+    $("[data-button-style]").forEach(btn => btn.addEventListener("click",() => {
       const found = findElement(selectedElementId);
       if(!found) return;
       found.element.variant = btn.dataset.buttonStyle;
       schedulePersist();
       renderAll();
     }));
+    $("[data-font-family]").forEach(select => select.addEventListener("change",() => {
+      const found = findElement(selectedElementId);
+      if(!found) return;
+      found.element.fontFamily = select.value;
+      schedulePersist();
+      renderCanvas();
+      renderInspector();
+    }));
+    $("[data-font-size]").forEach(input => input.addEventListener("input",() => {
+      const found = findElement(selectedElementId);
+      if(!found) return;
+      const val = Number(input.value);
+      found.element.fontSize = Number.isFinite(val) ? val : "";
+      schedulePersist();
+      renderCanvas();
+    }));
+    $("[data-font-weight]").forEach(select => select.addEventListener("change",() => {
+      const found = findElement(selectedElementId);
+      if(!found) return;
+      found.element.fontWeight = select.value;
+      schedulePersist();
+      renderCanvas();
+    }));
+    $("[data-text-align]").forEach(btn => btn.addEventListener("click",() => {
+      const found = findElement(selectedElementId);
+      if(!found) return;
+      found.element.textAlign = btn.dataset.textAlign;
+      schedulePersist();
+      renderCanvas();
+      renderInspector();
+    }));
+    $("[data-element-color]").forEach(input => input.addEventListener("input",() => {
+      const found = findElement(selectedElementId);
+      if(!found) return;
+      found.element.color = input.value;
+      schedulePersist();
+      renderCanvas();
+    }));
+    $("[data-image-element-check]").forEach(check => check.addEventListener("change",() => {
+      if(check.checked) selectedImageElementIds.push(check.dataset.imageElementCheck);
+      else selectedImageElementIds = selectedImageElementIds.filter(id => id !== check.dataset.imageElementCheck);
+      if(!selectedImageElementIds.length) selectedImageElementIds = [selectedElementId];
+      const active = findElement(selectedElementId);
+      if(active) renderImageInspector($("#wbInspector"),active.section,active.element);
+    }));
+    $("[data-image-fit]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageFit",btn.dataset.imageFit)));
+    $("[data-image-radius]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageRadius",btn.dataset.imageRadius)));
+
+  }
+
+
+  function applyImageBatch(key,value){
+    const ids = selectedImageElementIds.length ? selectedImageElementIds : [selectedElementId];
+    let changed = 0;
+    for(const id of ids){
+      const found = findElement(id);
+      if(found && found.element.type === "image"){
+        found.element[key] = value;
+        changed++;
+      }
+    }
+    schedulePersist();
+    renderAll();
+    toast(changed + " image" + (changed===1 ? "" : "s") + " updated.");
   }
 
   function uniqueId(prefix){
@@ -601,7 +833,12 @@
       type,
       variant:type === "button" ? "filled" : type === "text" ? "copy" : undefined,
       text:type === "text" ? "Click to edit this text" : type === "button" ? "New button" : "",
-      href:"#products"
+      href:"#products",
+      fontFamily:"Inter",
+      fontSize:"",
+      fontWeight:"",
+      textAlign:"left",
+      color:""
     };
     if(type === "divider") delete element.variant;
     section.elements.push(element);
@@ -633,7 +870,7 @@
       found.element.assetId = asset.id;
     }else{
       const section = sectionById(sectionId);
-      const element = {id:uniqueId("el"),type:"image",assetId:asset.id,text:""};
+      const element = {id:uniqueId("el"),type:"image",assetId:asset.id,text:"",imageFit:"cover",imageRadius:"12px",imageWidth:"100%"};
       section.elements.push(element);
       selectedElementId = element.id;
       selectedSectionId = section.id;
@@ -670,10 +907,19 @@
   }
 
   function deleteElement(){
-    const found = findElement(selectedElementId);
-    if(!found) return;
-    found.section.elements = found.section.elements.filter(el => el.id !== selectedElementId);
+    const ids = selectedImageElementIds.length && selectedElementId && findElement(selectedElementId)?.element.type === "image"
+      ? [...new Set(selectedImageElementIds)]
+      : [selectedElementId];
+    let changed = false;
+    for(const id of ids){
+      const found = findElement(id);
+      if(!found) continue;
+      found.section.elements = found.section.elements.filter(el => el.id !== id);
+      changed = true;
+    }
+    if(!changed) return;
     selectedElementId = null;
+    selectedImageElementIds = [];
     schedulePersist();
     renderAll();
   }
@@ -702,7 +948,8 @@
 
   function openView(view){
     currentView = view;
-    $$(".wb-mode").forEach(btn => btn.classList.toggle("is-active",btn.dataset.view===view));
+    document.body.classList.toggle("is-design-mode", view === "design");
+    $(".wb-mode").forEach(btn => btn.classList.toggle("is-active",btn.dataset.view===view));
     $("#wbDesignView").classList.toggle("is-visible",view==="design");
     $("#wbProductsView").classList.toggle("is-visible",view==="products");
     $("#wbFinishView").classList.toggle("is-visible",view==="finish");
@@ -962,7 +1209,11 @@
   async function buildGeneratedElement(sec,el){
     if(el.type === "image"){
       const data = await getImageDataUrlByAsset(el.assetId);
-      return data ? '<div class="generated-image-wrap"><img src="' + escAttr(data) + '" alt=""></div>' : "";
+      if(!data) return "";
+      const width = el.imageWidth || "100%";
+      const fit = el.imageFit || "cover";
+      const radius = el.imageRadius || "12px";
+      return '<div class="generated-image-wrap"><img style="width:' + escAttr(width) + ';object-fit:' + escAttr(fit) + ';border-radius:' + escAttr(radius) + '" src="' + escAttr(data) + '" alt=""></div>';
     }
     if(el.type === "divider") return '<div class="generated-divider" style="background:' + escAttr(sec.accent) + '"></div>';
     if(el.type === "button"){
@@ -972,7 +1223,12 @@
     }
     const tag = el.variant === "heading" ? "h1" : el.variant === "title" ? "h2" : el.variant === "copy" ? "p" : el.variant === "eyebrow" ? "div" : "strong";
     const cls = el.variant || "copy";
-    return '<' + tag + ' class="generated-' + cls + '">' + escText(el.text || "") + '</' + tag + '>';
+    const style = (el.fontFamily ? 'font-family:' + escAttr(el.fontFamily) + ';' : '') +
+      (el.fontSize ? 'font-size:' + escAttr(el.fontSize) + 'px;' : '') +
+      (el.fontWeight ? 'font-weight:' + escAttr(el.fontWeight) + ';' : '') +
+      (el.textAlign ? 'text-align:' + escAttr(el.textAlign) + ';' : '') +
+      (el.color ? 'color:' + escAttr(el.color) + ';' : '');
+    return '<' + tag + ' class="generated-' + cls + '" style="' + style + '">' + escText(el.text || "") + '</' + tag + '>';
   }
 
   function generatedCss(p){
@@ -1110,11 +1366,16 @@
   $$("[data-add-element]").forEach(btn => btn.addEventListener("click",() => addElement(btn.dataset.addElement)));
 
   $("#wbElementImageInput").addEventListener("change",async() => {
-    const file = $("#wbElementImageInput").files[0];
+    const files = Array.from($("#wbElementImageInput").files || []);
     $("#wbElementImageInput").value = "";
-    if(!file) return;
-    await addImageAssetToSection(file,selectedSectionId,pendingImageTargetId);
+    if(!files.length) return;
+    if(pendingImageTargetId && files.length === 1){
+      await addImageAssetToSection(files[0],selectedSectionId,pendingImageTargetId);
+    }else{
+      for(const file of files) await addImageAssetToSection(file,selectedSectionId,null);
+    }
     pendingImageTargetId = null;
+    await renderMediaLibrary();
   });
 
   $$("[data-choice='thumbRatio'] .wb-ratio").forEach(btn => btn.addEventListener("click",() => setRatio(btn.dataset.value)));
@@ -1124,6 +1385,14 @@
     $$(".wb-layout-choices .wb-choice").forEach(x => x.classList.toggle("is-selected",x===btn));
     renderCanvas();
   }));
+
+  $("#wbMediaInput").addEventListener("change",async() => {
+    const files = Array.from($("#wbMediaInput").files || []);
+    $("#wbMediaInput").value = "";
+    await uploadMediaFiles(files);
+  });
+  $("#wbUploadMediaBtn").addEventListener("click",() => $("#wbMediaInput").click());
+  $("#wbAddSelectedMedia").addEventListener("click",addSelectedMediaToSection);
 
   $("#wbProductThumb").addEventListener("change",() => handleThumbFile($("#wbProductThumb").files[0]));
   $("#wbProductZip").addEventListener("change",() => handleZipFile($("#wbProductZip").files[0]));
@@ -1159,7 +1428,9 @@
     await openDb();
     await migrateLegacyProducts();
     if(!sectionById(selectedSectionId)) selectedSectionId = state.sections[0]?.id || "hero";
+    document.body.classList.add("is-design-mode");
     renderAll();
+    await renderMediaLibrary();
     updateViewControls();
   }
 
