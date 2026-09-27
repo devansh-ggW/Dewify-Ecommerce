@@ -84,7 +84,6 @@ window.DEWIFY_CONFIG = {
     },
     {
       id: "creator-arsenal-1000",
-      productId: "pro_01m39gv9nym8krspztnfnqfm3y",
       name: "CREATOR ARSENAL 1000",
       version: "COMING SOON",
       category: "DIGITAL PRODUCTS",
