@@ -616,6 +616,38 @@
   }
 }
 
+/* Final avatar sizing/rendering overrides */
+.dewify-profile-hero .dewify-profile-avatar.is-large,
+.dewify-profile-edit-hero .dewify-profile-avatar.is-large {
+  width:92px;
+  height:92px;
+  box-sizing:border-box;
+}
+.dewify-profile-hero .dewify-profile-avatar.is-large img,
+.dewify-profile-edit-hero .dewify-profile-avatar.is-large img {
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  max-height:none !important;
+  object-fit:cover !important;
+  object-position:50% 50% !important;
+  transform:none !important;
+  left:50% !important;
+  top:50% !important;
+}
+.dewify-profile-avatar.dewify-profile-avatar-adjust {
+  width:200px;
+  height:200px;
+  box-sizing:border-box;
+}
+@media(max-width:620px) {
+  .dewify-profile-avatar.dewify-profile-avatar-adjust {
+    width:190px;
+    height:190px;
+  }
+}
+
+
 .dewify-profile-avatar-adjust img {
   position:absolute;
   left:50%;
