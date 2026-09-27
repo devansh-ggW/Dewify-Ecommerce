@@ -8,7 +8,7 @@
   <title>Website Builder — DEWIFY</title>
   <link rel="icon" href="/favicon.ico?v=20260920" type="image/x-icon" sizes="any">
   <link rel="stylesheet" href="styles.css?v=20260927-1">
-  <link rel="stylesheet" href="website-builder.css?v=20260927-4">
+  <link rel="stylesheet" href="website-builder.css?v=20260927-5">
 </head>
 <body class="builder-app">
   <div id="wbToast" class="wb-toast" role="status" aria-live="polite"></div>
@@ -58,9 +58,21 @@
           </div>
         </div>
 
+        <div class="wb-side-section wb-media-section">
+          <div class="wb-media-head">
+            <span class="wb-side-label">MEDIA</span>
+            <button id="wbUploadMediaBtn" class="wb-inline-button" type="button">Upload</button>
+          </div>
+          <div class="wb-media-actions">
+            <span id="wbMediaCount" class="wb-media-count">0 images</span>
+            <button id="wbAddSelectedMedia" class="wb-inline-button" type="button">Add selected</button>
+          </div>
+          <div id="wbMediaGrid" class="wb-media-grid"></div>
+        </div>
+
         <div class="wb-side-note">
           <span>EDIT</span>
-          <p>Click a section to style it. Click any text on the canvas to edit it directly.</p>
+          <p>Click a section to style it. Click text directly to edit it. Select multiple images in Media to add them together.</p>
         </div>
       </aside>
 
@@ -289,8 +301,9 @@
   </div>
 
   <input id="wbElementImageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+  <input id="wbMediaInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
 
   <script src="stars.js" defer></script>
-  <script src="website-builder.js?v=20260927-4" defer></script>
+  <script src="website-builder.js?v=20260927-5" defer></script>
 </body>
 </html>
