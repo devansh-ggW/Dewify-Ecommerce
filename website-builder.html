@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#070707">
+  <meta name="description" content="Build a digital product website with Dewify.">
+  <title>Website Builder — DEWIFY</title>
+  <link rel="icon" href="/favicon.ico?v=20260920" type="image/x-icon" sizes="any">
+  <link rel="stylesheet" href="styles.css?v=20260927-1">
+  <link rel="stylesheet" href="website-builder.css?v=20260927-1">
+</head>
+<body class="builder-page">
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="DEWIFY home">DEWIFY</a>
+      <nav class="nav-links" aria-label="Main navigation"><a href="products.html">Shop</a><a href="categories.html">Categories</a><a href="index.html">Home</a></nav>
+      <span class="store-pill">WEBSITE BUILDER</span>
+    </div>
+  </header>
+
+  <main class="builder-shell container">
+    <section class="builder-intro">
+      <p class="eyebrow">DEWIFY / WEBSITE BUILDER</p>
+      <div class="builder-intro-grid">
+        <div><h1>Build your<br><span>store.</span></h1></div>
+        <div class="builder-intro-copy"><p>Answer a few questions, add your products and Dewify will use the setup to build your digital-product website.</p><div class="builder-status"><span class="status-dot ready"></span><span id="saveStatus">Saved locally in this browser</span></div></div>
+      </div>
+    </section>
+
+    <section class="builder-card" aria-label="Website setup survey">
+      <div class="builder-progress">
+        <div class="progress-top"><span id="stepLabel">01 / 05</span><strong id="stepTitle">Business info</strong><span id="progressPercent">20%</span></div>
+        <div class="progress-track"><span id="progressBar"></span></div>
+        <div class="step-tabs" role="tablist" aria-label="Builder sections">
+          <button class="step-tab is-active" type="button" data-step="1">01 <span>Business</span></button>
+          <button class="step-tab" type="button" data-step="2">02 <span>Contact</span></button>
+          <button class="step-tab" type="button" data-step="3">03 <span>Design</span></button>
+          <button class="step-tab" type="button" data-step="4">04 <span>Legal</span></button>
+          <button class="step-tab" type="button" data-step="5">05 <span>Catalog</span></button>
+        </div>
+      </div>
+
+      <form id="builderForm" novalidate>
+        <section class="builder-step is-active" data-step="1" aria-labelledby="businessHeading">
+          <div class="step-heading"><span>01</span><div><p class="eyebrow">BUSINESS INFO</p><h2 id="businessHeading">Tell us about the business.</h2><p>These details become the foundation of the store identity.</p></div></div>
+          <div class="field-grid">
+            <label class="field full"><span>Business / store name <b>*</b></span><input name="businessName" required maxlength="80" placeholder="e.g. Nova Templates" autocomplete="organization"></label>
+            <label class="field"><span>Owner name</span><input name="ownerName" maxlength="80" placeholder="Your name" autocomplete="name"></label>
+            <label class="field"><span>Website / brand handle</span><input name="brandHandle" maxlength="80" placeholder="@brand or brand.com" autocomplete="url"></label>
+            <label class="field"><span>Business category</span><select name="businessCategory"><option value="digital-products">Digital products</option><option value="templates">Templates</option><option value="ebooks">Ebooks & guides</option><option value="design">Design assets</option><option value="education">Education</option><option value="software">Software / tools</option><option value="other">Other</option></select></label>
+            <label class="field"><span>Short tagline</span><input name="tagline" maxlength="120" placeholder="What does the store help people do?"></label>
+          </div>
+        </section>
+
+        <section class="builder-step" data-step="2" aria-labelledby="contactHeading">
+          <div class="step-heading"><span>02</span><div><p class="eyebrow">CONTACT INFO</p><h2 id="contactHeading">How should customers reach you?</h2><p>Only add the channels you actually want customers to use.</p></div></div>
+          <div class="field-grid">
+            <label class="field"><span>Business email</span><input type="email" name="contactEmail" maxlength="160" placeholder="hello@example.com" autocomplete="email"></label>
+            <label class="field"><span>Phone / WhatsApp</span><input name="contactPhone" maxlength="30" placeholder="+91 ..." autocomplete="tel"></label>
+            <label class="field"><span>Instagram</span><input name="instagram" maxlength="120" placeholder="instagram.com/yourbrand"></label>
+            <label class="field"><span>Other contact link</span><input name="otherContact" maxlength="240" placeholder="Discord, Telegram, Calendly, etc."></label>
+            <label class="field full"><span>Support hours / response note</span><textarea name="supportNote" rows="4" maxlength="400" placeholder="e.g. Usually reply within 24 hours."></textarea></label>
+          </div>
+        </section>
+
+        <section class="builder-step" data-step="3" aria-labelledby="designHeading">
+          <div class="step-heading"><span>03</span><div><p class="eyebrow">THEME & DESIGN</p><h2 id="designHeading">Make the store feel like you.</h2><p>Pick preferences now. We can turn these into the actual generated site later.</p></div></div>
+          <div class="design-grid">
+            <div class="choice-group"><span class="choice-label">Base theme</span><div class="choice-row" data-choice="theme"><button type="button" class="choice is-selected" data-value="dark">Dark</button><button type="button" class="choice" data-value="light">Light</button><button type="button" class="choice" data-value="system">System</button></div></div>
+            <div class="choice-group"><span class="choice-label">Accent</span><div class="choice-row" data-choice="accent"><button type="button" class="choice is-selected" data-value="purple"><i class="swatch purple"></i>Purple</button><button type="button" class="choice" data-value="blue"><i class="swatch blue"></i>Blue</button><button type="button" class="choice" data-value="green"><i class="swatch green"></i>Green</button><button type="button" class="choice" data-value="white"><i class="swatch white"></i>Neutral</button></div></div>
+            <div class="choice-group"><span class="choice-label">Corners</span><div class="choice-row" data-choice="radius"><button type="button" class="choice is-selected" data-value="medium">Medium</button><button type="button" class="choice" data-value="sharp">Sharp</button><button type="button" class="choice" data-value="round">Round</button></div></div>
+            <div class="choice-group"><span class="choice-label">Product layout</span><div class="choice-row" data-choice="layout"><button type="button" class="choice is-selected" data-value="grid">Grid</button><button type="button" class="choice" data-value="list">List</button><button type="button" class="choice" data-value="featured">Featured</button></div></div>
+          </div>
+          <div class="design-preview"><div class="preview-browser"><div class="preview-top"><span></span><span></span><span></span></div><div class="preview-content"><div class="preview-brand" id="previewBrand">YOUR STORE</div><div class="preview-hero-line"></div><div class="preview-cards"><i></i><i></i><i></i></div></div></div><div><p class="eyebrow">LIVE PREFERENCE PREVIEW</p><h3 id="previewTitle">Clean dark storefront</h3><p id="previewCopy">Your selections will guide the generated website layout.</p></div></div>
+        </section>
+
+        <section class="builder-step" data-step="4" aria-labelledby="legalHeading">
+          <div class="step-heading"><span>04</span><div><p class="eyebrow">LEGAL DOCUMENTS</p><h2 id="legalHeading">Cover the basics.</h2><p>Select the documents your store should include. We can generate the actual pages from these choices later.</p></div></div>
+          <div class="legal-list">
+            <label class="legal-row"><span><strong>Privacy Policy</strong><small>Explains what customer information the store collects and how it is used.</small></span><input type="checkbox" name="privacy" checked></label>
+            <label class="legal-row"><span><strong>Terms & Conditions</strong><small>Sets the rules for using the store and purchasing digital products.</small></span><input type="checkbox" name="terms" checked></label>
+            <label class="legal-row"><span><strong>Disclaimer</strong><small>Useful for informational, educational or recommendation-based products.</small></span><input type="checkbox" name="disclaimer"></label>
+            <label class="legal-row"><span><strong>Cookie Policy</strong><small>Include this when the site uses cookies or similar tracking that needs explaining.</small></span><input type="checkbox" name="cookiePolicy"></label>
+          </div>
+          <div class="notice"><strong>Legal note</strong><span>Dewify can help structure these pages, but the final wording should match the business, products, payment provider and applicable laws.</span></div>
+        </section>
+
+        <section class="builder-step" data-step="5" aria-labelledby="catalogHeading">
+          <div class="step-heading"><span>05</span><div><p class="eyebrow">CATALOG</p><h2 id="catalogHeading">Add what you're selling.</h2><p>Drop the product image and ZIP, add the details, save it, then keep adding products.</p></div></div>
+          <div class="catalog-toolbar"><div><strong id="productCount">0 products</strong><span>Saved locally in this browser</span></div><button class="button button-light" type="button" id="addProductBtn">+ Add product</button></div>
+          <div id="productList" class="product-list"><div class="catalog-empty"><strong>Your catalog is empty.</strong><span>Add your first digital product to start building the store.</span><button class="text-link" type="button" id="emptyAddBtn">Add first product ↗</button></div></div>
+        </section>
+
+        <div class="builder-footer"><button class="button button-ghost" type="button" id="backBtn">← Back</button><div class="footer-center"><span id="footerHint">Your progress saves automatically.</span></div><button class="button button-light" type="button" id="nextBtn">Continue →</button></div>
+      </form>
+    </section>
+
+    <section id="completePanel" class="complete-panel" hidden>
+      <div class="complete-mark">✓</div><p class="eyebrow">SETUP SAVED</p><h2>Your store blueprint is ready.</h2><p id="completeSummary">Your business preferences and catalog are saved locally.</p><div class="complete-actions"><a class="button button-light" href="index.html">Back home ↗</a><button class="button button-ghost" type="button" id="editSetupBtn">Edit setup</button></div></section>
+  </main>
+
+  <div class="product-modal" id="productModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+    <div class="modal-scrim" data-close-product></div>
+    <div class="product-modal-panel">
+      <div class="modal-head"><div><p class="eyebrow">CATALOG / PRODUCT</p><h2 id="productModalTitle">Add product</h2></div><button class="icon-button" type="button" data-close-product aria-label="Close">×</button></div>
+      <form id="productForm" class="product-form">
+        <label class="field full"><span>Product title <b>*</b></span><input id="productTitle" required maxlength="120" placeholder="e.g. Minimal Portfolio Website Template"></label>
+        <div class="field-grid compact"><label class="field"><span>Price</span><input id="productPrice" inputmode="decimal" placeholder="19.00"></label><label class="field"><span>Currency</span><select id="productCurrency"><option>INR</option><option>USD</option><option>EUR</option><option>GBP</option></select></label></div>
+        <label class="field full"><span>Description <b>*</b></span><textarea id="productDescription" required rows="5" maxlength="1000" placeholder="What does the buyer get? What's included? Who is it for?"></textarea></label>
+        <div class="upload-grid">
+          <label class="upload-box"><span>Product image</span><input id="productImage" type="file" accept="image/png,image/jpeg,image/webp"><small id="imageFileName">PNG, JPG or WebP</small><img id="imagePreview" alt="Product preview" hidden></label>
+          <label class="upload-box"><span>Digital product ZIP</span><input id="productZip" type="file" accept=".zip,application/zip,application/x-zip-compressed"><small id="zipFileName">ZIP only</small></label>
+        </div>
+        <div class="notice"><strong>Local-first for now</strong><span>Your product files are saved in this browser using IndexedDB. Payment and publishing will be connected later.</span></div>
+        <div class="modal-actions"><button class="button button-ghost" type="button" data-close-product>Cancel</button><button class="button button-light" type="submit">Save product</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="stars.js" defer></script>
+  <script src="website-builder.js?v=20260927-1" defer></script>
+</body>
+</html>
