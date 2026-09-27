@@ -316,7 +316,7 @@
       const img = $('[data-media-image="' + CSS.escape(asset.id) + '"]');
       if(img) img.src = await blobToDataURL(asset.blob);
     }
-    $("[data-media-check]").forEach(check => check.addEventListener("change", () => {
+    $$("[data-media-check]").forEach(check => check.addEventListener("change", () => {
       if(check.checked) selectedMediaIds.push(check.dataset.mediaCheck);
       else selectedMediaIds = selectedMediaIds.filter(id => id !== check.dataset.mediaCheck);
       check.closest(".wb-media-card")?.classList.toggle("is-selected",check.checked);
@@ -528,7 +528,7 @@
       });
     });
 
-    $("[data-editable]").forEach(el => {
+    $$("[data-editable]").forEach(el => {
       el.addEventListener("focus",() => {
         selectedSectionId = el.dataset.sectionId;
         selectedElementId = el.dataset.elementId;
@@ -554,7 +554,7 @@
       });
     });
 
-    $$("[data-image-edit]").forEach(el => {
+    $$$("[data-image-edit]").forEach(el => {
       el.addEventListener("click",event => {
         event.stopPropagation();
         selectedElementId = el.dataset.elementId;
@@ -690,25 +690,25 @@
   }
 
   function bindInspectorEvents(){
-    $$("[data-color-key]").forEach(btn => btn.addEventListener("click",() => {
+    $$$("[data-color-key]").forEach(btn => btn.addEventListener("click",() => {
       const section = selectedSection();
       section[btn.dataset.colorKey] = btn.dataset.color;
       schedulePersist();
       renderAll();
     }));
-    $$("[data-custom-color-key]").forEach(input => input.addEventListener("input",() => {
+    $$$("[data-custom-color-key]").forEach(input => input.addEventListener("input",() => {
       const section = selectedSection();
       section[input.dataset.customColorKey] = input.value;
       schedulePersist();
       renderCanvas();
       renderInspector();
     }));
-    $("[data-preset]").forEach(btn => btn.addEventListener("click",() => {
+    $$("[data-preset]").forEach(btn => btn.addEventListener("click",() => {
       applyPresetToSections(btn.dataset.preset);
       schedulePersist();
       renderAll();
     }));
-    $("[data-color-palette]").forEach(btn => btn.addEventListener("click",() => {
+    $$("[data-color-palette]").forEach(btn => btn.addEventListener("click",() => {
       const p = palette.colorPalettes[btn.dataset.colorPalette];
       if(!p) return;
       state.paletteName = btn.dataset.colorPalette;
@@ -721,7 +721,7 @@
       schedulePersist();
       renderAll();
     }));
-    $$("[data-layout]").forEach(btn => btn.addEventListener("click",() => {
+    $$$("[data-layout]").forEach(btn => btn.addEventListener("click",() => {
       state.productLayout = btn.dataset.layout;
       schedulePersist();
       renderAll();
@@ -741,14 +741,14 @@
       pendingImageTargetId = selectedElementId;
       $("#wbElementImageInput").click();
     });
-    $("[data-button-style]").forEach(btn => btn.addEventListener("click",() => {
+    $$("[data-button-style]").forEach(btn => btn.addEventListener("click",() => {
       const found = findElement(selectedElementId);
       if(!found) return;
       found.element.variant = btn.dataset.buttonStyle;
       schedulePersist();
       renderAll();
     }));
-    $("[data-font-family]").forEach(select => select.addEventListener("change",() => {
+    $$("[data-font-family]").forEach(select => select.addEventListener("change",() => {
       const found = findElement(selectedElementId);
       if(!found) return;
       found.element.fontFamily = select.value;
@@ -756,7 +756,7 @@
       renderCanvas();
       renderInspector();
     }));
-    $("[data-font-size]").forEach(input => input.addEventListener("input",() => {
+    $$("[data-font-size]").forEach(input => input.addEventListener("input",() => {
       const found = findElement(selectedElementId);
       if(!found) return;
       const val = Number(input.value);
@@ -764,14 +764,14 @@
       schedulePersist();
       renderCanvas();
     }));
-    $("[data-font-weight]").forEach(select => select.addEventListener("change",() => {
+    $$("[data-font-weight]").forEach(select => select.addEventListener("change",() => {
       const found = findElement(selectedElementId);
       if(!found) return;
       found.element.fontWeight = select.value;
       schedulePersist();
       renderCanvas();
     }));
-    $("[data-text-align]").forEach(btn => btn.addEventListener("click",() => {
+    $$("[data-text-align]").forEach(btn => btn.addEventListener("click",() => {
       const found = findElement(selectedElementId);
       if(!found) return;
       found.element.textAlign = btn.dataset.textAlign;
@@ -779,22 +779,22 @@
       renderCanvas();
       renderInspector();
     }));
-    $("[data-element-color]").forEach(input => input.addEventListener("input",() => {
+    $$("[data-element-color]").forEach(input => input.addEventListener("input",() => {
       const found = findElement(selectedElementId);
       if(!found) return;
       found.element.color = input.value;
       schedulePersist();
       renderCanvas();
     }));
-    $("[data-image-element-check]").forEach(check => check.addEventListener("change",() => {
+    $$("[data-image-element-check]").forEach(check => check.addEventListener("change",() => {
       if(check.checked) selectedImageElementIds.push(check.dataset.imageElementCheck);
       else selectedImageElementIds = selectedImageElementIds.filter(id => id !== check.dataset.imageElementCheck);
       if(!selectedImageElementIds.length) selectedImageElementIds = [selectedElementId];
       const active = findElement(selectedElementId);
       if(active) renderImageInspector($("#wbInspector"),active.section,active.element);
     }));
-    $("[data-image-fit]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageFit",btn.dataset.imageFit)));
-    $("[data-image-radius]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageRadius",btn.dataset.imageRadius)));
+    $$("[data-image-fit]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageFit",btn.dataset.imageFit)));
+    $$("[data-image-radius]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageRadius",btn.dataset.imageRadius)));
 
   }
 
@@ -982,8 +982,8 @@
       const img = $('[data-product-image="' + CSS.escape(p.id) + '"]');
       if(img && p.imageBlob) img.src = URL.createObjectURL(p.imageBlob);
     }
-    $$("[data-edit-product]").forEach(btn => btn.addEventListener("click",async() => openProductModal(await dbGet(PRODUCT_STORE,btn.dataset.editProduct))));
-    $$("[data-delete-product]").forEach(btn => btn.addEventListener("click",async() => {
+    $$$("[data-edit-product]").forEach(btn => btn.addEventListener("click",async() => openProductModal(await dbGet(PRODUCT_STORE,btn.dataset.editProduct))));
+    $$$("[data-delete-product]").forEach(btn => btn.addEventListener("click",async() => {
       if(!confirm("Delete this product from this browser?")) return;
       await dbDelete(PRODUCT_STORE,btn.dataset.deleteProduct);
       toast("Product deleted.");
@@ -1347,7 +1347,7 @@
 
   $("#wbSettingsBtn").addEventListener("click",openSettings);
   $("#wbSettingsForm").addEventListener("submit",saveSettings);
-  $$("[data-close-settings]").forEach(el => el.addEventListener("click",closeSettings));
+  $$$("[data-close-settings]").forEach(el => el.addEventListener("click",closeSettings));
 
   $$(".wb-mode").forEach(btn => btn.addEventListener("click",() => openView(btn.dataset.view)));
   $("#wbBackDesign").addEventListener("click",() => openView("design"));
@@ -1362,8 +1362,8 @@
   $("#wbAddProduct").addEventListener("click",() => openProductModal());
   $("#wbProductForm").addEventListener("submit",saveProduct);
 
-  $$("[data-close-product]").forEach(el => el.addEventListener("click",closeProductModal));
-  $$("[data-add-element]").forEach(btn => btn.addEventListener("click",() => addElement(btn.dataset.addElement)));
+  $$$("[data-close-product]").forEach(el => el.addEventListener("click",closeProductModal));
+  $$$("[data-add-element]").forEach(btn => btn.addEventListener("click",() => addElement(btn.dataset.addElement)));
 
   $("#wbElementImageInput").addEventListener("change",async() => {
     const files = Array.from($("#wbElementImageInput").files || []);
