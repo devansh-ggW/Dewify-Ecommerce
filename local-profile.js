@@ -12,10 +12,14 @@
 
   const loadProfile = () => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("dewify:local-profile:v1");
       if (!raw) return { ...defaults };
       const parsed = JSON.parse(raw);
-      return { ...defaults, ...(parsed && typeof parsed === "object" ? parsed : {}) };
+      const profile = { ...defaults, ...(parsed && typeof parsed === "object" ? parsed : {}) };
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanProfile(profile)));
+      }
+      return profile;
     } catch {
       return { ...defaults };
     }
