@@ -7,7 +7,10 @@
     email: "",
     business: "",
     phone: "",
-    avatar: ""
+    avatar: "",
+    avatarZoom: 1,
+    avatarX: 50,
+    avatarY: 50
   };
 
   const loadProfile = () => {
@@ -39,7 +42,10 @@
     email: String(profile.email || "").trim().slice(0, 190),
     business: String(profile.business || "").trim().slice(0, 160),
     phone: String(profile.phone || "").trim().slice(0, 40),
-    avatar: typeof profile.avatar === "string" && profile.avatar.startsWith("data:image/") ? profile.avatar : ""
+    avatar: typeof profile.avatar === "string" && profile.avatar.startsWith("data:image/") ? profile.avatar : "",
+    avatarZoom: Number.isFinite(Number(profile.avatarZoom)) ? Math.min(3, Math.max(1, Number(profile.avatarZoom))) : 1,
+    avatarX: Number.isFinite(Number(profile.avatarX)) ? Math.min(100, Math.max(0, Number(profile.avatarX))) : 50,
+    avatarY: Number.isFinite(Number(profile.avatarY)) ? Math.min(100, Math.max(0, Number(profile.avatarY))) : 50
   });
 
   const saveProfile = (profile) => {
@@ -64,11 +70,19 @@
   const renderAvatar = (element, profile, large = false) => {
     if (!element) return;
     element.classList.toggle("has-image", Boolean(profile.avatar));
-    element.innerHTML = profile.avatar
-      ? '<img src="' + profile.avatar.replace(/"/g, "&quot;") + '" alt="">'
-      : '<span>' + initials(profile) + '</span>';
-    element.setAttribute("aria-label", displayName(profile) + " profile");
     element.classList.toggle("is-large", large);
+    if (profile.avatar) {
+      const img = document.createElement("img");
+      img.src = profile.avatar;
+      img.alt = "";
+      img.style.objectPosition = String((Number(profile.avatarX) || 50)) + "% " + String((Number(profile.avatarY) || 50)) + "%";
+      img.style.transform = "scale(" + String(Number(profile.avatarZoom) || 1) + ")";
+      img.draggable = false;
+      element.replaceChildren(img);
+    } else {
+      element.innerHTML = '<span>' + initials(profile) + '</span>';
+    }
+    element.setAttribute("aria-label", displayName(profile) + " profile");
   };
 
   const resizeImage = (file) =>
@@ -212,6 +226,35 @@
             <input name="avatar" type="file" accept="image/*">
             <em>Choose an image</em>
           </label>
+
+          <div class="dewify-avatar-adjuster" hidden>
+            <div class="dewify-avatar-adjuster-head">
+              <div>
+                <p>Adjust picture</p>
+                <span>Position the image inside the circle.</span>
+              </div>
+              <button type="button" class="dewify-avatar-reset">Reset</button>
+            </div>
+            <div class="dewify-avatar-adjust-preview">
+              <div class="dewify-profile-avatar dewify-profile-avatar-adjust" data-adjust-avatar></div>
+            </div>
+            <label class="dewify-avatar-range">
+              <span>Zoom</span>
+              <output data-avatar-zoom-value>100%</output>
+              <input name="avatarZoom" type="range" min="1" max="3" step="0.05" value="1">
+            </label>
+            <label class="dewify-avatar-range">
+              <span>Horizontal position</span>
+              <output data-avatar-x-value>50%</output>
+              <input name="avatarX" type="range" min="0" max="100" step="1" value="50">
+            </label>
+            <label class="dewify-avatar-range">
+              <span>Vertical position</span>
+              <output data-avatar-y-value>50%</output>
+              <input name="avatarY" type="range" min="0" max="100" step="1" value="50">
+            </label>
+          </div>
+
           <button class="dewify-avatar-remove" type="button">Remove picture</button>
 
           <div class="dewify-local-profile-field">
@@ -251,6 +294,15 @@
     const clear = panel.querySelector(".dewify-local-profile-clear");
     const avatarInput = panel.querySelector('input[name="avatar"]');
     const avatarRemove = panel.querySelector(".dewify-avatar-remove");
+    const avatarAdjuster = panel.querySelector(".dewify-avatar-adjuster");
+    const adjustAvatar = panel.querySelector("[data-adjust-avatar]");
+    const avatarZoom = panel.querySelector('input[name="avatarZoom"]');
+    const avatarX = panel.querySelector('input[name="avatarX"]');
+    const avatarY = panel.querySelector('input[name="avatarY"]');
+    const avatarZoomValue = panel.querySelector("[data-avatar-zoom-value]");
+    const avatarXValue = panel.querySelector("[data-avatar-x-value]");
+    const avatarYValue = panel.querySelector("[data-avatar-y-value]");
+    const avatarReset = panel.querySelector(".dewify-avatar-reset");
     const fields = {
       name: panel.querySelector("#dewify-profile-name"),
       email: panel.querySelector("#dewify-profile-email"),
@@ -269,8 +321,16 @@
 
     const fillForm = () => {
       Object.entries(fields).forEach(([key, input]) => { input.value = profile[key] || ""; });
+      avatarZoom.value = String(profile.avatarZoom || 1);
+      avatarX.value = String(profile.avatarX ?? 50);
+      avatarY.value = String(profile.avatarY ?? 50);
       renderAvatar(editAvatar, profile, true);
+      renderAvatar(adjustAvatar, profile, true);
       avatarRemove.hidden = !profile.avatar;
+      avatarAdjuster.hidden = !profile.avatar;
+      avatarZoomValue.textContent = Math.round((Number(profile.avatarZoom) || 1) * 100) + "%";
+      avatarXValue.textContent = Math.round(Number(profile.avatarX) || 50) + "%";
+      avatarYValue.textContent = Math.round(Number(profile.avatarY) || 50) + "%";
     };
 
     const renderView = () => {
@@ -351,15 +411,46 @@
       setEditMode(false);
     });
 
+    const updateAvatarAdjustments = () => {
+      profile = {
+        ...profile,
+        avatarZoom: Number(avatarZoom.value),
+        avatarX: Number(avatarX.value),
+        avatarY: Number(avatarY.value)
+      };
+      renderAvatar(editAvatar, profile, true);
+      renderAvatar(adjustAvatar, profile, true);
+      avatarZoomValue.textContent = Math.round(profile.avatarZoom * 100) + "%";
+      avatarXValue.textContent = Math.round(profile.avatarX) + "%";
+      avatarYValue.textContent = Math.round(profile.avatarY) + "%";
+    };
+
+    [avatarZoom, avatarX, avatarY].forEach((input) => {
+      input.addEventListener("input", updateAvatarAdjustments);
+    });
+
+    avatarReset.addEventListener("click", () => {
+      avatarZoom.value = "1";
+      avatarX.value = "50";
+      avatarY.value = "50";
+      updateAvatarAdjustments();
+    });
+
     avatarInput.addEventListener("change", async () => {
       const file = avatarInput.files?.[0];
       if (!file) return;
       status.textContent = "Processing profile picture…";
       try {
-        profile = { ...profile, avatar: await resizeImage(file) };
+        profile = { ...profile, avatar: await resizeImage(file), avatarZoom: 1, avatarX: 50, avatarY: 50 };
+        avatarZoom.value = "1";
+        avatarX.value = "50";
+        avatarY.value = "50";
         renderAvatar(editAvatar, profile, true);
-        avatarRemove.hidden = !profile.avatar;
-        status.textContent = "Picture ready. Save the profile to keep it.";
+        renderAvatar(adjustAvatar, profile, true);
+        avatarRemove.hidden = false;
+        avatarAdjuster.hidden = false;
+        updateAvatarAdjustments();
+        status.textContent = "Picture ready. Adjust it below, then save the profile.";
       } catch {
         status.textContent = "That image could not be used.";
         avatarInput.value = "";
@@ -367,9 +458,11 @@
     });
 
     avatarRemove.addEventListener("click", () => {
-      profile = { ...profile, avatar: "" };
+      profile = { ...profile, avatar: "", avatarZoom: 1, avatarX: 50, avatarY: 50 };
       avatarInput.value = "";
       renderAvatar(editAvatar, profile, true);
+      renderAvatar(adjustAvatar, profile, true);
+      avatarAdjuster.hidden = true;
       avatarRemove.hidden = true;
       status.textContent = "Picture removed. Save the profile to apply it.";
     });
@@ -382,7 +475,10 @@
           name: fields.name.value,
           email: fields.email.value,
           business: fields.business.value,
-          phone: fields.phone.value
+          phone: fields.phone.value,
+          avatarZoom: Number(avatarZoom.value),
+          avatarX: Number(avatarX.value),
+          avatarY: Number(avatarY.value)
         });
         status.textContent = "Profile saved locally in this browser.";
         renderView();
