@@ -93,13 +93,22 @@
     const x = Math.min(100, Math.max(0, Number(profile.avatarX) || 50));
     const y = Math.min(100, Math.max(0, Number(profile.avatarY) || 50));
 
+    const width = element.clientWidth || 1;
+    const height = element.clientHeight || 1;
+    const maxPanX = (width * (zoom - 1)) / 2;
+    const maxPanY = (height * (zoom - 1)) / 2;
+    const tx = ((50 - x) / 50) * maxPanX;
+    const ty = ((50 - y) / 50) * maxPanY;
+
     img.style.width = (zoom * 100) + "%";
     img.style.height = (zoom * 100) + "%";
     img.style.maxWidth = "none";
     img.style.maxHeight = "none";
     img.style.objectFit = "cover";
     img.style.objectPosition = x + "% " + y + "%";
-    img.style.transform = "translate3d(0,0,0)";
+    img.style.left = "50%";
+    img.style.top = "50%";
+    img.style.transform = "translate(calc(-50% + " + tx.toFixed(2) + "px),calc(-50% + " + ty.toFixed(2) + "px))";
     img.style.transformOrigin = "center";
   };
 
