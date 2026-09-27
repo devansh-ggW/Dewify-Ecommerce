@@ -1,0 +1,180 @@
+/* DEWIFY local browser profile — no login required */
+#dewify-local-profile-trigger {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1200;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(8,8,8,.9);
+  color: #f3f3f3;
+  padding: 11px 14px;
+  font: 700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 12px 34px rgba(0,0,0,.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+#dewify-local-profile-trigger:hover,
+#dewify-local-profile-trigger:focus-visible {
+  border-color: rgba(255,255,255,.42);
+  outline: none;
+}
+
+#dewify-local-profile-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1190;
+  background: rgba(0,0,0,.62);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+#dewify-local-profile-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#dewify-local-profile-panel {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1201;
+  width: min(390px, calc(100vw - 36px));
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,.14);
+  background: #090909;
+  color: #f2f2f2;
+  box-shadow: 0 24px 70px rgba(0,0,0,.55);
+  transform: translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+#dewify-local-profile-panel.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.dewify-local-profile-head {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  padding:18px 18px 14px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.dewify-local-profile-kicker {
+  margin:0 0 5px;
+  color:#8d8d8d;
+  font:10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.dewify-local-profile-title {
+  margin:0;
+  font-size:20px;
+  letter-spacing:-.03em;
+}
+.dewify-local-profile-close {
+  border:0;
+  background:transparent;
+  color:#a9a9a9;
+  width:32px;
+  height:32px;
+  cursor:pointer;
+  font-size:20px;
+}
+.dewify-local-profile-close:hover,
+.dewify-local-profile-close:focus-visible {
+  color:#fff;
+  outline:none;
+}
+.dewify-local-profile-body {
+  padding:18px;
+}
+.dewify-local-profile-note {
+  margin:0 0 16px;
+  color:#aaa;
+  font-size:12px;
+  line-height:1.6;
+}
+.dewify-local-profile-form {
+  display:grid;
+  gap:12px;
+}
+.dewify-local-profile-field {
+  display:grid;
+  gap:7px;
+}
+.dewify-local-profile-field label {
+  color:#8d8d8d;
+  font:9px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.dewify-local-profile-field input {
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid rgba(255,255,255,.12);
+  background:#0f0f0f;
+  color:#f2f2f2;
+  padding:12px 13px;
+  outline:none;
+  font:13px/1.35 inherit;
+}
+.dewify-local-profile-field input:focus {
+  border-color:rgba(255,255,255,.35);
+}
+.dewify-local-profile-actions {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:4px;
+}
+.dewify-local-profile-save {
+  border:1px solid rgba(255,255,255,.2);
+  background:#f2f2f2;
+  color:#090909;
+  padding:11px 13px;
+  font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+.dewify-local-profile-clear {
+  border:0;
+  background:transparent;
+  color:#8d8d8d;
+  padding:9px 0;
+  font:10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  cursor:pointer;
+}
+.dewify-local-profile-clear:hover,
+.dewify-local-profile-clear:focus-visible {
+  color:#fff;
+  outline:none;
+}
+.dewify-local-profile-status {
+  min-height:15px;
+  margin:12px 0 0;
+  color:#8d8d8d;
+  font:10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.dewify-local-profile-warning {
+  margin:14px 0 0;
+  padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.08);
+  color:#6f6f6f;
+  font-size:10px;
+  line-height:1.55;
+}
+@media (max-width:620px) {
+  #dewify-local-profile-trigger { right:12px; bottom:12px; }
+  #dewify-local-profile-panel { top:12px; right:12px; width:calc(100vw - 24px); max-height:calc(100vh - 24px); }
+}
