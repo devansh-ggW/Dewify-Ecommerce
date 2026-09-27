@@ -68,9 +68,7 @@
     const state = getState();
     const products = await getProducts();
     const assets = [];
-    for (const p of products) {
-      assets.push({ ...p, imageData: await blobToDataURL(p.imageBlob), zipData: await blobToDataURL(p.zipBlob) });
-    }
+    for (const p of products) assets.push({ ...p, imageData: await blobToDataURL(p.imageBlob), zipData: await blobToDataURL(p.zipBlob) });
 
     const productMarkup = assets.length ? assets.map(p => {
       const image = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.title)}">` : `<div style="aspect-ratio:4/3;background:#151515"></div>`;
@@ -134,6 +132,76 @@
     actions.insertBefore(preview, actions.firstChild);
   }
 
+  function setDroppedFile(input, file) {
+    if (!input || !file) return false;
+    try {
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      input.files = transfer.files;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      return true;
+    } catch (error) {
+      console.warn("Could not attach dropped file to input", error);
+      return false;
+    }
+  }
+
+  function wireDropZone(box, input, kind) {
+    if (!box || !input || box.dataset.dropReady === "1") return;
+    box.dataset.dropReady = "1";
+    box.setAttribute("data-drop-zone", kind);
+    box.addEventListener("dragenter", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      box.classList.add("is-dragging");
+    });
+    box.addEventListener("dragover", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = "copy";
+      box.classList.add("is-dragging");
+    });
+    box.addEventListener("dragleave", event => {
+      if (event.relatedTarget && box.contains(event.relatedTarget)) return;
+      box.classList.remove("is-dragging");
+    });
+    box.addEventListener("drop", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      box.classList.remove("is-dragging");
+      const files = [...(event.dataTransfer?.files || [])];
+      const file = files[0];
+      if (!file) return;
+
+      const valid = kind === "image"
+        ? ["image/png", "image/jpeg", "image/webp"].includes(file.type)
+        : file.name.toLowerCase().endsWith(".zip");
+      if (!valid) {
+        showToast(kind === "image" ? "Drop a PNG, JPG or WebP image here." : "Drop a ZIP file here.");
+        return;
+      }
+      if (!setDroppedFile(input, file)) {
+        showToast("Your browser blocked the file drop. Use Choose a file instead.");
+        return;
+      }
+      box.classList.add("has-file");
+      showToast(`${kind === "image" ? "Image" : "ZIP"} added. Save the product when ready.`);
+    });
+  }
+
+  function wireFileDropZones() {
+    wireDropZone($("#productImage")?.closest(".upload-box"), $("#productImage"), "image");
+    wireDropZone($("#productZip")?.closest(".upload-box"), $("#productZip"), "zip");
+  }
+
+  function injectDropZoneStyles() {
+    if ($("#dewify-drop-zone-styles")) return;
+    const style = document.createElement("style");
+    style.id = "dewify-drop-zone-styles";
+    style.textContent = `.upload-box{position:relative;transition:border-color .16s ease,background .16s ease,transform .16s ease}.upload-box::after{content:"Drop file here";position:absolute;right:10px;top:10px;font:8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#55544f;pointer-events:none}.upload-box.is-dragging{border-color:#f4f2ec;background:#151515;transform:translateY(-1px)}.upload-box.is-dragging::after{content:"Release to add";color:#f4f2ec}.upload-box.has-file{border-style:solid}`;
+    document.head.appendChild(style);
+  }
+
   async function repairThumbnails() {
     try {
       const products = await getProducts();
@@ -147,8 +215,14 @@
     } catch (error) { console.warn("Thumbnail repair skipped", error); }
   }
 
-  const observer = new MutationObserver(() => { addCompleteActions(); repairThumbnails(); });
+  const observer = new MutationObserver(() => {
+    addCompleteActions();
+    repairThumbnails();
+    wireFileDropZones();
+  });
   observer.observe(document.body, {childList:true, subtree:true});
+  injectDropZoneStyles();
   addCompleteActions();
   repairThumbnails();
+  wireFileDropZones();
 })();
