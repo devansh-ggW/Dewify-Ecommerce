@@ -567,7 +567,10 @@
 
   function renderAll(){
     renderSectionList();
-    renderCanvas().then(renderInspector);
+    renderCanvas().then(() => {
+      renderInspector();
+      return renderMediaLibrary();
+    });
     updateViewControls();
   }
 
@@ -787,7 +790,8 @@
       if(check.checked) selectedImageElementIds.push(check.dataset.imageElementCheck);
       else selectedImageElementIds = selectedImageElementIds.filter(id => id !== check.dataset.imageElementCheck);
       if(!selectedImageElementIds.length) selectedImageElementIds = [selectedElementId];
-      renderElementInspector($("#wbInspector"),sectionById(selectedSectionId),findElement(selectedElementId)?.element || element);
+      const active = findElement(selectedElementId);
+      if(active) renderImageInspector($("#wbInspector"),active.section,active.element);
     }));
     $("[data-image-fit]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageFit",btn.dataset.imageFit)));
     $("[data-image-radius]").forEach(btn => btn.addEventListener("click",() => applyImageBatch("imageRadius",btn.dataset.imageRadius)));
@@ -829,7 +833,12 @@
       type,
       variant:type === "button" ? "filled" : type === "text" ? "copy" : undefined,
       text:type === "text" ? "Click to edit this text" : type === "button" ? "New button" : "",
-      href:"#products"
+      href:"#products",
+      fontFamily:"Inter",
+      fontSize:"",
+      fontWeight:"",
+      textAlign:"left",
+      color:""
     };
     if(type === "divider") delete element.variant;
     section.elements.push(element);
@@ -861,7 +870,7 @@
       found.element.assetId = asset.id;
     }else{
       const section = sectionById(sectionId);
-      const element = {id:uniqueId("el"),type:"image",assetId:asset.id,text:""};
+      const element = {id:uniqueId("el"),type:"image",assetId:asset.id,text:"",imageFit:"cover",imageRadius:"12px",imageWidth:"100%"};
       section.elements.push(element);
       selectedElementId = element.id;
       selectedSectionId = section.id;
@@ -1200,7 +1209,11 @@
   async function buildGeneratedElement(sec,el){
     if(el.type === "image"){
       const data = await getImageDataUrlByAsset(el.assetId);
-      return data ? '<div class="generated-image-wrap"><img src="' + escAttr(data) + '" alt=""></div>' : "";
+      if(!data) return "";
+      const width = el.imageWidth || "100%";
+      const fit = el.imageFit || "cover";
+      const radius = el.imageRadius || "12px";
+      return '<div class="generated-image-wrap"><img style="width:' + escAttr(width) + ';object-fit:' + escAttr(fit) + ';border-radius:' + escAttr(radius) + '" src="' + escAttr(data) + '" alt=""></div>';
     }
     if(el.type === "divider") return '<div class="generated-divider" style="background:' + escAttr(sec.accent) + '"></div>';
     if(el.type === "button"){
@@ -1210,7 +1223,12 @@
     }
     const tag = el.variant === "heading" ? "h1" : el.variant === "title" ? "h2" : el.variant === "copy" ? "p" : el.variant === "eyebrow" ? "div" : "strong";
     const cls = el.variant || "copy";
-    return '<' + tag + ' class="generated-' + cls + '">' + escText(el.text || "") + '</' + tag + '>';
+    const style = (el.fontFamily ? 'font-family:' + escAttr(el.fontFamily) + ';' : '') +
+      (el.fontSize ? 'font-size:' + escAttr(el.fontSize) + 'px;' : '') +
+      (el.fontWeight ? 'font-weight:' + escAttr(el.fontWeight) + ';' : '') +
+      (el.textAlign ? 'text-align:' + escAttr(el.textAlign) + ';' : '') +
+      (el.color ? 'color:' + escAttr(el.color) + ';' : '');
+    return '<' + tag + ' class="generated-' + cls + '" style="' + style + '">' + escText(el.text || "") + '</' + tag + '>';
   }
 
   function generatedCss(p){
