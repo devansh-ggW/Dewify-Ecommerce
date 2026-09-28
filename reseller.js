@@ -7,6 +7,12 @@
   const search = document.querySelector("#dw-search");
   const count = document.querySelector("#dw-count");
   let filter = "all";
+  const validFilters = new Set(["all","resell","templates","learning"]);
+  const hashFilter = location.hash.replace(/^#/, "").toLowerCase();
+  if (validFilters.has(hashFilter)) {
+    filter = hashFilter;
+    tabs.forEach(item => item.classList.toggle("active", item.dataset.dwFilter === filter));
+  }
 
   function render() {
     const q = (search?.value || "").trim().toLowerCase();
@@ -29,6 +35,13 @@
     });
   });
   search?.addEventListener("input", render);
+  window.addEventListener("hashchange", () => {
+    const next = location.hash.replace(/^#/, "").toLowerCase();
+    if (!validFilters.has(next)) return;
+    filter = next;
+    tabs.forEach(item => item.classList.toggle("active", item.dataset.dwFilter === filter));
+    render();
+  });
   render();
 
   const price = document.querySelector("#resale-price");
