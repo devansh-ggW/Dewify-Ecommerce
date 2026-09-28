@@ -24,7 +24,7 @@ window.DEWIFY_CONFIG = {
       productId: "pro_01m39m52mtc6qmjertkx1cwng0",
       name: "CREATOR CRATE 100",
       version: "DROP 02",
-      category: "DIGITAL INVENTORY / TEMPLATES",
+      category: "DIGITAL PRODUCTS",
       type: "One-time digital purchase",
       format: "50 website templates + 50 design templates",
       priceId: "pri_01m39m6ajene2ch68yskfkftzm",
@@ -32,9 +32,8 @@ window.DEWIFY_CONFIG = {
       displayPrice: "Local price",
       downloadUrl: "CREATOR_CRATE_100.zip",
       image: "assets/creator-crate-100-cover.svg",
-      resaleStatus: "license-defined",
-      description: "A compact digital inventory crate with 100 editable templates: 50 standalone website templates and 50 editable design templates for projects, client work and permitted commercial use.",
-      highlights: ["50 single-file website templates","50 editable design templates","HTML + CSS + JavaScript included in website files","Business, events, celebrations, food, beauty and more","Review the included license before redistribution or resale"]
+      description: "A compact creator crate with 100 editable templates: 50 standalone website templates and 50 editable design templates.",
+      highlights: ["50 single-file website templates","50 editable design templates","HTML + CSS + JavaScript included in website files","Business, events, celebrations, food, beauty and more","Instant digital ZIP delivery"]
     },
     {
       id: "creator-vault-300",
@@ -48,16 +47,15 @@ window.DEWIFY_CONFIG = {
       displayPrice: "$3.99",
       downloadUrl: "CREATOR%20VAULT%20300.zip",
       image: "assets/creator-vault-300-cover.svg",
-      resaleStatus: "resell-oriented",
-      description: "A 300-product digital inventory library for creators who want ready-made assets to customize, package and resell where permitted by the included license terms.",
-      highlights: ["300 digital product assets","Resell-oriented product pack","Ready-to-customize library","Instant ZIP delivery","Included license is the source of truth for resale"]
+      description: "A 300-product digital pack designed for creators who want a ready-made library of digital products to customize, package and resell where permitted by the included license terms.",
+      highlights: ["300 digital product assets","Resellable product pack","Ready-to-customize library","Instant ZIP delivery","Review included license terms before resale"]
     },
     {
       id: "creator-bundle-500",
       productId: "pro_01m39jyhw68mjchksmtqtaye5j",
       name: "CREATOR BUNDLE 500",
       version: "DROP 04",
-      category: "DIGITAL INVENTORY / TEMPLATES",
+      category: "DIGITAL PRODUCTS",
       type: "One-time digital purchase",
       format: "250 website templates + 250 design templates",
       priceId: "pri_01m39k067cwm6sfv1ygzzdrcjq",
@@ -65,16 +63,15 @@ window.DEWIFY_CONFIG = {
       displayPrice: "Local price",
       downloadUrl: "CREATOR_BUNDLE_500.zip",
       image: "assets/creator-bundle-500-cover.svg",
-      resaleStatus: "license-defined",
-      description: "A large digital template inventory bundle: 250 standalone website templates and 250 editable design templates for businesses, events, celebrations, food, beauty and more.",
-      highlights: ["250 single-file website templates","250 editable design templates","HTML + CSS + JavaScript included in website files","Business, event, celebration, food and beauty categories","Review the included license before redistribution or resale"]
+      description: "A creator-ready bundle of 500 editable templates: 250 standalone website templates and 250 editable design templates for businesses, events, celebrations, food, beauty and more.",
+      highlights: ["250 single-file website templates","250 editable design templates","HTML + CSS + JavaScript included in website files","Business, event, celebration, food and beauty categories","Instant digital ZIP delivery"]
     },
     {
       id: "creator-stash-700",
       productId: "pro_01m39m7m260rfj92k09tdc70c8",
       name: "CREATOR STASH 700",
       version: "DROP 05",
-      category: "DIGITAL INVENTORY / TEMPLATES",
+      category: "DIGITAL PRODUCTS",
       type: "One-time digital purchase",
       format: "350 website templates + 350 design templates",
       priceId: "pri_01m39m9dxebwxnhrqpcmmtgck5",
@@ -82,9 +79,8 @@ window.DEWIFY_CONFIG = {
       displayPrice: "Local price",
       downloadUrl: "CREATOR_STASH_700.zip",
       image: "assets/creator-stash-700-cover.svg",
-      resaleStatus: "license-defined",
-      description: "A large digital template inventory stash with 700 assets: 350 single-file website templates and 350 editable SVG design templates across business, weddings, celebrations, food, beauty, events and more.",
-      highlights: ["350 single-file website templates","350 editable SVG design templates","No frameworks, npm or build process for website templates","Responsive websites with embedded CSS and JavaScript","Review the included license before redistribution or resale"]
+      description: "A large creator stash with 700 templates: 350 single-file website templates and 350 editable SVG design templates across business, weddings, celebrations, food, beauty, events and more.",
+      highlights: ["350 single-file website templates","350 editable SVG design templates","No frameworks, npm or build process for website templates","Responsive websites with embedded CSS and JavaScript","Instant digital ZIP delivery"]
     },
     {
       id: "creator-arsenal-1000",
