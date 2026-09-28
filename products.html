@@ -1,186 +1,169 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <link rel="icon" href="/favicon.ico?v=20260920" type="image/x-icon" sizes="any">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#070707">
-  <meta name="description" content="Browse DEWIFY ebooks, creator packs, templates and digital resources.">
-  <title>DEWIFY — Products</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    .products-hero{padding-bottom:34px}
-    .store-tools{position:sticky;top:10px;z-index:20;display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 auto 34px;padding:12px;border:1px solid var(--line);background:rgba(7,7,7,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-    .filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
-    .filter-tab{border:1px solid var(--line);background:transparent;color:var(--dim);padding:10px 14px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
-    .filter-tab:hover,.filter-tab.active{border-color:var(--text);color:var(--text);background:rgba(255,255,255,.04)}
-    .product-search{width:min(270px,42vw);border:1px solid var(--line);background:#0b0b0b;color:var(--text);padding:11px 13px;outline:none;font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
-    .product-search:focus{border-color:var(--text)}
-    .catalog-section{padding-top:12px}
-    .catalog-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:18px}
-    .catalog-head h2{margin:0}
-    .catalog-count{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
-    .product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .catalog-card{display:flex;flex-direction:column;min-width:0;border:1px solid var(--line);background:rgba(12,12,12,.78);transition:transform .2s ease,border-color .2s ease,background .2s ease}
-    .catalog-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.32);background:#101010}
-    .catalog-cover{aspect-ratio:1/1.12;overflow:hidden;background:#090909;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center}
-    .catalog-cover img,.catalog-cover svg{width:100%;height:100%;object-fit:cover;display:block}
-    .catalog-copy{display:flex;flex:1;flex-direction:column;padding:18px}
-    .catalog-meta{display:flex;justify-content:space-between;gap:10px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em;text-transform:uppercase}
-    .catalog-copy h3{margin:10px 0 8px;font-size:22px;letter-spacing:-.03em}
-    .catalog-copy p{margin:0;color:var(--dim);font-size:13px;line-height:1.65}
-    .catalog-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:20px}
-    .catalog-price{font:700 16px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
-    .catalog-button{white-space:nowrap}
-    .empty-state{display:none;border:1px dashed var(--line);padding:38px;text-align:center;color:var(--dim)}
-    .catalog-card.is-hidden{display:none}
-    .catalog-info{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:42px}
-    .catalog-info>div{background:#0a0a0a;padding:18px}.catalog-info span{display:block;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em}.catalog-info strong{display:block;margin-top:7px;font-size:14px}
-    @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.catalog-info{grid-template-columns:1fr}.store-tools{position:static}}
-    @media(max-width:620px){.store-tools{align-items:stretch;flex-direction:column}.product-search{width:100%}.product-grid{grid-template-columns:1fr}.catalog-head{align-items:start;flex-direction:column;gap:8px}.catalog-copy h3{font-size:20px}}
-  </style>
-  <link rel="stylesheet" href="local-profile.css">
+<meta charset="utf-8">
+<link rel="icon" href="/favicon.ico?v=20260928-reseller" type="image/x-icon" sizes="any">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<meta name="description" content="DEWIFY wholesale catalog — digital inventory for creators, builders and resellers.">
+<title>DEWIFY — Wholesale Catalog</title>
+<link rel="stylesheet" href="styles.css?v=20260928-reseller">
+<link rel="stylesheet" href="reseller.css?v=20260928-1">
 </head>
-<body>
+<body class="dw-page">
 <canvas id="starfield" aria-hidden="true"></canvas>
-
-<header class="site-header">
-  <div class="container nav">
-    <a class="brand" href="index.html" aria-label="DEWIFY home">DEWIFY</a>
-    <nav class="nav-links" aria-label="Main navigation">
-      <a href="products.html" aria-current="page">Shop</a>
-      <a href="categories.html">Categories</a>
+<div class="dw-shell">
+<header class="dw-header">
+  <div class="dw-wrap dw-nav">
+    <a class="dw-brand" href="index.html">DEWIFY</a>
+    <nav class="dw-navlinks" aria-label="Main navigation">
+      <a href="products.html" aria-current="page">Wholesale</a>
+      <a href="reseller.html">Reseller desk</a>
       <a href="how-it-works.html">How it works</a>
       <a href="faq.html">FAQ</a>
     </nav>
-    <span class="store-pill">DIGITAL STORE</span>
+    <span class="dw-pill">DIGITAL WHOLESALE</span>
   </div>
 </header>
 
 <main>
-  <section class="page-hero products-hero container">
-    <p class="eyebrow">DEWIFY / DIGITAL STORE</p>
-    <h1>Pick a product.<br><span>Get to work.</span></h1>
-    <p>Browse ebooks, creator packs and practical digital resources without digging through one giant list. Filter by type or search by name.</p>
-  </section>
+<section class="dw-wrap dw-page-hero">
+  <span class="dw-eyebrow">DEWIFY / WHOLESALE CATALOG</span>
+  <h1>Stock the shelf.<br><span>Build the offer.</span></h1>
+  <p>Browse digital inventory by pack type. Open the product page to see what is included, how the files are delivered and what the product says about resale or commercial use.</p>
+</section>
 
-  <section class="container catalog-section" aria-label="Product catalog">
-    <div class="store-tools">
-      <div class="filter-tabs" role="group" aria-label="Filter products">
-        <button class="filter-tab active" type="button" data-filter="all">All</button>
-        <button class="filter-tab" type="button" data-filter="ebooks">Ebooks</button>
-        <button class="filter-tab" type="button" data-filter="creator">Creator packs</button>
+<section class="dw-wrap dw-section" style="padding-top:18px">
+  <div class="dw-tools">
+    <div class="dw-tabs" role="group" aria-label="Filter products">
+      <button class="dw-tab active" type="button" data-dw-filter="all">All inventory</button>
+      <button class="dw-tab" type="button" data-dw-filter="resell">Resell-oriented</button>
+      <button class="dw-tab" type="button" data-dw-filter="templates">Templates</button>
+      <button class="dw-tab" type="button" data-dw-filter="learning">Learning</button>
+    </div>
+    <input class="dw-search" id="dw-search" type="search" placeholder="Search inventory..." aria-label="Search inventory">
+  </div>
+
+  <div class="dw-section-head">
+    <div><span class="dw-eyebrow">CURRENT STOCK</span><h2>Digital inventory.</h2></div>
+    <span class="dw-eyebrow" id="dw-count">6 products</span>
+  </div>
+
+  <div class="dw-product-grid" id="dw-products">
+    <article class="dw-product" data-dw-category="learning" data-dw-search="ai money arc ebook ai business learning skills">
+      <a class="dw-product-cover" href="ai-money-arc.html" aria-label="View AI MONEY ARC"><img src="assets/ai-money-arc-cover.svg" alt="AI MONEY ARC cover" loading="lazy" decoding="async"></a>
+      <div class="dw-product-copy">
+        <div class="dw-meta"><span>Learning product</span><span>DROP 01</span></div>
+        <h3>AI MONEY ARC</h3>
+        <p>A practical AI and business learning pack. This is a learning product, not presented as reseller inventory.</p>
+        <div class="dw-tags"><span class="dw-tag">PDF + PROMPTS</span><span class="dw-tag">ONE-TIME</span><span class="dw-tag">INSTANT ZIP</span></div>
+        <div class="dw-product-bottom"><strong class="dw-price">$2.99</strong><a class="dw-btn dw-btn-primary" href="ai-money-arc.html">Inspect product ↗</a></div>
       </div>
-      <input class="product-search" id="product-search" type="search" placeholder="Search products..." aria-label="Search products">
-    </div>
+    </article>
 
-    <div class="catalog-head">
-      <div>
-        <p class="eyebrow">CURRENT COLLECTION</p>
-        <h2>Digital products.</h2>
+    <article class="dw-product" data-dw-category="templates" data-dw-search="creator crate 100 100 templates website design starter">
+      <a class="dw-product-cover" href="creator-crate-100.html" aria-label="View CREATOR CRATE 100"><img src="assets/creator-crate-100-cover.svg" alt="CREATOR CRATE 100 cover" loading="lazy" decoding="async"></a>
+      <div class="dw-product-copy">
+        <div class="dw-meta"><span>Template inventory</span><span>100 ASSETS</span></div>
+        <h3>CREATOR CRATE 100</h3>
+        <p>50 standalone website templates plus 50 editable design templates for projects, client work and permitted commercial use.</p>
+        <div class="dw-tags"><span class="dw-tag">50 WEB</span><span class="dw-tag">50 DESIGN</span><span class="dw-tag">LICENSE FIRST</span></div>
+        <div class="dw-product-bottom"><strong class="dw-price">Local price</strong><a class="dw-btn dw-btn-primary" href="creator-crate-100.html">Inspect pack ↗</a></div>
       </div>
-      <span class="catalog-count" id="catalog-count">6 products</span>
+    </article>
+
+    <article class="dw-product" data-dw-category="resell" data-dw-search="creator vault 300 digital products resell reseller">
+      <a class="dw-product-cover" href="creator-vault-300.html" aria-label="View CREATOR VAULT 300"><img src="assets/creator-vault-300-cover.svg" alt="CREATOR VAULT 300 cover" loading="lazy" decoding="async"></a>
+      <div class="dw-product-copy">
+        <div class="dw-meta"><span>Resell-oriented pack</span><span>300 PRODUCTS</span></div>
+        <h3>CREATOR VAULT 300</h3>
+        <p>300 digital-product assets for creators who want ready-made inventory to customize, package and resell where the included license permits.</p>
+        <div class="dw-tags"><span class="dw-tag dw-tag-purple">RESELL-ORIENTED</span><span class="dw-tag">300 ASSETS</span><span class="dw-tag">LICENSE INSIDE</span></div>
+        <div class="dw-product-bottom"><strong class="dw-price">$3.99</strong><a class="dw-btn dw-btn-primary" href="creator-vault-300.html">Inspect pack ↗</a></div>
+      </div>
+    </article>
+
+    <article class="dw-product" data-dw-category="templates" data-dw-search="creator bundle 500 500 templates website design">
+      <a class="dw-product-cover" href="creator-bundle-500.html" aria-label="View CREATOR BUNDLE 500"><img src="assets/creator-bundle-500-cover.svg" alt="CREATOR BUNDLE 500 cover" loading="lazy" decoding="async"></a>
+      <div class="dw-product-copy">
+        <div class="dw-meta"><span>Template inventory</span><span>500 ASSETS</span></div>
+        <h3>CREATOR BUNDLE 500</h3>
+        <p>250 standalone website templates plus 250 editable design templates for a broader commercial template library.</p>
+        <div class="dw-tags"><span class="dw-tag">250 WEB</span><span class="dw-tag">250 DESIGN</span><span class="dw-tag">LICENSE FIRST</span></div>
+        <div class="dw-product-bottom"><strong class="dw-price">Local price</strong><a class="dw-btn dw-btn-primary" href="creator-bundle-500.html">Inspect pack ↗</a></div>
+      </div>
+    </article>
+
+    <article class="dw-product" data-dw-category="templates" data-dw-search="creator stash 700 700 templates website design svg">
+      <a class="dw-product-cover" href="creator-stash-700.html" aria-label="View CREATOR STASH 700"><img src="assets/creator-stash-700-cover.svg" alt="CREATOR STASH 700 cover" loading="lazy" decoding="async"></a>
+      <div class="dw-product-copy">
+        <div class="dw-meta"><span>Template inventory</span><span>700 ASSETS</span></div>
+        <h3>CREATOR STASH 700</h3>
+        <p>350 website templates plus 350 editable SVG design templates across business, weddings, celebrations, food, beauty and events.</p>
+        <div class="dw-tags"><span class="dw-tag">350 WEB</span><span class="dw-tag">350 DESIGN</span><span class="dw-tag">LICENSE FIRST</span></div>
+        <div class="dw-product-bottom"><strong class="dw-price">Local price</strong><a class="dw-btn dw-btn-primary" href="creator-stash-700.html">Inspect pack ↗</a></div>
+      </div>
+    </article>
+
+    <article class="dw-product" data-dw-category="templates" data-dw-search="creator arsenal 1000 1000 templates coming soon">
+      <a class="dw-product-cover" href="creator-arsenal-1000.html" aria-label="View CREATOR ARSENAL 1000"><img src="assets/creator-arsenal-1000-cover.svg" alt="CREATOR ARSENAL 1000 cover" loading="lazy" decoding="async"></a>
+      <div class="dw-product-copy">
+        <div class="dw-meta"><span>Template inventory</span><span>COMING SOON</span></div>
+        <h3>CREATOR ARSENAL 1000</h3>
+        <p>500 website templates plus 500 design templates. This drop is being prepared and is not currently available for purchase.</p>
+        <div class="dw-tags"><span class="dw-tag">500 WEB</span><span class="dw-tag">500 DESIGN</span><span class="dw-tag">NOT YET LIVE</span></div>
+        <div class="dw-product-bottom"><strong class="dw-price">COMING SOON</strong><a class="dw-btn dw-btn-ghost" href="creator-arsenal-1000.html">View drop ↗</a></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="dw-callout" style="margin-top:20px">
+    <strong>License-first wholesale.</strong>
+    <p>DEWIFY does not treat every downloadable asset as automatically resellable. The exact product license controls whether and how the files can be redistributed, modified, branded or resold.</p>
+    <div class="dw-actions"><a class="dw-btn dw-btn-primary" href="reseller.html#license">Read reseller rules ↗</a></div>
+  </div>
+
+  <div class="dw-calc">
+    <div class="dw-calc-box">
+      <span class="dw-eyebrow">RESELLER MATH / EXAMPLE</span>
+      <h3>See the gross spread.</h3>
+      <p>Enter an example customer price and your acquisition cost. This is a simple arithmetic check before platform fees, tax, ads, refunds or your own work.</p>
+      <div class="dw-input-row">
+        <input id="resale-price" type="number" min="0" step="0.01" value="19.99" aria-label="Example resale price">
+        <input id="acquisition-cost" type="number" min="0" step="0.01" value="3.99" aria-label="Acquisition cost">
+      </div>
     </div>
-
-    <div class="product-grid" id="product-grid">
-      <a class="catalog-card" href="ai-money-arc.html" data-category="ebooks" data-name="ai money arc ebook ai money learning business">
-        <div class="catalog-cover">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" role="img" aria-label="AI MONEY ARC by Marco Vex cover">
-            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7f2e9"/><stop offset=".55" stop-color="#c8963d"/><stop offset="1" stop-color="#f0d89b"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="9"/></filter></defs>
-            <rect width="1024" height="1536" fill="#080807"/><rect x="51" y="52" width="922" height="1432" fill="none" stroke="#b98a43"/>
-            <text x="512" y="90" text-anchor="middle" fill="#eee9df" font-family="Arial" font-size="18" letter-spacing="12">LEARN / BUILD / EARN / GROW</text>
-            <text x="512" y="278" text-anchor="middle" fill="#f0ede6" font-family="Georgia" font-size="34" letter-spacing="18">THE</text>
-            <text x="512" y="420" text-anchor="middle" fill="#f5f2ec" font-family="Georgia" font-size="112">AI MONEY</text>
-            <text x="512" y="547" text-anchor="middle" fill="url(#g)" font-family="Georgia" font-size="132" letter-spacing="12">ARC</text>
-            <text x="512" y="664" text-anchor="middle" fill="#ede9e0" font-family="Arial" font-size="18" letter-spacing="6">THE COMPLETE GUIDE TO LEARNING AI</text>
-            <text x="512" y="704" text-anchor="middle" fill="#ede9e0" font-family="Arial" font-size="18" letter-spacing="6">BUILDING REAL SKILLS, AND CREATING</text>
-            <text x="512" y="744" text-anchor="middle" fill="#ede9e0" font-family="Arial" font-size="18" letter-spacing="6">INCOME IN THE MODERN WORLD.</text>
-            <path d="M430 976 L478 928 L511 959 L595 870" fill="none" stroke="url(#g)" stroke-width="7"/><path d="M410 1002 L614 807" stroke="#d8ad60" stroke-width="12" opacity=".13" filter="url(#glow)"/>
-            <text x="512" y="1288" text-anchor="middle" fill="#d9bf87" font-family="Arial" font-size="16" letter-spacing="8">BY</text><text x="512" y="1346" text-anchor="middle" fill="url(#g)" font-family="Georgia" font-size="34" letter-spacing="10">MARCO VEX</text>
-          </svg>
-        </div>
-        <div class="catalog-copy">
-          <div class="catalog-meta"><span>Ebook</span><span>Drop 01</span></div>
-          <h3>AI MONEY ARC</h3>
-          <p>AI, business, skills, discipline and a 30-day implementation arc for turning knowledge into action.</p>
-          <div class="catalog-footer"><strong class="catalog-price">$2.99</strong><span class="button button-light catalog-button">View product ↗</span></div>
-        </div>
-      </a>
-
-      <a class="catalog-card" href="creator-crate-100.html" data-category="creator" data-name="creator crate 100 templates websites designs">
-        <div class="catalog-cover"><img src="assets/creator-crate-100-cover.svg" alt="CREATOR CRATE 100 cover" loading="lazy" decoding="async"></div>
-        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>100 assets</span></div><h3>CREATOR CRATE 100</h3><p>50 self-contained website templates plus 50 editable design templates in one compact creator pack.</p><div class="catalog-footer"><strong class="catalog-price">Local price</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
-      </a>
-
-      <a class="catalog-card" href="creator-vault-300.html" data-category="creator" data-name="creator vault 300 digital products resell">
-        <div class="catalog-cover"><img src="assets/creator-vault-300-cover.svg" alt="CREATOR VAULT 300 cover" loading="lazy" decoding="async"></div>
-        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>300 products</span></div><h3>CREATOR VAULT 300</h3><p>A 300-product library for creators building, packaging and reselling digital products under the included license terms.</p><div class="catalog-footer"><strong class="catalog-price">$3.99</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
-      </a>
-
-      <a class="catalog-card" href="creator-bundle-500.html" data-category="creator" data-name="creator bundle 500 templates websites designs">
-        <div class="catalog-cover"><img src="assets/creator-bundle-500-cover.svg" alt="CREATOR BUNDLE 500 cover" loading="lazy" decoding="async"></div>
-        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>500 assets</span></div><h3>CREATOR BUNDLE 500</h3><p>250 self-contained website templates plus 250 editable design templates in one creator-ready bundle.</p><div class="catalog-footer"><strong class="catalog-price">Local price</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
-      </a>
-
-      <a class="catalog-card" href="creator-stash-700.html" data-category="creator" data-name="creator stash 700 templates websites svg designs">
-        <div class="catalog-cover"><img src="assets/creator-stash-700-cover.svg" alt="CREATOR STASH 700 cover" loading="lazy" decoding="async"></div>
-        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>700 assets</span></div><h3>CREATOR STASH 700</h3><p>350 self-contained website templates plus 350 editable SVG design templates in one large stash.</p><div class="catalog-footer"><strong class="catalog-price">Local price</strong><span class="button button-light catalog-button">View product ↗</span></div></div>
-      </a>
-
-      <a class="catalog-card" href="creator-arsenal-1000.html" data-category="creator" data-name="creator arsenal 1000 templates websites designs">
-        <div class="catalog-cover"><img src="assets/creator-arsenal-1000-cover.svg" alt="CREATOR ARSENAL 1000 cover" loading="lazy" decoding="async"></div>
-        <div class="catalog-copy"><div class="catalog-meta"><span>Creator pack</span><span>Coming soon</span></div><h3>CREATOR VAULT 1000</h3><p>500 self-contained website templates plus 500 design templates for businesses, events and more. This drop is being prepared and is not available for purchase yet.</p><div class="catalog-footer"><strong class="catalog-price">COMING SOON</strong><span class="button button-ghost catalog-button">View details ↗</span></div></div>
-      </a>
+    <div class="dw-calc-box">
+      <div class="dw-math">
+        <div class="dw-metric"><span>GROSS MARGIN</span><strong id="gross-margin">$16.00</strong></div>
+        <div class="dw-metric"><span>MARGIN %</span><strong id="gross-margin-percent">80%</strong></div>
+      </div>
     </div>
+  </div>
+</section>
 
-    <div class="empty-state" id="empty-state">No products match that search.</div>
-
-    <div class="catalog-info" aria-label="Store information">
-      <div><span>FORMAT</span><strong>Digital downloads</strong></div>
-      <div><span>ACCESS</span><strong>Open a product page</strong></div>
-      <div><span>DELIVERY</span><strong>Instant after payment</strong></div>
+<section class="dw-section">
+  <div class="dw-wrap">
+    <div class="dw-callout">
+      <span class="dw-eyebrow">MORE THAN A PRODUCT PAGE</span>
+      <strong>Need the reseller workflow?</strong>
+      <p>See how to buy the inventory, read the license, customize the permitted parts and package an offer around the files.</p>
+      <div class="dw-actions"><a class="dw-btn dw-btn-primary" href="reseller.html">Open reseller desk ↗</a></div>
     </div>
-  </section>
-
-  <section class="section container" style="padding-bottom:80px">
-    <div class="coming-inner">
-      <div><p class="eyebrow">NEXT / DEWIFY</p><h2>More products.<br><span>Cleaner browsing.</span></h2></div>
-      <div><p>New ebooks can be added to the Ebooks category without rebuilding the page. Creator packs stay grouped separately so the store can grow without turning into a wall of cards.</p><a class="button button-light" href="categories.html">Browse categories ↗</a></div>
-    </div>
-  </section>
+  </div>
+</section>
 </main>
 
-<footer class="footer">
-  <div class="container footer-inner">
-    <div><a class="brand" href="index.html">DEWIFY</a><p>Digital products, upgraded.</p></div>
-    <div class="footer-links"><a href="products.html">Shop</a><a href="categories.html">Categories</a><a href="how-it-works.html">How it works</a><a href="faq.html">FAQ</a><a href="terms.html">Terms</a><a href="refund-policy.html">Refund Policy</a><a href="privacy.html">Privacy</a></div>
-    <div class="footer-contact"><span class="eyebrow">SUPPORT</span><a href="mailto:dewifystores@gmail.com">dewifystores@gmail.com ↗</a></div>
-    <span class="copyright">© 2026 DEWIFY</span>
+<footer class="dw-footer">
+  <div class="dw-wrap dw-footer-inner">
+    <div><a class="dw-brand" href="index.html">DEWIFY</a><div class="dw-footer-contact">Digital wholesale for creators, builders and resellers.</div></div>
+    <div class="dw-footer-links"><a href="products.html">Wholesale</a><a href="reseller.html">Reseller Desk</a><a href="how-it-works.html">How it works</a><a href="faq.html">FAQ</a><a href="terms.html">Terms</a><a href="refund-policy.html">Refund Policy</a><a href="privacy.html">Privacy</a></div>
+    <div class="dw-footer-contact"><span class="dw-eyebrow">SUPPORT</span><br><a href="mailto:dewifystores@gmail.com">dewifystores@gmail.com</a></div>
   </div>
 </footer>
-
-<script>
-(function(){
-  const buttons=[...document.querySelectorAll('.filter-tab')];
-  const cards=[...document.querySelectorAll('.catalog-card')];
-  const search=document.getElementById('product-search');
-  const count=document.getElementById('catalog-count');
-  const empty=document.getElementById('empty-state');
-  let filter='all';
-  function render(){
-    const q=search.value.trim().toLowerCase(); let visible=0;
-    cards.forEach(card=>{const matchFilter=filter==='all'||card.dataset.category===filter;const matchSearch=!q||card.dataset.name.includes(q);const show=matchFilter&&matchSearch;card.classList.toggle('is-hidden',!show);if(show)visible++;});
-    count.textContent=visible+' product'+(visible===1?'':'s'); empty.style.display=visible?'none':'block';
-  }
-  buttons.forEach(btn=>btn.addEventListener('click',()=>{filter=btn.dataset.filter;buttons.forEach(b=>b.classList.toggle('active',b===btn));render();}));
-  search.addEventListener('input',render); render();
-
-  const canvas=document.getElementById('starfield'); const ctx=canvas.getContext('2d'); let stars=[];
-  function resize(){canvas.width=innerWidth;canvas.height=innerHeight;stars=Array.from({length:Math.min(110,Math.floor(innerWidth/12))},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.1+.2,a:Math.random()*.55+.1}));}
-  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);for(const s of stars){ctx.globalAlpha=s.a;ctx.fillStyle='#fff';ctx.fillRect(s.x,s.y,s.r,s.r);}requestAnimationFrame(draw);}
-  addEventListener('resize',resize,{passive:true});resize();draw();
-})();
-</script>
-  <script src="local-profile.js" defer></script>
+</div>
+<script src="stars.js" defer></script>
+<script src="reseller.js" defer></script>
+<script src="local-profile.js?v=20260928-reseller" defer></script>
 </body>
 </html>
