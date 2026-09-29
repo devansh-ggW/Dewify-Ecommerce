@@ -38,15 +38,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Another main-branch commit can land while the large build runs.
-          # Rebase the checkout onto the latest main before committing the generated ZIPs.
-          git fetch origin main
-          git rebase origin/main
-
+          # Generated ZIPs are working-tree changes, so commit them first.
+          # Then rebase that local ZIP commit onto the latest main before pushing.
           git add "AI MONEY ARC.zip" "CREATOR VAULT 300.zip" "EBOOX 100.zip" "WEBBLE 100.zip" "WEBBLE 300.zip" "WEBBLE 500.zip" "WEBBLE 700.zip"
           if git diff --cached --quiet; then
             echo "ZIP files are already up to date."
             exit 0
           fi
           git commit -m "Build clean customer ZIP filenames [skip ci]"
+          git fetch origin main
+          git rebase origin/main
           git push origin HEAD:main
