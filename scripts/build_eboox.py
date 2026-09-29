@@ -21,6 +21,21 @@ PALETTES={
 "Digital Products & Creator Business":"#B56F91","Power, Leadership & Social Intelligence":"#987DBF",
 "Future Skills & Long-Term Leverage":"#6E95B8"}
 
+NEW_TITLES=["Money Lens","Cashflow First","Own the Upside","Risk Budget","Tomorrow Costs","Compound Quietly","Cost of Choice","Decision Map","Skill to Asset","Quiet Wealth","AI Workbench","Solo Stack","Context Wins","Research Desk","Friction Hunt","Agent Rules","Product Forge","Service to Software","AI Distribution","Human Edge","Market First","Narrow Moat","Fewer Bets","Constraint Power","Offer Architecture","Business Machine","Hold Position","Test the Bet","Chaos to System","Scale Clean","Buyer Map","Value First","Objection Atlas","Variable Game","Credible Close","Converting Conversations","Trust Ledger","Deal Design","Keep Customers","Protect Margin","Attention Rents","Distribution First","Content Inventory","Message Architecture","Proof Engine","Real Brand","Clear Funnel","Audience Signal","Demand Loops","Loud Signal","Problem Hunter","Pain Test","Validate for Real","Bootstrap Calendar","Micro Bets","Builder Thesis","Service to Product","Opportunity Portfolio","Decision Rules","Launch Window","Design Focus","Friction Habit","Deep Work","Consistency Contract","Learn Faster","Recovery Capacity","Execution Queue","Bad Day Systems","Boring Wins","Self Management","Productize Knowledge","Template Economy","Books That Finish","Bundle Blueprint","Price Digital","Product Ladder","Small Catalog","License Clearly","Creator Store","Asset Flywheel","Incentive Map","Lead with Clarity","Reputation Compound","Clean Boundaries","Read the Room","Information Edge","Influence with Integrity","Decision Meetings","Quiet Operator","Low Supervision","AI Native Career","Skill Stack","Own the Stack","Automation Literacy","Adaptable Builder","Asymmetric Bets","Human Difference","Long Leverage","Ten Year View","Future Manual"]
+for _r,_t in zip(ROWS,NEW_TITLES):
+    _r["title"]=_t
+    _r["thesis"]=f"{_t} turns a vague problem into a decision you can see, test and improve."
+    _r["reader"]=f"builders, creators and ambitious learners who want a practical edge in {_t.lower()}"
+    _r["problem"]=f"the common trap of treating {_t.lower()} as advice to consume instead of a system to run"
+
+
+PREMIUM_PALETTE={
+"Money Psychology":("#0C1327","#7C1F32","#B9924B"),"AI Money":("#11102A","#45206A","#AE9CF2"),
+"Business Strategy":("#0C1A25","#173D55","#B59B61"),"Sales & Negotiation":("#1B1010","#5A2020","#C39A67"),
+"Marketing & Attention":("#160F1C","#4A2149","#C4A05E"),"Entrepreneurship & Opportunity":("#0B1916","#174C3C","#B59E6C"),
+"Discipline & Self-Mastery":("#171717","#34302A","#B89F6A"),"Digital Products & Creator Business":("#180F16","#50223E","#C49A62"),
+"Power, Leadership & Social Intelligence":("#151021","#33204C","#C4A06A"),"Future Skills & Long-Term Leverage":("#0B1720","#1A3850","#B79A63")}
+
 CHAPTERS={"Money Psychology":["See the choice","Trace the trade-off","Model the downside","Build a default","Review the result","Turn learning into a rule","Protect the system","Extend the horizon"],"AI Money":["Define the work","Structure the context","Assign the machine","Install the check","Ship the result","Capture the pattern","Automate the repeat","Expand the leverage"],"Business Strategy":["Pick the field","Study the constraint","Choose the position","Design the system","Create advantage","Test the assumption","Protect the margin","Scale deliberately"],"Sales & Negotiation":["Read the buyer","Find the real value","Surface uncertainty","Structure the offer","Trade variables","Ask for the next step","Deliver evidence","Protect the relationship"],"Marketing & Attention":["Earn the first second","Clarify the idea","Build proof","Choose distribution","Create memory","Repurpose the signal","Measure meaning","Compound the library"],"Entrepreneurship & Opportunity":["Observe real work","Name the friction","Test the stakes","Build the smallest response","Watch behavior","Price the learning","Choose what to keep","Create the next bet"],"Discipline & Self-Mastery":["Design the environment","Shrink the start","Protect attention","Finish the block","Recover capacity","Review the pattern","Raise the standard","Build the default"],"Digital Products & Creator Business":["Find the outcome","Shape the product","Design the experience","Package the value","Price the offer","Distribute the asset","Improve from usage","Build the catalog"],"Power, Leadership & Social Intelligence":["Read the context","Map incentives","Clarify the outcome","Set the boundary","Choose the response","Create the record","Repair the miss","Build trust"],"Future Skills & Long-Term Leverage":["See the shift","Protect the core","Choose the skill","Build the proof","Own the asset","Automate the repeat","Expand the option set","Play the long game"]}
 
 BASE={"Money Psychology":"financial judgment improves when incentives, time, risk, and trade-offs are made explicit","AI Money":"AI becomes useful when it is embedded in repeatable workflows with good context and verification","Business Strategy":"strategy is the disciplined choice of where to compete, what to ignore, and how to create durable advantage","Sales & Negotiation":"commercial conversations improve when uncertainty, value, variables, and next steps are made visible","Marketing & Attention":"attention only becomes useful when it turns into meaning, trust, distribution, and remembered demand","Entrepreneurship & Opportunity":"new ventures improve when real problems are observed, tested cheaply, and converted into repeatable value","Discipline & Self-Mastery":"execution improves when environments, defaults, attention, recovery, and standards are deliberately designed","Digital Products & Creator Business":"digital products become valuable when they remove meaningful work and are packaged, distributed, and improved deliberately","Power, Leadership & Social Intelligence":"social effectiveness grows from understanding incentives, context, boundaries, information, and trust without reducing people to tactics","Future Skills & Long-Term Leverage":"long-term advantage comes from adaptable skills, owned assets, useful systems, and the ability to work with changing technology"}
@@ -203,8 +218,117 @@ def build_book(row,num):
     doc.build(story)
     return path
 
+
+def resale_cover(c,W,H,row,num,back=False):
+    bg,burg,accent=PREMIUM_PALETTE[row["domain"]]
+    c.setFillColor(colors.HexColor(bg)); c.rect(0,0,W,H,fill=1,stroke=0)
+    ornament(c,W,H,accent,bg)
+    if back:
+        c.setFillColor(colors.HexColor(burg)); c.rect(0,0,W,115,fill=1,stroke=0)
+        c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",7.5); c.drawString(55,H-72,"PRIVATE LABEL / RESALE EDITION")
+        c.setFillColor(colors.white); c.setFont("Times-Bold",25); c.drawString(55,H-120,row["title"])
+        c.setFillColor(colors.HexColor("#DED4C4")); c.setFont("Helvetica",9); y=H-165
+        for line in wrap_lines(c,row["thesis"],"Helvetica",9,W-110): c.drawString(55,y,line); y-=14
+        c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(55,138,"RESALE READY")
+        c.setFillColor(colors.HexColor("#DED4C4")); c.setFont("Helvetica",8); c.drawString(55,120,"Private-label edition. Rebrand the presentation before resale.")
+        return
+    c.setFillColor(colors.HexColor(burg)); c.rect(0,H*.77,W,H*.23,fill=1,stroke=0)
+    cx,cy=W-120,H-118
+    c.setStrokeColor(colors.HexColor(accent)); c.setLineWidth(1.6); c.circle(cx,cy,38,fill=0,stroke=1); c.circle(cx,cy,25,fill=0,stroke=1)
+    c.line(cx-22,cy,cx+22,cy); c.line(cx,cy-22,cx,cy+22)
+    c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",9); c.drawCentredString(cx,cy-3,"P")
+    c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",7.5); c.drawString(55,H-72,"PRIVATE LABEL / RESALE EDITION")
+    c.setFillColor(colors.HexColor("#F1E8D9")); c.setFont("Times-Bold",40); y=H*.58
+    for line in wrap_lines(c,row["title"],"Times-Bold",40,W-150): c.drawString(55,y,line); y-=47
+    c.setFillColor(colors.HexColor("#D6CCBC")); c.setFont("Helvetica",9.5); y-=6
+    for line in wrap_lines(c,SHORT_PUNCH.get(row["domain"],"Build systems that make better decisions easier."),"Helvetica",9.5,W-150): c.drawString(55,y,line); y-=14
+    c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(55,152,row["domain"].upper())
+    c.setFillColor(colors.HexColor("#D6CCBC")); c.setFont("Helvetica",7.5); c.drawString(55,130,"FIELD MANUAL  /  ORIGINAL EDITION")
+    c.setFillColor(colors.HexColor("#8D8477")); c.setFont("Helvetica",7); c.drawRightString(W-55,53,f"{num:02d}")
+
+def chapter_pages_100(c,row,ch_num,ch_title,book_num):
+    W,H=LETTER; bg,burg,accent=PREMIUM_PALETTE[row["domain"]]
+    labels=[("THE EDGE","Turn the chapter into a decision."),("THE TENSION","Name the trade-off under the surface."),("THE MODEL","Reduce the idea to a working loop."),("THE SIGNALS","Know what evidence to watch."),("THE PATTERN","Recognize the repeat before it gets expensive."),("THE COUNTERMOVE","Change the structure before adding effort."),("THE FIELD CASE","See the idea under real constraints."),("THE WORKSHEET","Force the concept onto a real situation."),("THE EXPERIMENT","Test one variable with limited downside."),("THE CHAPTER CODE","Keep the rule. Drop the noise.")]
+    for j,(kicker,desc) in enumerate(labels,1):
+        page=(ch_num-1)*10+j+4
+        page_header(c,W,H,row["domain"],row["title"],ch_num,page,accent); page_title(c,W,H,kicker,ch_title,accent)
+        c.setFillColor(colors.HexColor("#EEE5D6")); c.roundRect(54,H-247,W-108,75,10,fill=1,stroke=0)
+        c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",7); c.drawString(68,H-194,"CORE THESIS")
+        draw_para(c,row["thesis"],68,H-206,W-136,SERIF_BOLD)
+        gap=14; col=(W-108-gap)/2; top=H-268
+        bodies=[
+            (f"{desc} {row['title']} becomes useful when you can name the exact moment a choice appears, what it costs to get wrong and what small move creates clarity.",f"Start with one real example. Write what happened, what you wanted, what you expected and what actually happened. The difference is the learning surface."),
+            (f"{desc} The visible problem often sits downstream of an earlier decision. Around {row['title'].lower()}, the trade-off may be speed versus control, comfort versus growth, or certainty versus learning.","Do not pretend the trade-off disappears. Name the price of each side and choose which cost you can carry deliberately."),
+            ("Build the loop: OBSERVE -> SEPARATE -> CHOOSE -> TEST -> REVIEW.",f"Observe facts. Separate outcome from method. Choose a reversible move. Test against a signal. Review and decide whether the rule stays."),
+            ("Watch leading signals: fewer repeated errors, cleaner handoffs, lower friction, better questions, faster recovery or clearer choices.","Write the expected signal before the test. Otherwise the story changes after the result and the learning gets blurry."),
+            ("A repeat is information. Look for the same trigger, bottleneck or postponed decision appearing under different names.","When a pattern repeats three times, name it. Turn the pattern into a trigger and a default instead of rediscovering it every week."),
+            ("The countermove is usually structural: shrink scope, move the decision earlier, add a check, remove a needless choice or make the right action easier to start.","Use the smallest structural change that addresses the cause. More effort is often the least interesting variable."),
+            (f"A fictional operator faces {row['problem']}. They choose one decision, define one signal and run a short test instead of rebuilding everything.","The result is mixed. They inspect input, timing, constraint, signal, quality and review. The next test becomes sharper because the system learned."),
+            ("Worksheet: outcome, constraint, trade-off, decision, downside, signal, review date.",'Write: “When ___ happens, I will ___ because ___, and I will review it after ___.” Then write the cost of ignoring the issue for another month.'),
+            (f"Experiment: take one real case of {row['title'].lower()}. Set a baseline, change one variable, define the signal and choose a review date.","A useful result is not only success. Useful information counts. Record what surprised you and which variable you would isolate next."),
+            ("Chapter code: make the problem visible; name the trade-off; protect the downside; test before scaling; record the learning.","The goal is a dependable starting position that can be updated by evidence instead of replaced by mood.")
+        ][j-1]
+        content_block(c,54,top,col,180,"Read this",bodies[0],accent)
+        content_block(c,54+col+gap,top,col,180,"Use it",bodies[1],accent,fill="#FBF7EF")
+        c.setFillColor(colors.HexColor(burg)); c.roundRect(54,78,W-108,102,12,fill=1,stroke=0)
+        c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(70,158,"FIELD PROMPT")
+        prompts=["What decision gets easier when this chapter is explicit?","What trade-off are you paying for without naming?","Which signal tells you the rule is helping?","What evidence should stop you scaling too soon?","What pattern keeps repeating under a new name?","Which structural change could replace extra effort?","What would the operator do next, not eventually?","What sentence could become a default rule?","What can you test this week with limited downside?","What will you keep, watch and change?"]
+        c.setFillColor(colors.white); c.setFont("Times-Roman",13); c.drawString(70,128,prompts[j-1])
+        c.setFillColor(colors.HexColor("#D7CCBA")); c.setFont("Helvetica",7.4); c.drawString(70,105,"Write the answer in your own words. The goal is a decision you can actually run.")
+        c.showPage()
+
+def build_book_100(row,num):
+    path=os.path.join(BOOKS,f"{num:02d}-{re.sub(r'[^a-z0-9]+','-',row['title'].lower()).strip('-')}.pdf")
+    c=canvas.Canvas(path,pagesize=LETTER,pageCompression=1); c.setTitle(row["title"]); c.setAuthor("Private Label Resale Edition"); c.setSubject(row["thesis"])
+    W,H=LETTER; accent=PREMIUM_PALETTE[row["domain"]][2]
+    resale_cover(c,W,H,row,num,False); c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,2,accent); page_title(c,W,H,"PRIVATE LABEL READY","Own the Presentation",accent)
+    content_block(c,54,H-175,(W-122)/2,200,"Resale Edition","This book is intended as a rebrandable digital asset. Replace the title treatment, cover, author presentation and storefront copy before resale.",accent)
+    content_block(c,68+(W-122)/2,H-175,(W-122)/2,200,"Use It Well","Adapt the examples to your market. Remove third-party logos, artwork or claims you did not create or verify.",accent,fill="#FBF7EF")
+    c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,3,accent); page_title(c,W,H,"THE THESIS","The Big Idea",accent)
+    draw_para(c,row["thesis"],54,H-170,W-108,SERIF_BOLD); content_block(c,54,H-265,W-108,110,"Who this is for",row["reader"],accent); content_block(c,54,H-395,W-108,110,"The Trap",row["problem"],accent,fill="#FBF7EF"); c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,4,accent); page_title(c,W,H,"THE MAP","Read This as a System",accent)
+    steps=[("01","OBSERVE","See the real situation."),("02","SEPARATE","Name outcome, method and trade-off."),("03","CHOOSE","Pick the smallest useful move."),("04","TEST","Create evidence."),("05","REVIEW","Keep, change or retire the rule.")]
+    y=H-185
+    for n,l,d in steps:
+        c.setFillColor(colors.HexColor(PREMIUM_PALETTE[row["domain"]][1])); c.roundRect(54,y-64,W-108,50,10,fill=1,stroke=0); c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",7.5); c.drawString(70,y-34,n); c.setFillColor(colors.white); c.setFont("Helvetica-Bold",9.5); c.drawString(108,y-34,l); c.setFillColor(colors.HexColor("#E6DED2")); c.setFont("Helvetica",8); c.drawRightString(W-70,y-34,d); y-=72
+    c.showPage()
+    for ch_num,ch_title in enumerate(CHAPTERS[row["domain"]],1): chapter_pages_100(c,row,ch_num,ch_title,num)
+    app=[("DECISION AUDIT","Audit one current decision","Outcome. Constraint. Alternatives. Downside. Signal. Review date."),("FRICTION AUDIT","Find the hidden drag","List five repeated frictions. Circle the one created by a missing default or unclear handoff."),("TRADE-OFF GRID","See the real price","Write what you gain and what the choice makes harder. Choose the cost deliberately."),("DEFAULT DESIGN","Build the next default","Write trigger, action, boundary and review point."),("EXPERIMENT CARD","Run a small test","Hypothesis. Baseline. One change. Signal. Window. Stop condition."),("7-DAY SPRINT","Seven days of proof","Observe. Define. Simplify. Build. Run. Review. Standardize."),("30-DAY BUILD","Thirty days of compounding","Week 1 baseline. Week 2 repeat. Week 3 measure. Week 4 keep the strongest rule."),("FAILURE REVIEW","When it did not work","Separate bad idea from bad execution. Check input, timing, constraint, signal, quality and follow-through."),("PERSONAL CODE","Write your rules","Write five rules for starting, quality, risk, review and stopping."),("NEXT MOVE","Leave with one action","Choose one action for the next 48 hours and one review date.")]
+    for j,(k,t,b) in enumerate(app,1):
+        p=84+j; page_header(c,W,H,row["domain"],row["title"],0,p,accent); page_title(c,W,H,k,t,accent); draw_para(c,b,54,H-175,W-108,SERIF)
+        c.setStrokeColor(colors.HexColor("#CFC4B2")); c.setLineWidth(.6); yy=H-265
+        for _ in range(9): c.line(54,yy,W-54,yy); yy-=38
+        c.setFillColor(colors.HexColor(PREMIUM_PALETTE[row["domain"]][1])); c.roundRect(54,72,W-108,70,10,fill=1,stroke=0); c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(68,116,"RESALE READY"); c.setFillColor(colors.white); c.setFont("Helvetica",8); c.drawString(68,97,"Rebrand the identity before publishing under your own name."); c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,95,accent); page_title(c,W,H,"REFERENCE","Quick Reference",accent)
+    refs=[("Observe","Facts before interpretation."),("Separate","Outcome from method."),("Choose","Smallest useful move."),("Test","Signal defined first."),("Review","Date plus decision."),("Standardize","Rule worth repeating."),("Protect","Downside before upside."),("Compound","Assets and systems over time.")]
+    y=H-175
+    for i,(a,b) in enumerate(refs):
+        x=54 if i%2==0 else W/2+7; yy=y-(i//2)*88; content_block(c,x,yy,(W-122)/2,65,a,b,accent)
+    c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,96,accent); page_title(c,W,H,"CHEAT CODES","Rules Worth Keeping",accent)
+    codes=["Define done before you begin.","Name the trade-off before it names you.","Prefer reversible moves when evidence is weak.","Automate repetition; keep judgment where stakes demand it.","A visible system beats a heroic memory.","Measure the signal, not the story.","Protect the downside before chasing upside.","When the same problem repeats, change the structure."]
+    y=H-185
+    for i,code in enumerate(codes,1):
+        c.setFillColor(colors.HexColor("#EEE6D8")); c.roundRect(54,y-40,W-108,30,9,fill=1,stroke=0); c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(68,y-29,f"{i:02d}"); c.setFillColor(colors.HexColor("#2D2B29")); c.setFont("Helvetica",9.2); c.drawString(102,y-29,code); y-=48
+    c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,97,accent); page_title(c,W,H,"WATCH OUT","Failure Modes",accent)
+    fails=["Solving the symptom instead of the upstream choice.","Adding tools before defining the output.","Scaling a weak signal because the result feels exciting.","Calling a repeated pattern random for too long.","Changing too many variables in one experiment.","Confusing visible activity with useful progress.","Ignoring recovery and assuming effort is infinite."]
+    y=H-185
+    for f in fails: content_block(c,54,y,W-108,52,"Failure mode",f,accent); y-=65
+    c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,98,accent); page_title(c,W,H,"IMPLEMENT","Your Operating Map",accent)
+    for i,txt in enumerate(["Outcome","Constraint","Default","Experiment","Signal","Review","New Rule"]):
+        y=H-175-i*65; c.setFillColor(colors.HexColor(PREMIUM_PALETTE[row["domain"]][1])); c.roundRect(54,y-42,W-108,34,9,fill=1,stroke=0); c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(70,y-29,f"{i+1:02d}  {txt.upper()}"); c.setStrokeColor(colors.HexColor("#D8CDBD")); c.line(54,y-51,W-54,y-51)
+    c.showPage()
+    page_header(c,W,H,row["domain"],row["title"],0,99,accent); page_title(c,W,H,"NOTES","Make It Yours",accent); c.setStrokeColor(colors.HexColor("#CFC4B2")); c.setLineWidth(.65); y=H-175
+    for _ in range(15): c.line(54,y,W-54,y); y-=32
+    c.setFillColor(colors.HexColor(PREMIUM_PALETTE[row["domain"]][1])); c.roundRect(54,72,W-108,58,10,fill=1,stroke=0); c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(68,108,"FINAL REMINDER"); c.setFillColor(colors.white); c.setFont("Helvetica",8); c.drawString(68,90,"A framework only matters after it changes a real decision."); c.showPage()
+    resale_cover(c,W,H,row,num,True); c.showPage(); c.save(); return path
+
 files=[]
-for i,row in enumerate(ROWS,1): files.append(build_book(row,i))
+for i,row in enumerate(ROWS,1): files.append(build_book_100(row,i))
 
 index_path=os.path.join(BUILD,"EBOOX 100 - Library Index.pdf")
 idoc=SimpleDocTemplate(index_path,pagesize=LETTER,leftMargin=50,rightMargin=50,topMargin=55,bottomMargin=55,title="EBOOX 100 - Library Index")
