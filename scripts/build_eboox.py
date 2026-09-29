@@ -1,4 +1,5 @@
 import os, re, json, zipfile, shutil
+from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
