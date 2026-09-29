@@ -2,6 +2,7 @@ import os, re, json, zipfile, shutil
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib import colors
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import BaseDocTemplate, SimpleDocTemplate, PageTemplate, Frame, NextPageTemplate, Paragraph, Spacer, PageBreak, Flowable
@@ -219,6 +220,53 @@ def build_book(row,num):
     doc.build(story)
     return path
 
+
+
+SHORT_PUNCH={"Money Psychology":"Make better money decisions. Keep more options.","AI Money":"Compress work without lowering judgment.","Business Strategy":"Stop doing everything. Build the advantage that matters.","Sales & Negotiation":"Sell value. Trade variables. Protect trust.","Marketing & Attention":"Attention is rented. Meaning is the asset.","Entrepreneurship & Opportunity":"Find friction people already pay to escape.","Discipline & Self-Mastery":"Make execution easier than avoidance.","Digital Products & Creator Business":"Turn useful knowledge into assets people can use.","Power, Leadership & Social Intelligence":"Read the room. Set the frame. Keep trust.","Future Skills & Long-Term Leverage":"Build skills that get stronger as tools change."}
+
+def draw_para(c,text,x,y_top,width,style):
+    p=Paragraph(esc(text),style); w,h=p.wrap(width,1000); p.drawOn(c,x,y_top-h); return h
+
+def wrap_lines(c,text,font,size,maxw):
+    words=str(text).split(); lines=[]; cur=""
+    for word in words:
+        trial=(cur+" "+word).strip()
+        if stringWidth(trial,font,size)<=maxw: cur=trial
+        else:
+            if cur: lines.append(cur)
+            cur=word
+    if cur: lines.append(cur)
+    return lines
+
+def ornament(c,W,H,accent,deep):
+    m=28; c.setStrokeColor(colors.HexColor(accent)); c.setLineWidth(.9); c.rect(m,m,W-2*m,H-2*m,fill=0,stroke=1)
+    c.setStrokeColor(colors.HexColor("#6D604A")); c.rect(m+7,m+7,W-2*(m+7),H-2*(m+7),fill=0,stroke=1)
+    for sx,sy in [(1,1),(1,-1),(-1,1),(-1,-1)]:
+        x=m+12 if sx==1 else W-m-12; y=m+12 if sy==1 else H-m-12
+        c.circle(x,y,5,fill=0,stroke=1); c.line(x,y,x+sx*25,y); c.line(x,y,x,y+sy*25)
+
+def page_header(c,W,H,domain,title,chapter,idx,accent):
+    c.setFillColor(colors.HexColor("#F4EFE6")); c.rect(0,0,W,H,fill=1,stroke=0)
+    c.saveState(); c.setStrokeColor(colors.HexColor("#E7DECF")); c.setLineWidth(.35)
+    for x in range(int(-H),int(W),22): c.line(x,0,x+H,H)
+    c.restoreState()
+    draw_rule(c,44,H-45,W-44,accent,1.2)
+    c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",7.5); c.drawString(44,H-32,domain.upper())
+    c.setFillColor(colors.HexColor("#77736B")); c.setFont("Helvetica",7); c.drawRightString(W-44,H-32,f"CHAPTER {chapter}  /  {idx:02d}")
+    c.setFillColor(colors.HexColor("#B8A37B")); c.setFont("Helvetica",7); c.drawString(44,24,title.upper()); c.drawRightString(W-44,24,str(idx))
+
+def page_title(c,W,H,kicker,title,accent):
+    c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",7.3); c.drawString(54,H-92,kicker.upper())
+    c.setFillColor(colors.HexColor("#1B1A18")); c.setFont("Times-Bold",24)
+    lines=wrap_lines(c,title,"Times-Bold",24,W-108); y=H-127
+    for line in lines[:2]: c.drawString(54,y,line); y-=27
+    draw_rule(c,54,y+7,W-54,accent,.8)
+
+def content_block(c,x,y,w,h,title,body,accent,fill="#F8F3EA"):
+    c.setFillColor(colors.HexColor(fill)); c.roundRect(x,y-h,w,h,8,fill=1,stroke=0)
+    c.setStrokeColor(colors.HexColor("#D4C8B5")); c.setLineWidth(.6); c.roundRect(x,y-h,w,h,8,fill=0,stroke=1)
+    c.setFillColor(colors.HexColor(accent)); c.setFont("Helvetica-Bold",8); c.drawString(x+13,y-20,title.upper())
+    draw_para(c,body,x+13,y-30,w-26,BODY_SMALL)
 
 def resale_cover(c,W,H,row,num,back=False):
     bg,burg,accent=PREMIUM_PALETTE[row["domain"]]
