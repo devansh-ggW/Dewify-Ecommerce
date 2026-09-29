@@ -185,10 +185,16 @@ def education(brand,niche,sub,p,layout,seed,pages):
     return frame(brand,niche,sub,p,layout,"Curriculum",pages,"curriculum.html",body)
 
 def events(brand,niche,sub,p,layout,seed,pages):
+    slots=[("09:30","Doors / coffee"),("11:00","Opening note"),("13:15","Main session"),("16:00","Break / studio"),("19:30","Night set")]
+    rows=[]
+    for i,(t,n) in enumerate(slots):
+        rows.append(f'<div class="list-row"><span class="num">{t}</span><div><strong>{n}</strong><div class="meta">Main room · replace the details.</div></div><button class="btn" data-modal="e{i}">Info</button></div>')
+    dialogs=[]
+    for i,(t,n) in enumerate(slots):
+        dialogs.append(f'<dialog id="e{i}"><div class="eyebrow">{t}</div><h3>{n}</h3><p>Add speaker notes, access info or room details here.</p><button class="btn primary" onclick="this.closest(\'dialog\').close()">Close</button></dialog>')
     body=hero(brand,niche,sub,p,layout,seed+"ev","One calendar. No clutter.","SCHEDULE")
-    body+=f'<section class="section"><div class="wrap"><div class="list">{"".join(f"<div class=\"list-row\"><span class=\"num\">{t}</span><div><strong>{n}</strong><div class=\"meta\">Main room · replace the details.</div></div><button class=\"btn\" data-modal=\"e{i}\">Info</button></div><dialog id=\"e{i}\"><div class=\"eyebrow\">{t}</div><h3>{n}</h3><p>Add speaker notes, access info or room details here.</p><button class=\"btn primary\" onclick=\"this.closest('dialog').close()\">Close</button></dialog>" for i,(t,n) in enumerate([("09:30","Doors / coffee"),("11:00","Opening note"),("13:15","Main session"),("16:00","Break / studio"),("19:30","Night set"])) )}</div></div></section><section class="section"><div class="wrap split"><div class="card"><div class="eyebrow">Tickets</div><div class="kpi">₹1,990</div><p>Change the price and the destination.</p></div><div><div class="eyebrow">Venue</div><h2>A room that can handle a little energy.</h2><p>Add your address, accessibility notes and parking details.</p></div></div></section>'
+    body+=f'<section class="section"><div class="wrap"><div class="list>{"".join(rows)}</div>{"" .join(dialogs)}</div></section><section class="section"><div class="wrap split"><div class="card"><div class="eyebrow">Tickets</div><div class="kpi">₹1,990</div><p>Change the price and the destination.</p></div><div><div class="eyebrow">Venue</div><h2>A room that can handle a little energy.</h2><p>Add your address, accessibility notes and parking details.</p></div></div></section>'
     return frame(brand,niche,sub,p,layout,"Schedule",pages,"schedule.html",body)
-
 def business(brand,niche,sub,p,layout,seed,pages):
     body=hero(brand,niche,sub,p,layout,seed+"b","Make the useful obvious.","SERVICES")
     body+=f'<section class="section" id="work"><div class="wrap"><div class="section-head"><div><div class="eyebrow">Capabilities</div><h2>What happens next.</h2></div><p>Rename the cards without changing the structure.</p></div>{cards(["<div class=\"num\">01</div><h3>Strategy</h3><p>Clarify the offer and the one decision that matters.</p>","<div class=\"num\">02</div><h3>Direction</h3><p>Give the visual system a point of view.</p>","<div class=\"num\">03</div><h3>Execution</h3><p>Ship the thing and keep the code readable.</p>","<div class=\"num\">04</div><h3>Iteration</h3><p>Measure the signal and keep what works.</p>"],"cols-4")}</div></section><section class="section"><div class="wrap"><div class="list">{"".join(f"<div class=\"list-row\"><span class=\"num\">0{i+1}</span><div><strong>{x}</strong><div class=\"meta\">Define → build → test → launch.</div></div><span>↗</span></div>" for i,x in enumerate(["Brief","Build","Test","Launch"]))}</div></div></section>'
