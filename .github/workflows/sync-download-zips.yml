@@ -8,6 +8,7 @@ on:
       - ".github/workflows/sync-download-zips.yml"
       - "config.js"
       - "scripts/build_eboox.py"
+      - "scripts/build_webble.py"
 
 permissions:
   contents: write
@@ -29,13 +30,14 @@ jobs:
 
           python -m pip install --disable-pip-version-check -q reportlab
           python scripts/build_eboox.py
+          python scripts/build_webble.py
 
       - name: Commit clean download files
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "AI MONEY ARC.zip" "CREATOR VAULT 300.zip" "EBOOX 100.zip"
+          git add "AI MONEY ARC.zip" "CREATOR VAULT 300.zip" "EBOOX 100.zip" "WEBBLE 100.zip" "WEBBLE 300.zip" "WEBBLE 500.zip" "WEBBLE 700.zip"
           if git diff --cached --quiet; then
             echo "ZIP files are already up to date."
             exit 0
