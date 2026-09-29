@@ -84,16 +84,19 @@ window.DEWIFY_CONFIG = {
     },
     {
       id: "creator-arsenal-1000",
+      productId: "pro_01m39gv9nym8krspztnfnqfm3y",
       name: "CREATOR ARSENAL 1000",
-      version: "COMING SOON",
+      version: "DROP 06",
       category: "DIGITAL PRODUCTS",
       type: "One-time digital purchase",
       format: "500 website templates + 500 design templates",
-      status: "coming-soon",
-      downloadUrl: "",
+      priceId: "pri_01m39gxn8k1ytp2efs880wm899",
+      basePriceUsd: 7.99,
+      displayPrice: "$7.99",
+      downloadUrl: "dewify-creator-arsenal-8a9b630b156d3088c2eb058559f63d18aae70c72.zip",
       image: "assets/creator-arsenal-1000-cover.svg",
       description: "A creator-ready arsenal of 1,000 editable templates for businesses, weddings, celebrations, food, beauty, events and more.",
-      highlights: ["500 single-file website templates","500 editable design templates","HTML + CSS + JavaScript included in every website file","Business, weddings, celebrations, food, beauty and event categories","Coming soon — purchase and download are not available yet"]
+      highlights: ["500 single-file website templates","500 editable design templates","HTML + CSS + JavaScript included in every website file","Business, weddings, celebrations, food, beauty and event categories","Instant digital ZIP delivery"]
     }
   ]
 };
