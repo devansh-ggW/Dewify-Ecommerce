@@ -39,7 +39,10 @@ class Cover(Flowable):
         super().__init__()
         self.width=LETTER[0]; self.height=LETTER[1]
         self.title=title; self.subtitle=subtitle; self.back=back; self.accent=accent; self.num=num; self.domain=domain
-    def wrap(self,w,h): return self.width,self.height
+    def wrap(self,w,h):
+        self.width=w
+        self.height=h
+        return w,h
     def draw(self):
         c=self.canv; W,H=self.width,self.height
         c.setFillColor(colors.HexColor("#070707")); c.rect(0,0,W,H,fill=1,stroke=0)
