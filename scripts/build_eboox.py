@@ -3,7 +3,7 @@ from reportlab.lib.pagesizes import LETTER
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, KeepTogether, Flowable
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, NextPageTemplate, Paragraph, Spacer, PageBreak, Flowable
 
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUILD=os.path.join(ROOT,".eboox-build")
@@ -73,6 +73,30 @@ class Cover(Flowable):
 def para(text,style=body):
     return Paragraph(esc(text),style)
 
+def normal_page(canvas,doc):
+    W,H=LETTER
+    if doc.page==1:
+        canvas.saveState()
+        canvas.setFillColor(colors.HexColor("#070707"))
+        canvas.rect(0,0,W,H,fill=1,stroke=0)
+        canvas.restoreState()
+    else:
+        canvas.saveState()
+        canvas.setStrokeColor(colors.HexColor("#D9D9D9"))
+        canvas.line(52,40,W-52,40)
+        canvas.setFillColor(colors.HexColor("#777777"))
+        canvas.setFont("Helvetica",6.8)
+        canvas.drawString(52,26,"EBOOX 100 / PRIVATE DIGITAL LIBRARY")
+        canvas.drawRightString(W-52,26,str(doc.page))
+        canvas.restoreState()
+
+def back_page(canvas,doc):
+    W,H=LETTER
+    canvas.saveState()
+    canvas.setFillColor(colors.HexColor("#070707"))
+    canvas.rect(0,0,W,H,fill=1,stroke=0)
+    canvas.restoreState()
+
 def chapter_copy(row,chapter,index):
     title=row["title"]; domain=row["domain"]
     lens=chapter
@@ -88,7 +112,9 @@ def build_book(row,num):
     domain=row["domain"]; title=row["title"]; accent=PALETTES[domain]
     slug=re.sub(r"[^a-z0-9]+","-",title.lower()).strip("-")
     path=os.path.join(BOOKS,f"{num:02d}-{slug}.pdf")
-    doc=SimpleDocTemplate(path,pagesize=LETTER,leftMargin=52,rightMargin=52,topMargin=56,bottomMargin=54,title=title,author="EBOOX 100 Editorial Library")
+    doc=BaseDocTemplate(path,pagesize=LETTER,leftMargin=52,rightMargin=52,topMargin=56,bottomMargin=54,title=title,author="EBOOX 100 Editorial Library")
+    frame=Frame(doc.leftMargin,doc.bottomMargin,doc.width,doc.height,id="normal",showBoundary=0)
+    doc.addPageTemplates([PageTemplate(id="normal",frames=[frame],onPage=normal_page),PageTemplate(id="back",frames=[frame],onPage=back_page)])
     story=[Cover(title,f"{row['thesis']}\\n\\n{row['problem']}",False,accent,num,domain),PageBreak()]
     story += [para("EBOOX 100",h1),para(title,ParagraphStyle("BookTitle",parent=h2,fontSize=17,leading=21,textColor=colors.HexColor(accent))),
               para(f"Book {num:02d} of 100",small),para("Independent digital edition for the EBOOX 100 library.",small),Spacer(1,18),
@@ -170,7 +196,7 @@ def build_book(row,num):
     for x in ["Make the problem visible.","Name the trade-off.","Protect the downside.","Test before scaling.","Record what you learn."]: story.append(para(x))
     story += [PageBreak(),para("Conclusion",h1),para(f"The practical value of {title} is not in finishing a PDF. It is in having a clearer way to approach {row['problem']}. Keep the framework close to the work, use it when the decision is real, and improve it from evidence."),para("This book is one component of the EBOOX progression. It is useful alone, and it becomes more useful when its ideas connect with neighboring skills in the collection.")]
 
-    story += [PageBreak(),Cover(title,f"{row['thesis']}\\n\\nCore domain: {domain}.\\n\\nEBOOX 100 is an independently created digital library for practical thinking, building, selling, leading, and long-term leverage.",True,accent,num,domain)]
+    story += [NextPageTemplate("back"),PageBreak(),Cover(title,f"{row['thesis']}\\n\\nCore domain: {domain}.\\n\\nEBOOX 100 is an independently created digital library for practical thinking, building, selling, leading, and long-term leverage.",True,accent,num,domain)]
     doc.build(story)
     return path
 
