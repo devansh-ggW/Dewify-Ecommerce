@@ -224,6 +224,9 @@ def build_book(row,num):
 
 SHORT_PUNCH={"Money Psychology":"Make better money decisions. Keep more options.","AI Money":"Compress work without lowering judgment.","Business Strategy":"Stop doing everything. Build the advantage that matters.","Sales & Negotiation":"Sell value. Trade variables. Protect trust.","Marketing & Attention":"Attention is rented. Meaning is the asset.","Entrepreneurship & Opportunity":"Find friction people already pay to escape.","Discipline & Self-Mastery":"Make execution easier than avoidance.","Digital Products & Creator Business":"Turn useful knowledge into assets people can use.","Power, Leadership & Social Intelligence":"Read the room. Set the frame. Keep trust.","Future Skills & Long-Term Leverage":"Build skills that get stronger as tools change."}
 
+def draw_rule(c,x1,y,x2,color,lw=1):
+    c.setStrokeColor(colors.HexColor(color)); c.setLineWidth(lw); c.line(x1,y,x2,y)
+
 def draw_para(c,text,x,y_top,width,style):
     p=Paragraph(esc(text),style); w,h=p.wrap(width,1000); p.drawOn(c,x,y_top-h); return h
 
