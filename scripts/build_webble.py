@@ -193,7 +193,7 @@ def events(brand,niche,sub,p,layout,seed,pages):
     for i,(t,n) in enumerate(slots):
         dialogs.append(f'<dialog id="e{i}"><div class="eyebrow">{t}</div><h3>{n}</h3><p>Add speaker notes, access info or room details here.</p><button class="btn primary" onclick="this.closest(\'dialog\').close()">Close</button></dialog>')
     body=hero(brand,niche,sub,p,layout,seed+"ev","One calendar. No clutter.","SCHEDULE")
-    body+=f'<section class="section"><div class="wrap"><div class="list>{"".join(rows)}</div>{"" .join(dialogs)}</div></section><section class="section"><div class="wrap split"><div class="card"><div class="eyebrow">Tickets</div><div class="kpi">₹1,990</div><p>Change the price and the destination.</p></div><div><div class="eyebrow">Venue</div><h2>A room that can handle a little energy.</h2><p>Add your address, accessibility notes and parking details.</p></div></div></section>'
+    body+=f'<section class="section"><div class="wrap"><div class="list">{"".join(rows)}</div>{"".join(dialogs)}</div></section><section class="section"><div class="wrap split"><div class="card"><div class="eyebrow">Tickets</div><div class="kpi">₹1,990</div><p>Change the price and the destination.</p></div><div><div class="eyebrow">Venue</div><h2>A room that can handle a little energy.</h2><p>Add your address, accessibility notes and parking details.</p></div></div></section>'
     return frame(brand,niche,sub,p,layout,"Schedule",pages,"schedule.html",body)
 def business(brand,niche,sub,p,layout,seed,pages):
     body=hero(brand,niche,sub,p,layout,seed+"b","Make the useful obvious.","SERVICES")
