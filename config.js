@@ -5,6 +5,22 @@ window.DEWIFY_CONFIG = {
   PADDLE_CLIENT_TOKEN: "live_9fcd118aea6146c1a0052a9298a",
   products: [
     {
+      id: "eboox-100",
+      productId: "pro_01m3pe1d5shne94gbn14yh1gca",
+      name: "EBOOX 100",
+      version: "DROP 07",
+      category: "DIGITAL LEARNING",
+      type: "One-time digital purchase",
+      format: "100 original ebook PDFs + library index",
+      priceId: "pri_01m3pe35wzenwgmncw0e11cf14",
+      basePriceUsd: null,
+      displayPrice: "Local price",
+      downloadUrl: "EBOOX%20100.zip",
+      image: "assets/eboox-100-cover.svg",
+      description: "100 original ebooks across money, AI, business, sales, marketing, opportunity, discipline, digital products, leadership and long-term leverage.",
+      highlights: ["100 original ebook PDFs","Ten-domain private library","Original frameworks and exercises","7-day and 30-day implementation plans","Master library index included","Instant ZIP delivery"]
+    },
+    {
       id: "ai-money-arc",
       name: "AI MONEY ARC",
       version: "V1.0",
