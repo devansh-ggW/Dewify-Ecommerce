@@ -3,7 +3,7 @@ from reportlab.lib.pagesizes import LETTER
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
-from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, NextPageTemplate, Paragraph, Spacer, PageBreak, Flowable
+from reportlab.platypus import BaseDocTemplate, SimpleDocTemplate, PageTemplate, Frame, NextPageTemplate, Paragraph, Spacer, PageBreak, Flowable
 
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUILD=os.path.join(ROOT,".eboox-build")
