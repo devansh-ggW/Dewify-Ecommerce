@@ -48,6 +48,8 @@ h1=ParagraphStyle("H1",fontName="Helvetica-Bold",fontSize=19,leading=22,textColo
 h2=ParagraphStyle("H2",fontName="Helvetica-Bold",fontSize=11.3,leading=14,textColor=colors.HexColor("#2A2A2A"),spaceBefore=6,spaceAfter=6)
 quote=ParagraphStyle("Quote",fontName="Helvetica",fontSize=9.2,leading=13.5,leftIndent=15,borderLeftWidth=3,borderLeftColor=colors.HexColor("#777777"),borderPadding=8,textColor=colors.HexColor("#414141"),spaceAfter=10)
 
+BODY_SMALL=ParagraphStyle("BodySmall",parent=small,fontSize=8.2,leading=11.2,textColor=colors.HexColor("#5A5A5A"))
+SERIF_BOLD=ParagraphStyle("SerifBold",fontName="Times-Bold",fontSize=13.5,leading=17,textColor=colors.HexColor("#1A1A1A"))
 def esc(s):
     return str(s).replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"',"&quot;")
 
