@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500">
+<defs>
+  <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#111827"/><stop offset=".55" stop-color="#07101b"/><stop offset="1" stop-color="#02050a"/></linearGradient>
+  <linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#8fd3ff"/><stop offset="1" stop-color="#6e7cff"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1200" height="1500" fill="#05080e"/>
+<rect x="90" y="150" width="1020" height="1200" rx="26" fill="url(#dark)" stroke="#244463" stroke-width="2"/>
+<g opacity=".18" stroke="#a7d9ff" stroke-width="1">
+  <path d="M120 390H1080M120 630H1080M120 870H1080M120 1110H1080"/>
+  <path d="M330 180V1320M600 180V1320M870 180V1320"/>
+</g>
+<g filter="url(#glow)" fill="none" stroke="url(#line)">
+  <circle cx="600" cy="430" r="120" stroke-width="2"/>
+  <circle cx="600" cy="430" r="83" stroke-width="1"/>
+  <path d="M480 430h240M600 310v240M515 345l170 170M685 345L515 515" stroke-width="1.5"/>
+</g>
+<text x="600" y="225" text-anchor="middle" fill="#8fd3ff" font-family="Arial,sans-serif" font-size="18" letter-spacing="9">KORO / CREATIVE SYSTEMS</text>
+<text x="600" y="635" text-anchor="middle" fill="#f2f7ff" font-family="Arial,sans-serif" font-size="82" font-weight="700" letter-spacing="-2">KORO</text>
+<text x="600" y="684" text-anchor="middle" fill="#8fa7ba" font-family="Arial,sans-serif" font-size="18" letter-spacing="5">BRAND · DIGITAL · MOTION</text>
+<g font-family="Arial,sans-serif" fill="#e7f2ff">
+  <text x="155" y="785" font-size="22">MILA VOSS</text><text x="155" y="818" font-size="16" fill="#89a0b4">CREATIVE DIRECTOR</text>
+  <text x="155" y="900" font-size="18">+44 20 7946 0218</text><text x="155" y="936" font-size="18">studio@koro.systems</text>
+  <text x="155" y="972" font-size="18">koro.systems</text>
+</g>
+<g transform="translate(780 770)">
+  <rect width="250" height="250" fill="#0b1320" stroke="#2d78a8"/>
+  <g fill="none" stroke="#7fd2ff" stroke-width="3"><rect x="30" y="30" width="80" height="80"/><rect x="140" y="30" width="80" height="80"/><rect x="30" y="140" width="80" height="80"/><path d="M140 140h25v25h-25zM190 190h30v30h-30z"/></g>
+  <text x="125" y="285" text-anchor="middle" fill="#7ca1ba" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">NETWORK ID / 04F6</text>
+</g>
+<path d="M155 1090H1045" stroke="#315b78" stroke-width="1"/>
+<text x="155" y="1170" fill="#6f8497" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">LONDON · BERLIN · SINGAPORE</text>
+<text x="1045" y="1170" text-anchor="end" fill="#8fd3ff" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">SPEAK CLEAR. BUILD BETTER.</text>
+</svg>
