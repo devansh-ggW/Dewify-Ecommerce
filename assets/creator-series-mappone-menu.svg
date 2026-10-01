@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1300" role="img" aria-labelledby="title desc">
+<title id="title">MAPPONE — Fine Italian Cuisine</title>
+<desc id="desc">Editorial Italian restaurant menu design with a warm paper base, centered emblem, panoramic food photograph treatment and refined menu typography.</desc>
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf8f0"/><stop offset="1" stop-color="#efe8da"/></linearGradient>
+  <linearGradient id="photo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c3d36"/><stop offset=".45" stop-color="#80604f"/><stop offset=".78" stop-color="#c49a71"/><stop offset="1" stop-color="#e4ca9d"/></linearGradient>
+  <filter id="soft"><feGaussianBlur stdDeviation="22"/></filter>
+</defs>
+<rect width="1000" height="1300" fill="url(#paper)"/>
+<rect x="52" y="50" width="896" height="1200" fill="none" stroke="#2c2824" stroke-width="2"/>
+<path d="M88 90H912M88 1210H912" stroke="#c7baa2"/>
+<text x="92" y="128" fill="#5f584f" font-family="Georgia,serif" font-size="22" letter-spacing="5">MAPPONE</text>
+<text x="908" y="128" text-anchor="end" fill="#84796c" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">ROMA · MILANO · DUBAI</text>
+<circle cx="500" cy="216" r="64" fill="none" stroke="#28241f" stroke-width="2"/>
+<circle cx="500" cy="216" r="45" fill="none" stroke="#8c7a62"/>
+<path d="M500 177c14 13 20 27 20 40 0 16-8 29-20 40-12-11-20-24-20-40 0-13 7-27 20-40Z" fill="#29241f"/>
+<path d="M486 202h28M487 215h26M490 228h20" stroke="#f4eee2" stroke-width="2"/>
+<text x="500" y="304" text-anchor="middle" fill="#2b2723" font-family="Georgia,serif" font-size="18" letter-spacing="7">FINE ITALIAN CUISINE</text>
+<path d="M350 329H650" stroke="#b8aa95"/>
+<rect x="118" y="368" width="764" height="250" fill="url(#photo)"/>
+<ellipse cx="326" cy="514" rx="230" ry="80" fill="#b99069" opacity=".45" filter="url(#soft)"/>
+<ellipse cx="692" cy="452" rx="250" ry="130" fill="#edd3a7" opacity=".25" filter="url(#soft)"/>
+<path d="M118 575c90-48 170-40 242-4 86 42 179 35 270-16 85-48 165-54 252-19v82H118Z" fill="#39312c" opacity=".66"/>
+<circle cx="762" cy="426" r="52" fill="#f7ead0" opacity=".48"/>
+<path d="M725 462c18-32 35-48 62-56 17 23 25 49 25 81-25 10-53 4-87-25Z" fill="#514139" opacity=".7"/>
+<text x="145" y="408" fill="#fff7eb" font-family="Arial,sans-serif" font-size="12" letter-spacing="3" opacity=".85">EST. 1987</text>
+<text x="118" y="690" fill="#2d2925" font-family="Georgia,serif" font-size="34" letter-spacing="2">TONIGHT'S MENU</text>
+<text x="118" y="720" fill="#8a7f71" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">SEASONAL · HANDMADE · SLOW FOOD</text>
+<g font-family="Georgia,serif" fill="#34302a">
+  <text x="118" y="784" font-size="20">ANTIPASTI</text><text x="118" y="822" font-size="16">Burrata, heirloom tomato, basil oil</text><text x="880" y="822" text-anchor="end" font-size="16">18</text>
+  <text x="118" y="854" font-size="16">Crispy artichoke, lemon, pecorino</text><text x="880" y="854" text-anchor="end" font-size="16">16</text>
+  <text x="118" y="914" font-size="20">PASTA</text><text x="118" y="952" font-size="16">Tagliolini, wild mushroom, truffle butter</text><text x="880" y="952" text-anchor="end" font-size="16">24</text>
+  <text x="118" y="984" font-size="16">Rigatoni al forno, tomato, smoked mozzarella</text><text x="880" y="984" text-anchor="end" font-size="16">22</text>
+  <text x="118" y="1044" font-size="20">SECONDI</text><text x="118" y="1082" font-size="16">Charred sea bass, fennel, saffron</text><text x="880" y="1082" text-anchor="end" font-size="16">31</text>
+  <text x="118" y="1114" font-size="16">Veal milanese, rocket, lemon</text><text x="880" y="1114" text-anchor="end" font-size="16">29</text>
+</g>
+<path d="M118 1170H882" stroke="#b8aa95"/>
+<text x="118" y="1200" fill="#746a5e" font-family="Arial,sans-serif" font-size="11" letter-spacing="2">VIA DEL CORSO · RESERVATIONS RECOMMENDED</text>
+<text x="882" y="1200" text-anchor="end" fill="#746a5e" font-family="Arial,sans-serif" font-size="11" letter-spacing="2">MAPPONE.IT</text>
+</svg>
