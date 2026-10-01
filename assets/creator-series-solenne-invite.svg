@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fbf7ef"/><stop offset="1" stop-color="#efe4d5"/></linearGradient>
+  <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8e3e47"/><stop offset="1" stop-color="#c88680"/></linearGradient>
+  <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="1200" height="1500" fill="url(#bg)"/>
+<circle cx="165" cy="165" r="120" fill="#c9978d" opacity=".18" filter="url(#soft)"/>
+<circle cx="1030" cy="1320" r="150" fill="#9b6268" opacity=".14" filter="url(#soft)"/>
+<path d="M165 108c185 15 210 135 115 245M1035 1325c-175-28-196-155-90-236" fill="none" stroke="#8e3e47" stroke-width="3"/>
+<g fill="#302622" text-anchor="middle" font-family="Georgia,serif">
+  <text x="600" y="190" font-size="18" letter-spacing="7">TOGETHER WITH THEIR FAMILIES</text>
+  <text x="600" y="340" font-size="104" font-style="italic">Ava</text>
+  <text x="600" y="430" font-size="72">&amp;</text>
+  <text x="600" y="520" font-size="104" font-style="italic">Noah</text>
+  <line x1="420" y1="585" x2="780" y2="585" stroke="#8e3e47" stroke-width="2"/>
+  <text x="600" y="660" font-size="20" letter-spacing="6">REQUEST THE HONOUR OF YOUR PRESENCE</text>
+  <text x="600" y="770" font-size="52" font-weight="700">14 · OCTOBER · 2026</text>
+  <text x="600" y="835" font-size="22" letter-spacing="4">AT FIVE THIRTY IN THE EVENING</text>
+  <text x="600" y="960" font-size="34">Maison Saint-Claire</text>
+  <text x="600" y="1006" font-size="18" letter-spacing="3">THE GLASSHOUSE · LONDON</text>
+  <text x="600" y="1130" font-size="18" letter-spacing="5">DINNER · DANCING · CELEBRATION</text>
+  <text x="600" y="1320" font-size="16" letter-spacing="3">RSVP BY 10 SEPTEMBER · SOLENNE.STUDIO</text>
+</g>
+<g transform="translate(600 1200)" stroke="url(#rose)" fill="none" stroke-width="4">
+  <path d="M0-38C-55-92-108-30-54 15 0 61 0 70 0 70S0 61 54 15C108-30 55-92 0-38z"/>
+  <path d="M0 34C-20 4-53 10-58 36M0 34C20 4 53 10 58 36"/>
+</g>
+</svg>
