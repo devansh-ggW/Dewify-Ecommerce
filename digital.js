@@ -188,19 +188,49 @@
     modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("locked");
+    modal.replaceChildren();
+  };
+
+  const renderSuccessModal = (transactionId) => {
+    const modal = $("#successModal");
+    if (!modal) return null;
+
+    modal.innerHTML = `
+      <div class="scrim"></div>
+      <div class="success-panel">
+        <p class="eyebrow">PAYMENT CONFIRMED</p>
+        <h2>You're in.</h2>
+        <p class="success-lead">Your download is ready. Everything is packed into one ZIP.</p>
+        <div class="success-meta">
+          <div><span>TRANSACTION</span><strong id="successTransaction"></strong></div>
+          <div><span>PRODUCT</span><strong id="productName"></strong></div>
+        </div>
+        <div class="success-actions">
+          <a class="button button-light is-download-locked" id="downloadBook" href="#" download="AI MONEY ARC.zip" aria-disabled="true" tabindex="-1" target="_blank" rel="noopener">Download AI MONEY ARC ↗</a>
+          <button class="button button-ghost" id="closeSuccess" type="button">Close</button>
+        </div>
+        <p class="success-note">The ZIP contains both <strong>AI MONEY ARC.pdf</strong> and <strong>AI MONEY ARC - Prompt Vault.pdf</strong>.</p>
+      </div>
+    `;
+
+    const out = $("#successTransaction");
+    if (out) out.textContent = transactionId || "Completed";
+    const name = $("#productName");
+    if (name) name.textContent = product?.name || "AI MONEY ARC";
+
+    $("#closeSuccess")?.addEventListener("click", closeSuccess);
+    $("#successModal .scrim")?.addEventListener("click", closeSuccess);
+    return modal;
   };
 
   const showSuccess = (event) => {
-    const out = $("#successTransaction");
-    if (out) out.textContent = event?.data?.transaction_id || "Completed";
-
     const transactionId = event?.data?.transaction_id || "Completed";
+    const modal = renderSuccessModal(transactionId);
+    if (!modal) return;
+
     rememberDownload(transactionId);
     setDownloadLinks();
     showDownloadBar();
-
-    const modal = $("#successModal");
-    if (!modal) return;
 
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
@@ -240,7 +270,30 @@
         eventCallback: (event) => {
           if (event?.name === "checkout.completed") {
             checkoutOpen = false;
+            const paymentMethod = String(
+              event?.data?.payment?.method_details?.type ||
+              event?.data?.payment?.method_details?.kebab_type ||
+              ""
+            ).toLowerCase();
+            const checkoutStatus = String(event?.data?.status || "").toLowerCase();
+
+            // Paddle documents that deferred-capture methods can emit checkout.completed
+            // before the payment is actually captured. Do not claim success in that case.
+            if (paymentMethod === "upi" && !["paid", "completed"].includes(checkoutStatus)) {
+              setDownloadLocked();
+              setStatus("UPI payment submitted. Waiting for Paddle to confirm the payment…");
+              return;
+            }
+
             showSuccess(event);
+            return;
+          }
+
+          if (event?.name === "checkout.payment.failed" || event?.name === "checkout.payment.error") {
+            checkoutOpen = false;
+            setDownloadLocked();
+            setStatus("Payment was not completed. You can try UPI again.");
+            setBuyState(true);
             return;
           }
 
@@ -250,7 +303,6 @@
 
           if (
             event?.name === "checkout.error" ||
-            event?.name === "checkout.payment.error" ||
             event?.name === "checkout.warning"
           ) {
             checkoutOpen = false;
@@ -338,8 +390,6 @@
     });
   });
 
-  $("#closeSuccess")?.addEventListener("click", closeSuccess);
-  $("#successModal .scrim")?.addEventListener("click", closeSuccess);
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeSuccess();
   });
