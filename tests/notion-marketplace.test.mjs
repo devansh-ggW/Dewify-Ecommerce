@@ -108,7 +108,7 @@ test("every published HTML page includes the shared starfield canvas and animati
 test("homepage features Notion templates with a hero CTA and a dedicated promo strip", () => {
   const html = read("index.html");
   assert.match(html, /class="button button-light" href="notion-templates\.html">Explore templates/);
-  assert.match(html, /class="home-template-promo(?:\\s|")/);
+  assert.ok(html.includes('class="home-template-promo container"'));
   assert.match(html, /href="notion-templates\.html">Browse templates/);
 });
 
