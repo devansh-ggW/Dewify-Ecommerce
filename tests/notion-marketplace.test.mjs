@@ -88,3 +88,32 @@ test("marketplace script includes core navigation/filter/detail actions", () => 
   assert.match(source, /notion-template\.html\?slug=/);
   assert.match(source, /notion-bundle\.html\?slug=/);
 });
+
+test("every published HTML page includes the shared starfield canvas and animation", () => {
+  const pages = [
+    "404.html", "admin.html", "ai-money-arc.html", "categories.html",
+    "creator-arsenal-1000.html", "creator-bundle-500.html", "creator-crate-100.html",
+    "creator-stash-700.html", "creator-vault-300.html", "eboox-100.html", "faq.html",
+    "how-it-works.html", "index.html", "notion-bundle.html", "notion-template.html",
+    "notion-templates.html", "privacy.html", "products.html", "refund-policy.html",
+    "terms.html", "webble-100.html", "webble-300.html", "webble-500.html", "webble-700.html"
+  ];
+  for (const file of pages) {
+    const html = read(file);
+    assert.match(html, /<canvas[^>]*id="starfield"/i, file + ": starfield canvas");
+    assert.match(html, /<script[^>]+src="stars\.js(?:\?[^"]*)?"/i, file + ": starfield animation script");
+  }
+});
+
+test("homepage features Notion templates with a hero CTA and a dedicated promo strip", () => {
+  const html = read("index.html");
+  assert.match(html, /class="button button-light" href="notion-templates\.html">Explore templates/);
+  assert.match(html, /class="home-template-promo"/);
+  assert.match(html, /href="notion-templates\.html">Browse templates/);
+});
+
+test("light marketplace stylesheet keeps stars visible but subtle", () => {
+  const css = read("stars.css");
+  assert.match(css, /body\.nt-page #starfield/);
+  assert.match(css, /mix-blend-mode:multiply/);
+});
