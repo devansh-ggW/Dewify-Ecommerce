@@ -1,0 +1,25 @@
+name: Notion marketplace checks
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-marketplace-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: |
+          node --check notion-catalog.js
+          node --check notion-marketplace.js
+      - name: Run marketplace tests
+        run: node --test tests/notion-marketplace.test.mjs
