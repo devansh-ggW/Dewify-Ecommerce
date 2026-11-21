@@ -21,7 +21,7 @@ jobs:
           node-version: 20
       - name: Check JavaScript syntax
         run: |
-          node --check notion-catalog.js
           node --check notion-marketplace.js
+          node --check template-previews.js
       - name: Run marketplace tests
         run: node --test tests/notion-marketplace.test.mjs
