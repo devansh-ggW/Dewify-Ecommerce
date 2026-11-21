@@ -43,7 +43,7 @@
     button.textContent = ready ? "Buy CREATOR ARSENAL 1000 ↗" : "Currently unavailable";
   }
 
-  function setDownloadLocked(message = "Complete your purchase to unlock the CREATOR ARSENAL 1000 ZIP download.") {
+  function setDownloadLocked(message = "After Paddle confirms payment in this browser, the download link will appear here.") {
     ["#downloadVault", "#downloadPersistent"].forEach(selector => {
       const link = $(selector);
       if (!link) return;
@@ -57,7 +57,7 @@
     const title = $("#downloadStateTitle");
     const copy = $("#downloadStateCopy");
     if (label) label.textContent = "DOWNLOAD UNAVAILABLE";
-    if (title) title.textContent = hasDownload ? "Pay to unlock your download." : "Delivery file is not configured yet.";
+    if (title) title.textContent = hasDownload ? "Complete checkout to show your download link." : "Delivery file is not configured yet.";
     if (copy) copy.textContent = message;
   }
 
@@ -75,9 +75,9 @@
     const label = $("#downloadStateLabel");
     const title = $("#downloadStateTitle");
     const copy = $("#downloadStateCopy");
-    if (label) label.textContent = "DOWNLOAD READY";
+    if (label) label.textContent = "DOWNLOAD LINK READY";
     if (title) title.textContent = "Your CREATOR ARSENAL 1000 ZIP is ready.";
-    if (copy) copy.textContent = "Your payment is confirmed. Your download is unlocked.";
+    if (copy) copy.textContent = "Paddle confirmed payment in this browser. Your download link is ready.";
   }
 
   function rememberDownload(transactionId) {
@@ -190,7 +190,7 @@
     $(selector)?.addEventListener("click", async event => {
       event.preventDefault();
       const link = event.currentTarget;
-      if (link?.dataset?.ready !== "true" || !hasDownload) { setStatus("Please complete your purchase to unlock the download."); return; }
+      if (link?.dataset?.ready !== "true" || !hasDownload) { setStatus("Complete checkout in this browser to display the download link."); return; }
       link.dataset.downloading = "true"; link.setAttribute("aria-busy", "true"); link.textContent = "Preparing ZIP…";
       try { await triggerNamedDownload(product.downloadUrl, downloadFilename); setStatus("Download started — " + downloadFilename); }
       catch (error) { console.warn("Named download failed, opening the file directly:", error); window.open(product.downloadUrl, "_blank", "noopener"); setStatus("Your ZIP opened in a new tab. Save it as " + downloadFilename + "."); }
