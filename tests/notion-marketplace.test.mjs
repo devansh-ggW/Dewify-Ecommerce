@@ -14,7 +14,7 @@ test("Notion marketplace shows only the real release status", () => {
 
   assert.match(html, /No released templates yet\./);
   assert.match(html, /No Notion templates are published yet\./);
-  assert.match(html, /Only completed workspaces/);
+  assert.match(html, /actual workspace/);
   assert.doesNotMatch(html, /ntTemplateGrid|ntBundleGrid|DEMO PREVIEW|Featured templates|Curated collections/);
   assert.doesNotMatch(script, /makeWorkspacePreview|Demo listing|DEMO PREVIEW|Preview listing/);
   assert.equal(exists("notion-catalog.js"), false);
