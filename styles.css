@@ -105,3 +105,5 @@
 .home-template-copy>p:last-child{max-width:590px;margin:9px 0 0;color:var(--muted);font-size:11px;line-height:1.65}
 .home-template-promo>.button{flex:0 0 auto}
 @media(max-width:760px){.home-template-promo{align-items:stretch;flex-direction:column;gap:18px;margin-bottom:12px;padding:22px}.home-template-promo>.button{width:100%}}
+
+.download-disclosure{max-width:760px;margin:14px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px;line-height:1.65}
