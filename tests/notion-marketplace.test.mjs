@@ -15,6 +15,11 @@ test("Notion marketplace shows only the real release status", () => {
   assert.match(html, /No released templates yet\./);
   assert.match(html, /No Notion templates are published yet\./);
   assert.match(html, /actual workspace/);
+  assert.match(html, /COMING SOON/);
+  assert.match(html, /Paid release planned/);
+  assert.match(html, /notion-ecommerce-seller-dashboard\\.html/);
+  assert.ok(exists("notion-ecommerce-seller-dashboard.html"));
+  assert.ok(exists("assets/dewify-ecommerce-seller-dashboard.svg"));
   assert.doesNotMatch(html, /ntTemplateGrid|ntBundleGrid|DEMO PREVIEW|Featured templates|Curated collections/);
   assert.doesNotMatch(script, /makeWorkspacePreview|Demo listing|DEMO PREVIEW|Preview listing/);
   assert.equal(exists("notion-catalog.js"), false);
@@ -140,7 +145,7 @@ test("Customer pages include the shared starfield assets", () => {
     "creator-arsenal-1000.html", "creator-bundle-500.html", "creator-crate-100.html",
     "creator-stash-700.html", "creator-vault-300.html", "eboox-100.html", "faq.html",
     "how-it-works.html", "index.html", "notion-bundle.html", "notion-template.html",
-    "notion-templates.html", "privacy.html", "products.html", "refund-policy.html",
+    "notion-templates.html", "notion-ecommerce-seller-dashboard.html", "privacy.html", "products.html", "refund-policy.html",
     "terms.html", "webble-100.html", "webble-300.html", "webble-500.html", "webble-700.html"
   ];
   for (const file of pages) {
@@ -164,4 +169,14 @@ test("Notion page retains its light marketplace stylesheet", () => {
   assert.ok(css.includes(".nt-page"));
   assert.match(stars, /body\.nt-page #starfield/);
   assert.match(stars, /mix-blend-mode:multiply/);
+});
+
+test("Seller dashboard preview is not a public checkout or duplicate link", () => {
+  const html = read("notion-templates.html");
+  const detail = read("notion-ecommerce-seller-dashboard.html");
+  assert.match(detail, /Not available yet/);
+  assert.match(detail, /illustrative sample values/);
+  assert.match(detail, /Paid release planned/);
+  assert.doesNotMatch(html + detail, /https:\\/\\/shard-dugout-b5f\\.notion\\.site/);
+  assert.doesNotMatch(detail, /Paddle\\.Checkout\\.open|Buy now|Duplicate template/i);
 });
