@@ -200,3 +200,23 @@ test("Paid Notion release clearly documents static link limitations", () => {
   assert.match(readme, /public Notion duplication URL can be copied and shared/);
   assert.match(readme, /server-side payment verification/);
 });
+
+test("Seller dashboard uses the supplied thumbnail on catalogue and product pages", () => {
+  const loader = read("notion-thumb-loader.js");
+  const catalogue = read("notion-templates.html");
+  const detail = read("notion-ecommerce-seller-dashboard.html");
+  const fallback = read("assets/dewify-ecommerce-seller-dashboard.svg");
+
+  assert.match(loader, /assets\/thumb-parts\/part1\.txt/);
+  assert.match(loader, /assets\/thumb-parts\/part2\.txt/);
+  assert.match(loader, /assets\/thumb-parts\/part3\.txt/);
+  assert.match(loader, /base64\.length !== 8608/);
+  assert.match(catalogue, /data-dewify-seller-thumb/);
+  assert.match(detail, /data-dewify-seller-thumb/);
+  assert.ok(fallback.startsWith("<svg"));
+  for (const file of [
+    "assets/thumb-parts/part1.txt",
+    "assets/thumb-parts/part2.txt",
+    "assets/thumb-parts/part3.txt"
+  ]) assert.ok(exists(file), "missing thumbnail image data: " + file);
+});
