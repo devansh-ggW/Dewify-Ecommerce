@@ -2,67 +2,50 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
+const exists = (file) => fs.existsSync(path.join(root, file));
 
-const context = { window: {} };
-vm.runInNewContext(read("notion-catalog.js"), context, { filename: "notion-catalog.js" });
-const catalog = context.window.DEWIFY_NOTION_CATALOG;
-const expectedCategories = [
-  "Business", "Creators", "Game Development", "Digital Sellers",
-  "Productivity", "Student Life", "Personal Organization", "Freelancers"
-];
+test("Notion marketplace shows only the real release status", () => {
+  const html = read("notion-templates.html");
+  const script = read("notion-marketplace.js");
 
-test("catalogue contains the eight requested categories", () => {
-  assert.deepEqual(Array.from(catalog.categories, (item) => item.name), expectedCategories);
+  assert.match(html, /No released templates yet\./);
+  assert.match(html, /No Notion templates are published yet\./);
+  assert.match(html, /Only completed workspaces/);
+  assert.doesNotMatch(html, /ntTemplateGrid|ntBundleGrid|DEMO PREVIEW|Featured templates|Curated collections/);
+  assert.doesNotMatch(script, /makeWorkspacePreview|Demo listing|DEMO PREVIEW|Preview listing/);
+  assert.equal(exists("notion-catalog.js"), false);
 });
 
-test("template entries have unique IDs and slugs and clear demo status", () => {
-  assert.equal(catalog.products.length, 8);
-  assert.equal(new Set(catalog.products.map((item) => item.id)).size, catalog.products.length);
-  assert.equal(new Set(catalog.products.map((item) => item.slug)).size, catalog.products.length);
-  for (const item of catalog.products) {
-    assert.ok(item.name && item.description && item.longDescription);
-    assert.ok(expectedCategories.includes(item.category));
-    assert.equal(item.demo, true);
-    assert.equal(item.availability, "preview");
-    assert.equal(item.price, null);
-    assert.equal(item.paddlePriceId, "");
-    assert.equal(item.notionDuplicateUrl, "");
-    assert.ok(Array.isArray(item.features) && item.features.length);
-    assert.ok(Array.isArray(item.includedResources) && item.includedResources.length);
-  }
-});
+test("Unpublished template routes cannot claim a product is available", () => {
+  const template = read("notion-template.html");
+  const bundle = read("notion-bundle.html");
+  const script = read("notion-marketplace.js");
 
-test("bundle entries are unique and only reference known templates", () => {
-  assert.equal(catalog.bundles.length, 4);
-  assert.equal(new Set(catalog.bundles.map((item) => item.slug)).size, catalog.bundles.length);
-  const ids = new Set(catalog.products.map((item) => item.id));
-  for (const bundle of catalog.bundles) {
-    assert.equal(bundle.demo, true);
-    assert.equal(bundle.availability, "preview");
-    assert.equal(bundle.price, null);
-    assert.ok(bundle.productIds.length >= 2);
-    for (const id of bundle.productIds) assert.ok(ids.has(id), "bundle references missing product " + id);
-  }
-});
-
-test("marketplace routes reference existing stylesheets and scripts", () => {
+  assert.match(template, /This template is not published/);
+  assert.match(bundle, /This collection is not published/);
+  assert.match(script, /showUnpublishedTemplate/);
+  assert.match(script, /showUnpublishedBundle/);
+  assert.doesNotMatch(template + bundle, /Loading template preview|Loading bundle preview|Get this template|Buy now/);
   for (const file of ["notion-templates.html", "notion-template.html", "notion-bundle.html"]) {
     const html = read(file);
     assert.match(html, /notion-templates\.css/);
-    assert.match(html, /notion-catalog\.js/);
     assert.match(html, /notion-marketplace\.js/);
-  }
-  for (const file of ["assets/notion-hero-illustration.svg", "assets/notion-workspace-illustration.svg"]) {
-    assert.match(read(file), /^<svg[\s\S]*<\/svg>\s*$/);
+    assert.doesNotMatch(html, /notion-catalog\.js/);
   }
 });
 
-test("existing storefront pages link to the marketplace in both navigation and footer", () => {
+test("Notion menu remains functional on desktop and mobile layouts", () => {
+  const source = read("notion-marketplace.js");
+  for (const token of ["ntMenuToggle", "ntMobileNav", "aria-expanded", "addEventListener"]) {
+    assert.ok(source.includes(token), "missing menu behavior: " + token);
+  }
+});
+
+test("Storefront pages link to the Notion release status", () => {
   const pages = [
     "index.html", "products.html", "categories.html", "faq.html", "how-it-works.html",
     "ai-money-arc.html", "creator-arsenal-1000.html", "creator-bundle-500.html",
@@ -78,20 +61,82 @@ test("existing storefront pages link to the marketplace in both navigation and f
   }
 });
 
-test("marketplace script includes core navigation/filter/detail actions", () => {
-  const source = read("notion-marketplace.js");
-  assert.match(source, /function applyFilters\(\)/);
-  assert.match(source, /function renderTemplateDetail\(/);
-  assert.match(source, /function renderBundleDetail\(/);
-  assert.match(source, /function initMobileNavigation\(/);
-  assert.match(source, /function initSearchAndCategories\(/);
-  assert.match(source, /notion-template\.html\?slug=/);
-  assert.match(source, /notion-bundle\.html\?slug=/);
+test("Configured products and visible product cards match exactly", () => {
+  const config = read("config.js");
+  const products = read("products.html");
+  const configuredIds = [...config.matchAll(/\{id:"([^"]+)"/g)].map((match) => match[1]).sort();
+  const visibleIds = [...products.matchAll(/data-price-product="([^"]+)"/g)].map((match) => match[1]).sort();
+
+  assert.equal(configuredIds.length, 11);
+  assert.deepEqual(visibleIds, configuredIds);
+  for (const id of configuredIds) assert.ok(exists(id + ".html"), "missing product page: " + id);
 });
 
-test("every published HTML page includes the shared starfield canvas and animation", () => {
+test("Every configured customer download file exists in the repository", () => {
+  const config = read("config.js");
+  const files = [...config.matchAll(/downloadUrl:"([^"]+)"/g)].map((match) => decodeURIComponent(match[1]));
+
+  assert.equal(files.length, 11);
+  for (const file of files) assert.ok(exists(file), "missing customer download: " + file);
+});
+
+test("Product pages disclose the public static download limitation", () => {
+  const productIds = [...read("config.js").matchAll(/\{id:"([^"]+)"/g)].map((match) => match[1]);
+  const disclosure = "not protected by account based access";
+
+  assert.ok(read("products.html").toLowerCase().includes(disclosure));
+  for (const id of productIds) {
+    const html = read(id + ".html").toLowerCase();
+    assert.ok(html.includes(disclosure), id + ": missing download disclosure");
+  }
+});
+
+test("Product pages and checkout scripts have no old price or fake lock labels", () => {
+  const ids = [...read("config.js").matchAll(/\{id:"([^"]+)"/g)].map((match) => match[1]);
+  const staleCopy = /Local price|Loading local price|DOWNLOAD LOCKED|Pay to unlock|download is unlocked|DEMO PREVIEW/;
+
+  assert.doesNotMatch(read("config.js"), staleCopy);
+  assert.doesNotMatch(read("products.html"), staleCopy);
+
+  for (const id of ids) assert.doesNotMatch(read(id + ".html"), staleCopy, id + ": stale product copy");
+
+  const scripts = [
+    "digital.js", "creator-arsenal-1000.js", "creator-bundle-500.js",
+    "creator-crate-100.js", "creator-stash-700.js", "creator-vault-300.js",
+    "eboox-100.js", "webble-100.js", "webble-300.js", "webble-500.js", "webble-700.js"
+  ];
+  for (const file of scripts) assert.doesNotMatch(read(file), staleCopy, file + ": stale checkout copy");
+});
+
+test("Website example previews disclose nonfunctional contact forms", () => {
+  const previewScript = read("template-previews.js");
+  assert.match(previewScript, /sample websites, not live businesses/);
+  assert.match(previewScript, /Contact forms do not send messages/);
+  assert.doesNotMatch(previewScript, /fully working|<span>LIVE<\/span>/);
+
+  const checks = [
+    ["template-previews/01-aurora-house/contact.html", "No request was sent."],
+    ["template-previews/03-solstice/contact.html", "No reservation was sent."],
+    ["template-previews/04-orbital/contact.html", "No message was sent."]
+  ];
+  for (const [file, message] of checks) assert.ok(read(file).includes(message), file + ": missing honest form status");
+  assert.doesNotMatch(read("template-previews/03-solstice/contact.html"), /pretend the concierge/);
+});
+
+test("Fake admin order data and unused legacy storefront scripts are removed", () => {
+  const admin = read("admin.html");
+  assert.match(admin, /Order management[\s\S]*is not connected/);
+  assert.match(admin, /No order counts or revenue figures are being displayed as real data/);
+  assert.doesNotMatch(admin, /loginForm|resetData|Cloud ready|TOTAL ORDERS|demoOrders/);
+
+  for (const file of ["admin.js", "admin.css", "app.js", "product-details.js"]) {
+    assert.equal(exists(file), false, file + " should not remain");
+  }
+});
+
+test("Customer pages include the shared starfield assets", () => {
   const pages = [
-    "404.html", "admin.html", "ai-money-arc.html", "categories.html",
+    "404.html", "ai-money-arc.html", "categories.html",
     "creator-arsenal-1000.html", "creator-bundle-500.html", "creator-crate-100.html",
     "creator-stash-700.html", "creator-vault-300.html", "eboox-100.html", "faq.html",
     "how-it-works.html", "index.html", "notion-bundle.html", "notion-template.html",
@@ -101,19 +146,22 @@ test("every published HTML page includes the shared starfield canvas and animati
   for (const file of pages) {
     const html = read(file);
     assert.match(html, /<canvas[^>]*id="starfield"/i, file + ": starfield canvas");
-    assert.match(html, /<script[^>]+src="stars\.js(?:\?[^"]*)?"/i, file + ": starfield animation script");
+    assert.match(html, /<script[^>]+src="stars\.js(?:\?[^"]*)?"/i, file + ": starfield script");
   }
 });
 
-test("homepage features Notion templates with a hero CTA and a dedicated promo strip", () => {
+test("Homepage describes Notion release status honestly", () => {
   const html = read("index.html");
-  assert.match(html, /class="button button-light" href="notion-templates\.html">Explore templates/);
+  assert.match(html, /View template status/);
+  assert.match(html, /View release status/);
   assert.ok(html.includes('class="home-template-promo container"'));
-  assert.match(html, /href="notion-templates\.html">Browse templates/);
+  assert.match(html, /working duplication link will be listed/);
 });
 
-test("light marketplace stylesheet keeps stars visible but subtle", () => {
-  const css = read("stars.css");
-  assert.match(css, /body\.nt-page #starfield/);
-  assert.match(css, /mix-blend-mode:multiply/);
+test("Notion page retains its light marketplace stylesheet", () => {
+  const css = read("notion-templates.css");
+  const stars = read("stars.css");
+  assert.ok(css.includes(".nt-page"));
+  assert.match(stars, /body\.nt-page #starfield/);
+  assert.match(stars, /mix-blend-mode:multiply/);
 });
