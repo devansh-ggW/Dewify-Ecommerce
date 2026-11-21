@@ -17,7 +17,7 @@ test("Notion marketplace shows only the real release status", () => {
   assert.match(html, /actual workspace/);
   assert.match(html, /COMING SOON/);
   assert.match(html, /Paid release planned/);
-  assert.match(html, /notion-ecommerce-seller-dashboard\\.html/);
+  assert.ok(html.includes("notion-ecommerce-seller-dashboard.html"));
   assert.ok(exists("notion-ecommerce-seller-dashboard.html"));
   assert.ok(exists("assets/dewify-ecommerce-seller-dashboard.svg"));
   assert.doesNotMatch(html, /ntTemplateGrid|ntBundleGrid|DEMO PREVIEW|Featured templates|Curated collections/);
@@ -177,6 +177,7 @@ test("Seller dashboard preview is not a public checkout or duplicate link", () =
   assert.match(detail, /Not available yet/);
   assert.match(detail, /illustrative sample values/);
   assert.match(detail, /Paid release planned/);
-  assert.doesNotMatch(html + detail, /https:\\/\\/shard-dugout-b5f\\.notion\\.site/);
-  assert.doesNotMatch(detail, /Paddle\\.Checkout\\.open|Buy now|Duplicate template/i);
+  assert.equal((html + detail).includes("shard-dugout-b5f.notion.site"), false);
+  assert.equal(detail.includes("Paddle.Checkout.open"), false);
+  assert.doesNotMatch(detail, /Buy now|Duplicate template/i);
 });
