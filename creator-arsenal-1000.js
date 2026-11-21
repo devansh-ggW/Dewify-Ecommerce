@@ -144,7 +144,7 @@
       return;
     }
     setBuyState(false);
-    setStatus("Loading local price & secure checkout…");
+    setStatus("Checking Paddle checkout…");
     if (!window.Paddle) { setStatus("Paddle checkout could not load. Please refresh and try again."); return; }
     if (!token || !priceId) { setStatus("Checkout setup is incomplete. Please contact support."); return; }
     try {
@@ -168,7 +168,7 @@
         const result = await Paddle.PricePreview({ items: [{ priceId, quantity: 1 }] });
         const line = result?.data?.details?.lineItems?.[0];
         const localized = line?.formattedTotals?.total || line?.formattedUnitTotals?.total || line?.formattedTotals?.subtotal || line?.formattedUnitTotals?.subtotal;
-        if (localized) { setPrice(localized); setStatus("Local price loaded. Checkout is ready."); }
+        if (localized) { setPrice(localized); setStatus("Localized price loaded. Checkout is ready."); }
         else setStatus("Checkout is ready. Final tax and currency are confirmed in Paddle.");
       } catch (_) { setStatus("Checkout is ready. Final tax and currency are confirmed in Paddle."); }
     } catch (error) { console.error("Paddle initialization failed:", error); setStatus("Checkout error: " + (error?.message || "initialize_failed")); }
