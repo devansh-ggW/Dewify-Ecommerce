@@ -305,3 +305,20 @@ body.nt-page {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* DEWIFY prelaunch Notion product card */
+.nt-upcoming{max-width:760px;margin:20px 0 0}
+.nt-upcoming-card{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(260px,.92fr);overflow:hidden;border:1px solid var(--nt-line);border-radius:12px;background:#fff;transition:transform .2s var(--nt-ease),border-color .2s ease}
+.nt-upcoming-card:hover{transform:translateY(-2px);border-color:#c9c6c0}
+.nt-upcoming-visual{position:relative;display:block;min-width:0;overflow:hidden;aspect-ratio:16/9;background:#080808}
+.nt-upcoming-visual img{display:block;width:100%;height:100%;object-fit:cover}
+.nt-upcoming-badge{position:absolute;top:12px;left:12px;padding:6px 9px;border:1px solid rgba(255,255,255,.26);border-radius:5px;background:rgba(8,8,8,.82);color:#fff;font-size:9px;font-weight:750;letter-spacing:.1em}
+.nt-upcoming-copy{display:flex;min-width:0;flex-direction:column;justify-content:center;padding:22px}
+.nt-upcoming-meta{color:#77746e;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.nt-upcoming-copy h3{margin:9px 0 7px;font-size:clamp(19px,2.3vw,25px);line-height:1.08;letter-spacing:-.05em}
+.nt-upcoming-copy p{margin:0;color:var(--nt-muted);font-size:12px;line-height:1.6}
+.nt-upcoming-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-top:18px;padding-top:13px;border-top:1px solid #f0efec}
+.nt-upcoming-footer span{color:#79643f;font-size:10px;font-weight:650}
+.nt-upcoming-footer a{font-size:11px;font-weight:650}
+.nt-upcoming-footer a:hover{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:680px){.nt-upcoming{max-width:none}.nt-upcoming-card{grid-template-columns:1fr}.nt-upcoming-copy{padding:16px}.nt-upcoming-copy h3{font-size:21px}}
