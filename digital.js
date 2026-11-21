@@ -174,7 +174,7 @@
 
       if (localized) {
         setPrice(localized);
-        setStatus("Local price loaded. Checkout is ready.");
+        setStatus("Localized price loaded. Checkout is ready.");
       }
     } catch (error) {
       console.warn("Localized price preview failed:", error);
@@ -248,7 +248,7 @@
 
   async function init() {
     setBuyState(false);
-    setStatus("Loading local price & secure checkout…");
+    setStatus("Checking Paddle checkout…");
 
     if (!window.Paddle) {
       setStatus("Paddle checkout could not load. Please refresh and try again.");
@@ -320,7 +320,7 @@
       await setLocalizedPrice();
 
       if (!$("#checkoutStatus")?.textContent || $("#checkoutStatus").textContent.includes("Loading")) {
-        setStatus("Local price loaded. Checkout is ready.");
+        setStatus("Localized price loaded. Checkout is ready.");
       }
     } catch (error) {
       console.error("Paddle.Initialize failed:", error);
