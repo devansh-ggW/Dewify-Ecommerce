@@ -91,9 +91,9 @@
     const label = $("#downloadStateLabel");
     const title = $("#downloadStateTitle");
     const copy = $("#downloadStateCopy");
-    if (label) label.textContent = "DOWNLOAD LOCKED";
-    if (title) title.textContent = "Pay to unlock your download.";
-    if (copy) copy.textContent = "Complete your purchase to unlock the AI MONEY ARC ZIP download.";
+    if (label) label.textContent = "DOWNLOAD LINK HIDDEN";
+    if (title) title.textContent = "Complete checkout to show your download link.";
+    if (copy) copy.textContent = "After Paddle confirms payment in this browser, the download link will appear here.";
   };
 
   const setDownloadLinks = () => {
@@ -112,9 +112,9 @@
     const label = $("#downloadStateLabel");
     const title = $("#downloadStateTitle");
     const copy = $("#downloadStateCopy");
-    if (label) label.textContent = "DOWNLOAD READY";
+    if (label) label.textContent = "DOWNLOAD LINK READY";
     if (title) title.textContent = "Your AI MONEY ARC ZIP is ready.";
-    if (copy) copy.textContent = "Your payment is confirmed. Your download is unlocked.";
+    if (copy) copy.textContent = "Paddle confirmed payment in this browser. Your download link is ready.";
   };
 
   const rememberDownload = (transactionId) => {
@@ -367,7 +367,7 @@
       const link = event.currentTarget;
 
       if (link?.dataset?.ready !== "true" || !product?.downloadUrl) {
-        setStatus("Please complete your purchase to unlock the download.");
+        setStatus("Complete checkout in this browser to display the download link.");
         return;
       }
 
