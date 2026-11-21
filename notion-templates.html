@@ -5,31 +5,42 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Thoughtfully designed Notion template previews for work, creativity and everyday life by DEWIFY.">
-  <meta property="og:title" content="DEWIFY Templates — Make room for better work.">
-  <meta property="og:description" content="Explore carefully structured Notion workspace previews for business, creators, game development, productivity and more.">
-  <title>DEWIFY Templates — Make room for better work.</title>
+  <meta name="description" content="DEWIFY Notion templates. Only published workspaces with confirmed contents and working duplication links are listed.">
+  <meta property="og:title" content="DEWIFY Templates">
+  <meta property="og:description" content="Notion templates built around real workflows.">
+  <title>DEWIFY Templates</title>
   <link rel="stylesheet" href="notion-templates.css">
   <link rel="stylesheet" href="stars.css?v=20261120-2">
+  <style>
+    .nt-release-panel{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;margin-top:32px;padding:34px;border:1px solid #e8e8e8;border-radius:18px;background:#fafafa}
+    .nt-release-panel h2{margin:8px 0 12px;font-size:clamp(30px,4vw,48px);letter-spacing:-.055em;line-height:1.02}
+    .nt-release-panel p{max-width:650px;margin:0;color:#666;font-size:15px;line-height:1.7}
+    .nt-release-count{min-width:190px;padding:24px;border:1px solid #e4e4e4;border-radius:14px;background:#fff;text-align:center}
+    .nt-release-count strong{display:block;font-size:48px;line-height:1;letter-spacing:-.07em}
+    .nt-release-count span{display:block;margin-top:9px;color:#777;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+    .nt-release-note{margin-top:18px;color:#777;font-size:12px;line-height:1.65}
+    @media(max-width:700px){.nt-release-panel{grid-template-columns:1fr;padding:24px}.nt-release-count{min-width:0;text-align:left}.nt-release-count strong{font-size:38px}}
+  </style>
   <script src="notion-catalog.js" defer></script>
   <script src="notion-marketplace.js" defer></script>
 </head>
 <body class="nt-page">
-  <canvas id="starfield" aria-hidden="true"></canvas>
   <header class="nt-header">
     <div class="nt-nav">
       <a class="nt-brand" href="index.html" aria-label="dewify. home">dewify.</a>
       <nav class="nt-nav-links" aria-label="Template marketplace navigation">
-        <a href="#catalog">Templates</a><a href="#categories">Categories</a><a href="#bundles">Bundles</a><a href="#about">About</a>
+        <a href="#catalog">Templates</a>
+        <a href="#about">About</a>
       </nav>
       <div class="nt-nav-actions">
-        <button class="nt-icon-button" id="ntSearchFocus" type="button" aria-label="Focus template search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button>
-        <a class="nt-button nt-button-dark nt-nav-cta" href="#catalog">Get started</a>
+        <a class="nt-button nt-button-dark nt-nav-cta" href="products.html">Shop digital products</a>
         <button class="nt-menu-toggle" id="ntMenuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="ntMobileNav"><span></span><span></span></button>
       </div>
     </div>
-    <nav class="nt-mobile-nav" id="ntMobileNav" hidden aria-label="Mobile marketplace navigation">
-      <a href="#catalog">Templates</a><a href="#categories">Categories</a><a href="#bundles">Bundles</a><a href="#about">About</a>
+    <nav class="nt-mobile-nav" id="ntMobileNav" hidden>
+      <a href="#catalog">Templates</a>
+      <a href="#about">About</a>
+      <a href="products.html">Shop digital products</a>
     </nav>
   </header>
 
@@ -37,62 +48,59 @@
     <section class="nt-hero nt-container">
       <div class="nt-hero-copy">
         <p class="nt-eyebrow"><span class="nt-eyebrow-mark"></span> DEWIFY TEMPLATES</p>
-        <h1>Make room<br>for better work.</h1>
-        <p class="nt-hero-lead">Thoughtfully designed Notion templates for work, creativity and everyday life.</p>
-        <div class="nt-hero-actions"><a class="nt-button nt-button-dark" href="#catalog">Explore templates <span aria-hidden="true">→</span></a><span class="nt-hero-note">One clear space for what matters.</span></div>
+        <h1>Notion workspaces.<br>Only the real ones.</h1>
+        <p class="nt-hero-lead">A focused catalogue for practical Notion systems. We list a template only after its actual workspace, included content, duplication link and delivery are ready.</p>
+        <div class="nt-hero-actions">
+          <a class="nt-button nt-button-dark" href="#catalog">View release status <span aria-hidden="true">→</span></a>
+          <span class="nt-hero-note">No concept listings. No mock workspaces.</span>
+        </div>
       </div>
-      <div class="nt-hero-art"><img src="assets/notion-hero-illustration.svg" alt="Original hand-drawn illustration of a person organizing ideas at a laptop" width="760" height="520" fetchpriority="high"></div>
-    </section>
-
-    <section class="nt-container nt-discovery" aria-label="Find a template">
-      <form class="nt-search" id="ntSearchForm" role="search">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
-        <input id="ntTemplateSearch" type="search" name="q" autocomplete="off" placeholder="Search templates..." aria-label="Search templates by name, category, description or audience">
-        <button id="ntClearSearch" type="button" aria-label="Clear search" hidden>Clear</button>
-      </form>
-      <div class="nt-category-grid" id="categories" aria-label="Browse template categories">
-        <button class="nt-category-tile" type="button" data-category="Business"><span class="nt-category-icon" data-icon="business"></span><strong>Business</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
-        <button class="nt-category-tile" type="button" data-category="Creators"><span class="nt-category-icon" data-icon="creators"></span><strong>Creators</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
-        <button class="nt-category-tile" type="button" data-category="Game Development"><span class="nt-category-icon" data-icon="game"></span><strong>Game Development</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
-        <button class="nt-category-tile" type="button" data-category="Digital Sellers"><span class="nt-category-icon" data-icon="sellers"></span><strong>Digital Sellers</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
-        <button class="nt-category-tile" type="button" data-category="Productivity"><span class="nt-category-icon" data-icon="productivity"></span><strong>Productivity</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
-        <button class="nt-category-tile" type="button" data-category="Student Life"><span class="nt-category-icon" data-icon="student"></span><strong>Student Life</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
-        <button class="nt-category-tile" type="button" data-category="Personal Organization"><span class="nt-category-icon" data-icon="personal"></span><strong>Personal Organization</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
-        <button class="nt-category-tile" type="button" data-category="Freelancers"><span class="nt-category-icon" data-icon="freelance"></span><strong>Freelancers</strong><span>Explore category <b aria-hidden="true">→</b></span></button>
+      <div class="nt-hero-art" aria-label="DEWIFY template catalogue status">
+        <div class="nt-release-count"><strong>0</strong><span>Published templates</span></div>
       </div>
     </section>
 
     <section class="nt-container nt-section" id="catalog">
       <div class="nt-section-heading">
-        <div><p class="nt-section-kicker">THE COLLECTION</p><h2>Featured templates</h2><p class="nt-section-intro">A first look at the kinds of workspaces DEWIFY is building.</p></div>
-        <a class="nt-text-link" href="#catalog" id="ntViewAll">View all templates <span aria-hidden="true">→</span></a>
+        <div>
+          <p class="nt-section-kicker">CATALOGUE STATUS</p>
+          <h2>No released templates yet.</h2>
+          <p class="nt-section-intro">Unreleased ideas and illustrative workspace previews have been removed from the public catalogue.</p>
+        </div>
       </div>
-      <div class="nt-active-filters" id="ntActiveFilters" hidden><span id="ntFilterLabel"></span><button id="ntResetFilters" type="button">Clear filters</button></div>
-      <div class="nt-product-grid" id="ntTemplateGrid" aria-live="polite"><p class="nt-loading">Loading template previews...</p></div>
-      <p class="nt-result-count" id="ntTemplateCount"></p>
-    </section>
-
-    <section class="nt-container nt-bundles-section nt-section" id="bundles">
-      <div class="nt-section-heading">
-        <div><p class="nt-section-kicker">CURATED COLLECTIONS</p><h2>More room to do your thing.</h2><p class="nt-section-intro">Related workspaces, grouped around a bigger goal.</p></div>
-        <a class="nt-text-link" href="#bundles">Explore bundles <span aria-hidden="true">→</span></a>
+      <div class="nt-release-panel" id="ntTemplateGrid" aria-live="polite">
+        <div>
+          <p class="nt-section-kicker">PUBLIC RELEASE</p>
+          <h2>No Notion templates are published yet.</h2>
+          <p>Listings will appear here only when the workspace, included content, duplication link and delivery process have been checked.</p>
+          <p class="nt-release-note">This page does not currently offer a Notion template for purchase or duplication.</p>
+        </div>
+        <div class="nt-release-count"><strong>0</strong><span>Available now</span></div>
       </div>
-      <div class="nt-bundle-grid" id="ntBundleGrid"><p class="nt-loading">Loading bundle previews...</p></div>
-    </section>
-
-    <section class="nt-promo nt-container">
-      <div class="nt-promo-copy"><p class="nt-section-kicker">A CALMER WAY TO WORK</p><h2>Everything you need,<br>in one workspace.</h2><p>Bring projects, plans and the small details of everyday work into a space that feels clear and easy to return to.</p><a href="#catalog" class="nt-text-link">Find your starting point <span aria-hidden="true">→</span></a></div>
-      <div class="nt-promo-art"><img src="assets/notion-workspace-illustration.svg" alt="Original hand-drawn illustration of an organized workspace" width="760" height="440" loading="lazy"></div>
+      <p class="nt-result-count" id="ntTemplateCount">No released templates</p>
     </section>
 
     <section class="nt-about nt-container" id="about">
-      <p class="nt-section-kicker">ABOUT DEWIFY TEMPLATES</p>
-      <div><h2>Less time setting things up.<br>More time making progress.</h2><p>DEWIFY Templates is a focused collection for people who want a useful starting point—not another complicated system to maintain. Every listing will explain what is included, who it is for and how to make it your own.</p></div>
+      <p class="nt-section-kicker">THE DEWIFY STANDARD</p>
+      <div>
+        <h2>Real workspaces.<br>Clear expectations.</h2>
+        <p>Every published listing must point to a real Notion workspace and explain what is included, who it is for, any setup requirements and how delivery works. Draft concepts stay off the customer site.</p>
+      </div>
     </section>
   </main>
 
   <footer class="nt-footer">
-    <div class="nt-footer-main"><div><a class="nt-brand" href="index.html">dewify.</a><p>Thoughtfully made digital products.</p></div><div class="nt-footer-links"><a href="notion-templates.html">Templates</a><a href="#categories">Categories</a><a href="#bundles">Bundles</a><a href="products.html">All DEWIFY products</a><a href="terms.html">Terms</a><a href="refund-policy.html">Refund policy</a><a href="privacy.html">Privacy</a></div><div class="nt-footer-contact"><span>QUESTIONS?</span><a href="mailto:dewifystores@gmail.com">dewifystores@gmail.com</a></div></div>
+    <div class="nt-footer-main">
+      <div><a class="nt-brand" href="index.html">dewify.</a><p>Thoughtfully made digital products.</p></div>
+      <div class="nt-footer-links">
+        <a href="notion-templates.html">Templates</a>
+        <a href="products.html">All DEWIFY products</a>
+        <a href="terms.html">Terms</a>
+        <a href="refund-policy.html">Refund policy</a>
+        <a href="privacy.html">Privacy</a>
+      </div>
+      <div class="nt-footer-contact"><span>QUESTIONS?</span><a href="mailto:dewifystores@gmail.com">dewifystores@gmail.com</a></div>
+    </div>
     <div class="nt-footer-bottom"><span>© 2026 DEWIFY</span><span>Made for better work.</span></div>
   </footer>
   <script src="stars.js?v=20261120-2" defer></script>
