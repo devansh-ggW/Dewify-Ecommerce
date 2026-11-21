@@ -17,6 +17,7 @@ test("Notion marketplace shows only the real release status", () => {
   assert.match(html, /actual workspace/);
   assert.match(html, /FREE TEST RELEASE/);
   assert.match(html, /Free during testing/);
+  assert.doesNotMatch(html, /Available templates|Available now|nt-release-count/);
   assert.doesNotMatch(html, /COMING SOON|Paid release planned/);
   assert.ok(html.includes("notion-ecommerce-seller-dashboard.html"));
   assert.ok(exists("notion-ecommerce-seller-dashboard.html"));
