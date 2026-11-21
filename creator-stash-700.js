@@ -186,7 +186,7 @@
 
   async function initPaddle() {
     setBuyState(false);
-    setStatus("Loading local price & secure checkout…");
+    setStatus("Checking Paddle checkout…");
 
     if (!window.Paddle) {
       setStatus("Paddle checkout could not load. Please refresh and try again.");
@@ -249,7 +249,7 @@
 
         if (localized) {
           setPrice(localized);
-          setStatus("Local price loaded. Checkout is ready.");
+          setStatus("Localized price loaded. Checkout is ready.");
         } else {
           setStatus("Checkout is ready. Final total is confirmed in Paddle.");
         }
