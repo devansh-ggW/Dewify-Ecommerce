@@ -23,7 +23,7 @@ window.DEWIFY_CONFIG = {
   const productPages = new Set(["creator-crate-100.html","creator-vault-300.html","creator-bundle-500.html","creator-stash-700.html","creator-arsenal-1000.html","webble-100.html","webble-300.html","webble-500.html","webble-700.html"]);
   if (!productPages.has(file) || document.querySelector('script[data-dewify-template-previews]')) return;
   const script = document.createElement("script");
-  script.src = "template-previews.js?v=20261001-1";
+  script.src = "template-previews.js?v=20261121-1";
   script.defer = true;
   script.dataset.dewifyTemplatePreviews = "true";
   document.head.appendChild(script);
