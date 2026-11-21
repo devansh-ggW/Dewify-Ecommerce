@@ -17,8 +17,7 @@ test("Notion marketplace shows only the real release status", () => {
   assert.match(html, /actual workspace/);
   assert.match(html, /FREE TEST RELEASE/);
   assert.match(html, /Free during testing/);
-  assert.match(html, /COMING SOON/);
-  assert.match(html, /Paid release planned/);
+  assert.doesNotMatch(html, /COMING SOON|Paid release planned/);
   assert.ok(html.includes("notion-ecommerce-seller-dashboard.html"));
   assert.ok(exists("notion-ecommerce-seller-dashboard.html"));
   assert.ok(exists("assets/dewify-ecommerce-seller-dashboard.svg"));
@@ -163,7 +162,7 @@ test("Homepage describes Notion release status honestly", () => {
   assert.match(html, /Get free template/);
   assert.match(html, /available free during testing/);
   assert.ok(html.includes('class="home-template-promo container"'));
-  assert.match(html, /working duplication link will be listed/);
+  assert.match(html, /The DEWIFY Ecommerce Seller Dashboard is available free during testing/);
 });
 
 test("Notion page retains its light marketplace stylesheet", () => {
