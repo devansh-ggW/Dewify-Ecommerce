@@ -5,9 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Preview the DEWIFY Ecommerce Seller Dashboard Notion template. Paid release planned. Not yet available to purchase or duplicate.">
+  <meta name="description" content="Get the DEWIFY Ecommerce Seller Dashboard Notion template free during the testing release.">
   <meta property="og:title" content="DEWIFY Ecommerce Seller Dashboard">
-  <meta property="og:description" content="A Notion workspace for organizing ecommerce operations. Paid release planned.">
+  <meta property="og:description" content="A Notion workspace for organizing ecommerce operations. Free during testing.">
   <title>DEWIFY Ecommerce Seller Dashboard | Coming Soon</title>
   <link rel="stylesheet" href="notion-templates.css?v=20261121-3">
   <link rel="stylesheet" href="stars.css?v=20261120-2">
@@ -22,6 +22,11 @@
     .nt-seller-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#c8953d}
     .nt-seller-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:19px}
     .nt-seller-cta-note{color:#77746e;font-size:11px}
+
+    .nt-seller-price{margin-top:14px;color:#77746e;font-size:11px}
+    .nt-seller-price strong{color:#171717;font-size:14px}
+    .nt-seller-checkout-status{min-height:18px;margin:7px 0 0;color:#77746e;font-size:11px;line-height:1.5}
+    .nt-seller-cta button:disabled{opacity:.6;cursor:not-allowed}
     .nt-seller-includes{padding-top:58px}
     .nt-seller-includes h2{margin:0;font-size:clamp(27px,3vw,34px);letter-spacing:-.06em}
     .nt-seller-includes-intro{max-width:650px;margin:9px 0 20px;color:#666;font-size:13px;line-height:1.65}
@@ -67,11 +72,13 @@
         <p class="nt-section-kicker">DEWIFY / NOTION TEMPLATE</p>
         <h1>Ecommerce Seller Dashboard</h1>
         <p class="nt-seller-lead">A structured Notion workspace for keeping ecommerce operations organized, with a business dashboard, customer records and setup guidance.</p>
-        <span class="nt-seller-status">Coming soon · Paid release planned</span>
+        <span class="nt-seller-status">Free testing release · No payment needed</span>
         <div class="nt-seller-cta">
-          <span class="nt-button nt-button-dark" aria-disabled="true">Not available yet</span>
-          <span class="nt-seller-cta-note">Checkout and customer delivery are not enabled yet.</span>
+          <button class="nt-button nt-button-dark" id="sellerPrimaryAction" type="button">Preparing free access…</button>
+          <span class="nt-seller-cta-note">Free during testing. No checkout required.</span>
         </div>
+        <div class="nt-seller-price">Current price: <strong id="sellerReleasePrice">Free during testing</strong></div>
+        <p class="nt-seller-checkout-status" id="sellerCheckoutStatus" role="status" aria-live="polite">Loading access details…</p>
       </div>
       <figure class="nt-seller-art">
         <img src="assets/dewify-ecommerce-seller-dashboard.svg" alt="DEWIFY Ecommerce Seller Dashboard promotional thumbnail" width="840" height="472" fetchpriority="high">
@@ -90,7 +97,7 @@
         <article class="nt-seller-item"><small>05 / SETUP</small><h3>AI Assistant Setup</h3><p>Setup guidance for connecting and using an AI assistant with the workspace.</p></article>
       </div>
       <aside class="nt-seller-disclosure">
-        <strong>Preview disclosure:</strong> The figures visible in the promotional thumbnail are illustrative sample values, not real store data or live analytics. This page is a product preview only. The template is not currently available to purchase or duplicate, and no private Notion link is exposed here.
+        <strong>Release note:</strong> The figures shown in the promotional thumbnail are illustrative sample values, not real store data or live analytics. This is the free testing release. The Open in Notion link leads to the shared workspace; Notion must allow public access and duplication for visitors to make their own copy. A paid release is planned after testing.
       </aside>
     </section>
   </main>
@@ -110,6 +117,8 @@
     <div class="nt-footer-bottom"><span>© 2026 DEWIFY</span><span>Made for better work.</span></div>
   </footer>
   <script src="notion-marketplace.js?v=20261121-3" defer></script>
+  <script src="config.js?v=20261121-4" defer></script>
+  <script src="notion-seller-dashboard.js?v=20261121-1" defer></script>
   <script src="stars.js?v=20261120-2" defer></script>
 </body>
 </html>
