@@ -28,3 +28,6 @@ nav{display:grid;gap:5px}.nav-item,.store-link,.reset-link{border:0;background:n
 .auth-screen{position:fixed;inset:0;background:#080808;display:grid;place-items:center;z-index:100;padding:20px}.auth-screen[hidden]{display:none}.auth-card{width:min(410px,100%);border:1px solid #242424;background:#101010;border-radius:18px;padding:28px;box-shadow:0 30px 100px rgba(0,0,0,.55)}.auth-card .brand{padding:0 0 28px}.auth-card h2{font-size:28px;letter-spacing:-.05em;margin:7px 0}.auth-card p{color:#777;font-size:11px;margin:0 0 20px}.auth-card form{display:grid;gap:9px}.auth-card input{width:100%;background:#0b0b0b;border:1px solid #272727;border-radius:9px;color:#eee;padding:12px;outline:none;font-size:12px}.auth-card input:focus{border-color:#555}.login-error{color:#ff8e8e;font-size:10px;min-height:15px}
 
 .notify-toggle{border:1px solid var(--line);background:#121212;color:#aaa;border-radius:8px;padding:8px 10px;font:9px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.04em}.notify-toggle:hover{background:#1b1b1b;color:#eee}.notify-toggle.enabled{color:#b9d1b3;border-color:#304030}
+
+/* DEWIFY wordmark refresh */
+.brand-wordmark{display:flex;flex-direction:column;gap:3px}.brand-wordmark strong{font-size:25px;font-weight:850;letter-spacing:-.075em;text-transform:none}.brand-wordmark span{font-size:9px;letter-spacing:.18em}
