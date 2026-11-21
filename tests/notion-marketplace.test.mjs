@@ -12,9 +12,11 @@ test("Notion marketplace shows only the real release status", () => {
   const html = read("notion-templates.html");
   const script = read("notion-marketplace.js");
 
-  assert.match(html, /No released templates yet\./);
-  assert.match(html, /No Notion templates are published yet\./);
+  assert.match(html, /One template is available during testing\./);
+  assert.match(html, /Free testing access is now open\./);
   assert.match(html, /actual workspace/);
+  assert.match(html, /FREE TEST RELEASE/);
+  assert.match(html, /Free during testing/);
   assert.match(html, /COMING SOON/);
   assert.match(html, /Paid release planned/);
   assert.ok(html.includes("notion-ecommerce-seller-dashboard.html"));
@@ -157,8 +159,9 @@ test("Customer pages include the shared starfield assets", () => {
 
 test("Homepage describes Notion release status honestly", () => {
   const html = read("index.html");
-  assert.match(html, /View template status/);
-  assert.match(html, /View release status/);
+  assert.match(html, /Get free Notion template/);
+  assert.match(html, /Get free template/);
+  assert.match(html, /available free during testing/);
   assert.ok(html.includes('class="home-template-promo container"'));
   assert.match(html, /working duplication link will be listed/);
 });
@@ -171,13 +174,30 @@ test("Notion page retains its light marketplace stylesheet", () => {
   assert.match(stars, /mix-blend-mode:multiply/);
 });
 
-test("Seller dashboard preview is not a public checkout or duplicate link", () => {
+test("Seller dashboard is released free and wired to its shared Notion URL", () => {
   const html = read("notion-templates.html");
   const detail = read("notion-ecommerce-seller-dashboard.html");
-  assert.match(detail, /Not available yet/);
+  const config = read("config.js");
+  const script = read("notion-seller-dashboard.js");
+
+  assert.match(html, /FREE TEST RELEASE/);
+  assert.match(detail, /Free testing release/);
+  assert.match(detail, /sellerPrimaryAction/);
+  assert.match(detail, /sellerCheckoutStatus/);
   assert.match(detail, /illustrative sample values/);
-  assert.match(detail, /Paid release planned/);
-  assert.equal((html + detail).includes("shard-dugout-b5f.notion.site"), false);
-  assert.equal(detail.includes("Paddle.Checkout.open"), false);
-  assert.doesNotMatch(detail, /Buy now|Duplicate template/i);
+  assert.match(config, /releaseMode: "free"/);
+  assert.match(config, /priceId: ""/);
+  assert.ok(config.includes("https://shard-dugout-b5f.notion.site/DEWIFY-Ecommerce-Seller-Dashboard-Customer-Template-41e57ad7b0818134a254d01e0c4ba0ba?pvs=73"));
+  assert.match(script, /mode === "free"/);
+  assert.match(script, /mode === "paid"/);
+  assert.match(script, /Paddle\.Checkout\.open/);
+  assert.match(script, /PADDLE_CLIENT_TOKEN/);
+  assert.doesNotMatch(script, /PADDLE_API_KEY|PADDLE_SECRET_KEY/);
+});
+
+test("Paid Notion release clearly documents static link limitations", () => {
+  const readme = read("README.md");
+  assert.match(readme, /Never put a Paddle API secret/);
+  assert.match(readme, /public Notion duplication URL can be copied and shared/);
+  assert.match(readme, /server-side payment verification/);
 });
