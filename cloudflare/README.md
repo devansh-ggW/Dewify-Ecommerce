@@ -37,7 +37,7 @@ The production defaults in `wrangler.toml` include the known Paddle product and 
 - `STORE_ORIGIN`: exact storefront origin, currently `https://dewify.shop`.
 - `PADDLE_ENVIRONMENT`: `production`.
 - `PADDLE_PRODUCT_ID` and `PADDLE_PRICE_ID`: the matching live IDs.
-- `PRODUCT_OBJECT_KEY` and `BOOK_COVER_OBJECT_KEY`: the exact R2 object keys.
+- `PRODUCT_OBJECT_KEY`: the exact private PDF object key.
 - `MAX_DOWNLOADS`: defaults to `5`.
 
 Add `PADDLE_WEBHOOK_SECRET` as a **Worker secret**, not a variable committed to Git. Copy the endpoint secret from the matching Paddle notification destination.
