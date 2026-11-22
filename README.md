@@ -44,16 +44,14 @@ The page loads Paddle checkout only when its release mode is set to `paid`. In f
 **Paid delivery limitation:** this is a static GitHub Pages site. A browser-only Paddle callback is not server-side payment verification, and a public Notion duplication URL can be copied and shared. Before charging customers, add a backend that verifies Paddle webhooks and design the delivery flow around that limitation. Do not treat the frontend switch as access protection.
 
 
-## THE ECOM GAMBIT payment and delivery
+## THE ECOM GAMBIT checkout and download
 
-THE ECOM GAMBIT keeps its own Paddle product and price configuration in `config.js`. Its browser checkout flow is provider-neutral and expects a separate server-side fulfillment API.
+THE ECOM GAMBIT uses the same browser-side Paddle checkout and public static download pattern as the existing DEWIFY products. Its Paddle product and price IDs and download URL are stored in `config.js`.
 
-The DEWIFY storefront is hosted as a static GitHub Pages site. GitHub Pages cannot receive Paddle webhooks, verify payment signatures, maintain private purchase entitlements, or securely stream a private PDF. Therefore **THE ECOM GAMBIT checkout stays disabled** while no non-Cloudflare fulfillment host has been selected and deployed.
+The product page checks that `THE ECOM GAMBIT.pdf` exists at the site root before enabling checkout. Upload the PDF with that exact filename to the repository root before accepting purchases.
 
-The frontend expects:
-- `POST /webhooks/paddle` to receive and verify signed `transaction.completed` notifications.
-- `POST /api/download` to verify a transaction ID and one-time delivery nonce against a server-side entitlement, then stream the PDF from private storage.
+After Paddle emits `checkout.completed` in the browser, the page reveals the download link and saves the ready state in local storage. The page also avoids unlocking the file while Paddle reports a deferred UPI payment as pending.
 
-Set `PADDLE_FULFILLMENT_API_URL` only after that backend is deployed and tested. Keep the PDF, Paddle API keys, and webhook destination secret off GitHub Pages and out of browser code. A browser `checkout.completed` callback is not proof of payment.
+**Delivery limitation:** this is the legacy DEWIFY delivery model. The PDF is a public GitHub Pages file, and its URL can be used directly by anyone who discovers it. A browser callback and local storage flag are not server-side payment verification. Do not describe this as private or protected fulfilment.
 
-See [PADDLE-SETUP.md](PADDLE-SETUP.md) for the provider-neutral backend contract and release checklist. No Cloudflare deployment or account is required by this repository.
+Never put a Paddle API key or notification destination secret in frontend code. A secure private download flow would need a separate webhook-verifying backend, which is not part of this setup.
