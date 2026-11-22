@@ -9,7 +9,6 @@ PADDLE_ENVIRONMENT = "production"
 PADDLE_PRODUCT_ID = "pro_01m81azb8jnb4ejrhbmxnyedfv"
 PADDLE_PRICE_ID = "pri_01m81b57jng4gsnnbnv2fte0cz"
 PRODUCT_OBJECT_KEY = "the-ecom-gambit-structure-edition.pdf"
-BOOK_COVER_OBJECT_KEY = "the-ecom-gambit-cover.jpg"
 MAX_DOWNLOADS = "5"
 
 [[d1_databases]]

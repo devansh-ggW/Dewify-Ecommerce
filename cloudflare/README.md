@@ -1,6 +1,6 @@
 # THE ECOM GAMBIT — secure Paddle fulfillment
 
-This Worker is the server-side part of the GitHub Pages storefront. It verifies Paddle notifications and streams the PDF from a **private** Cloudflare R2 bucket. It does not publish the PDF in the Git repository.
+This Worker is the server-side part of the GitHub Pages storefront. It verifies Paddle notifications and streams the PDF from a **private** Cloudflare R2 bucket. The cover is a public static image in the GitHub Pages assets folder; the PDF is never committed to Git.
 
 ## What it does
 
@@ -9,7 +9,6 @@ This Worker is the server-side part of the GitHub Pages storefront. It verifies 
 - Stores the transaction entitlement and a SHA-256 hash of the nonce in D1. It does not store the raw nonce or customer billing details.
 - Requires the transaction ID and nonce for a download request, then streams the private R2 object without exposing an R2 URL.
 - Limits a verified order to five download attempts by default.
-- Serves the public cover image through `GET /cover`; only the PDF remains private.
 
 A browser checkout event never grants access. The only entitlement writer is the signed server-side webhook handler.
 
@@ -23,12 +22,11 @@ Create these resources in the Cloudflare account that will own the Worker:
    - `DB` → the D1 database.
    - `BOOK_FILES` → the private R2 bucket.
 
-Upload the supplied files into R2 with these exact object keys:
+Upload the supplied PDF into R2 with this exact object key:
 
 | Object key | Content type | Access |
 | --- | --- | --- |
 | `the-ecom-gambit-structure-edition.pdf` | `application/pdf` | Private, Worker only |
-| `the-ecom-gambit-cover.jpg` | `image/jpeg` | Served by the Worker's public `/cover` route |
 
 Apply `migrations/0001_orders.sql` to the D1 database before accepting webhooks.
 

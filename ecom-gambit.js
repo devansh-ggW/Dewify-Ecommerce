@@ -36,17 +36,6 @@
     return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
   }
 
-  function loadCover() {
-    const cover = $("#bookCover");
-    const fallback = $("#coverFallback");
-    if (!cover || !fallback || !apiBase) return;
-    cover.src = apiBase + "/cover";
-    cover.addEventListener("load", () => {
-      cover.hidden = false;
-      fallback.hidden = true;
-    }, { once: true });
-  }
-
   function readPending() {
     try {
       const value = JSON.parse(sessionStorage.getItem(pendingKey) || "null");
@@ -264,7 +253,6 @@
 
   $("#checkDelivery")?.addEventListener("click", checkDelivery);
 
-  loadCover();
   const pending = readPending();
   if (pending?.transactionId) {
     showDeliveryPanel("A completed checkout was found in this tab. Verify the server-side payment record to prepare the PDF.");

@@ -164,22 +164,6 @@ async function handleDownload(request, env) {
   return new Response(pdf.body, { status: 200, headers });
 }
 
-async function handleCover(request, env) {
-  if (!env.BOOK_FILES || !env.BOOK_COVER_OBJECT_KEY) {
-    return new Response("Cover is not configured.", { status: 404 });
-  }
-  const cover = await env.BOOK_FILES.get(env.BOOK_COVER_OBJECT_KEY);
-  if (!cover) return new Response("Cover not found.", { status: 404 });
-
-  const headers = new Headers();
-  cover.writeHttpMetadata(headers);
-  headers.set("Content-Type", "image/jpeg");
-  headers.set("Cache-Control", "public, max-age=86400");
-  headers.set("X-Content-Type-Options", "nosniff");
-  headers.set("Access-Control-Allow-Origin", "*");
-  return new Response(cover.body, { status: 200, headers });
-}
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -187,10 +171,6 @@ export default {
 
     if (path === "/health" && request.method === "GET") {
       return json({ status: "ok", service: "dewify-paddle-fulfillment" });
-    }
-
-    if (path === "/cover" && request.method === "GET") {
-      return handleCover(request, env);
     }
 
     if (path === "/webhooks/paddle" && request.method === "POST") {

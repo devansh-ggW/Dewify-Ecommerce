@@ -14,11 +14,6 @@
     .gambit-cover{position:sticky;top:104px}
     .gambit-cover-frame{width:100%;aspect-ratio:2/3;overflow:hidden;background:#050505;border:1px solid rgba(223,211,180,.28);box-shadow:0 30px 80px rgba(0,0,0,.45)}
     .gambit-cover-frame img{width:100%;height:100%;display:block;object-fit:cover}
-    .gambit-cover-fallback{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:22px;text-align:center;color:#eee5d0}
-    .gambit-cover-fallback span{font:clamp(15px,2.2vw,22px) Georgia,serif;letter-spacing:.28em}
-    .gambit-cover-fallback strong{font:clamp(54px,8vw,84px) Georgia,serif;line-height:.9;letter-spacing:-.06em}
-    .gambit-cover-fallback b{font:clamp(46px,7vw,76px) Georgia,serif;line-height:.9;letter-spacing:-.04em;color:#6d9b2e}
-    .gambit-cover-fallback small{margin-top:36px;font:9px Arial,sans-serif;letter-spacing:.18em}
     .gambit-meta{display:flex;justify-content:space-between;gap:16px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
     .gambit-main h1{margin:0;font:clamp(54px,7.6vw,102px)/.84 Georgia,serif;letter-spacing:-.075em;color:#f1e8d5}
     .gambit-main h1 span{display:block;color:#709b31}
@@ -58,10 +53,7 @@
   <div class="container gambit-grid">
     <div class="gambit-cover">
       <div class="gambit-cover-frame">
-        <img id="bookCover" alt="THE ECOM GAMBIT front cover" hidden>
-        <div class="gambit-cover-fallback" id="coverFallback" aria-label="THE ECOM GAMBIT cover preview">
-          <span>THE</span><strong>ECOM</strong><b>GAMBIT</b><small>THE GLOBAL E-COMMERCE FIELD GUIDE</small>
-        </div>
+        <img id="bookCover" src="assets/the-ecom-gambit-cover.webp" alt="THE ECOM GAMBIT front cover" fetchpriority="high">
       </div>
     </div>
 
