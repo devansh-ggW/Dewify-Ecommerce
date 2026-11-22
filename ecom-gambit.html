@@ -35,6 +35,10 @@
     .gambit-delivery-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
     .gambit-delivery[hidden],#downloadFile[hidden],#checkDelivery[hidden]{display:none}
     .gambit-buy[disabled]{opacity:.48;cursor:not-allowed}
+    .download-locked{opacity:.72}
+    .download-locked a[aria-disabled="true"]{background:#6a6a6a!important;color:#d8d8d8!important;border-color:#6a6a6a!important;cursor:not-allowed!important}
+    .success-panel{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);z-index:71;width:min(560px,calc(100% - 24px));padding:30px;background:#0c0c0c;border:1px solid var(--line-strong);box-shadow:var(--shadow);display:none}
+    .modal.is-open .success-panel{display:block}
     @media(max-width:800px){.gambit-grid{grid-template-columns:1fr;gap:34px}.gambit-cover{position:static;max-width:390px;margin:0 auto}.gambit-list{grid-template-columns:1fr}.gambit-price{align-items:stretch;flex-direction:column}}
   </style>
   <link rel="stylesheet" href="local-profile.css">
@@ -67,16 +71,17 @@
           <strong id="productPrice">Checking local price…</strong>
           <div class="gambit-status" id="checkoutStatus" role="status" aria-live="polite">Preparing Paddle checkout…</div>
         </div>
-        <button class="button button-light gambit-buy" id="buyButton" type="button" disabled>Checkout unavailable</button>
+        <button class="button button-light gambit-buy" id="buyButton" type="button" disabled>Preparing checkout…</button>
       </div>
 
-      <section class="gambit-delivery" id="deliveryPanel" hidden>
-        <p id="deliveryMessage">Payment completed in Paddle. Verify the server-side payment record to prepare your PDF.</p>
-        <div class="gambit-delivery-actions">
-          <button class="button button-light" id="checkDelivery" type="button" hidden>Verify &amp; prepare download</button>
-          <a class="button button-light" id="downloadFile" href="#" download="The-Ecom-Gambit-Structure-Edition.pdf" hidden>Download the PDF ↗</a>
+      <div class="purchase-download-bar download-locked" id="downloadBar">
+        <div>
+          <span id="downloadStateLabel">DOWNLOAD LINK HIDDEN</span>
+          <strong id="downloadStateTitle">Complete checkout to show your download link.</strong>
+          <p id="downloadStateCopy">After Paddle confirms checkout in this browser, the PDF download link will appear here.</p>
         </div>
-      </section>
+        <a class="button button-light is-download-locked" id="downloadPersistent" href="#" download="THE ECOM GAMBIT.pdf" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1">Download after checkout</a>
+      </div>
 
       <section class="gambit-section">
         <h2>What this edition contains</h2>
@@ -100,7 +105,7 @@
       <section class="gambit-section">
         <h2>Digital delivery</h2>
         <div class="gambit-note">
-          This is a PDF digital product. Paddle handles the checkout; the PDF is released only after the server verifies Paddle's signed <strong>transaction.completed</strong> notification. No physical item is shipped.
+          This is a PDF digital product. It follows the same DEWIFY checkout and download flow as the existing products. After Paddle confirms checkout in this browser, the download link appears here. The PDF is a public static file, not a protected download. No physical item is shipped.
         </div>
       </section>
     </div>
@@ -116,10 +121,26 @@
   </div>
 </footer>
 
+<div class="modal" id="successModal" aria-hidden="true">
+  <div class="scrim"></div>
+  <div class="success-panel" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <p class="eyebrow">PAYMENT CONFIRMED</p>
+    <h2 id="successTitle">You’re in.</h2>
+    <p class="success-lead">Your PDF download is ready.</p>
+    <div class="success-meta">
+      <div><span>TRANSACTION</span><strong id="successTransaction">—</strong></div>
+      <div><span>PRODUCT</span><strong>THE ECOM GAMBIT</strong></div>
+    </div>
+    <div class="success-actions">
+      <a class="button button-light is-download-locked" id="downloadEcomGambit" href="#" download="THE ECOM GAMBIT.pdf" aria-disabled="true" tabindex="-1" target="_blank" rel="noopener">Download THE ECOM GAMBIT ↗</a>
+      <button class="button button-ghost" id="closeSuccess" type="button">Close</button>
+    </div>
+  </div>
+</div>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js" defer></script>
 <script src="config.js?v=20261122-1" defer></script>
 <script src="stars.js?v=20261120-2" defer></script>
-<script src="ecom-gambit.js?v=20261122-1" defer></script>
+<script src="ecom-gambit.js?v=20261122-2" defer></script>
 <script src="local-profile.js" defer></script>
 </body>
 </html>
