@@ -1,0 +1,45 @@
+name = "dewify-paddle-fulfillment"
+main = "src/index.js"
+compatibility_date = "2026-11-22"
+workers_dev = true
+
+[vars]
+STORE_ORIGIN = "https://dewify.shop"
+PADDLE_ENVIRONMENT = "production"
+PADDLE_PRODUCT_ID = "pro_01m81azb8jnb4ejrhbmxnyedfv"
+PADDLE_PRICE_ID = "pri_01m81b57jng4gsnnbnv2fte0cz"
+PRODUCT_OBJECT_KEY = "the-ecom-gambit-structure-edition.pdf"
+BOOK_COVER_OBJECT_KEY = "the-ecom-gambit-cover.jpg"
+MAX_DOWNLOADS = "5"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dewify-paddle-orders"
+database_id = "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "BOOK_FILES"
+bucket_name = "dewify-private-downloads"
+
+[env.sandbox]
+name = "dewify-paddle-fulfillment-sandbox"
+
+[env.sandbox.vars]
+STORE_ORIGIN = "https://dewify.shop"
+PADDLE_ENVIRONMENT = "sandbox"
+PADDLE_PRODUCT_ID = "REPLACE_WITH_SANDBOX_PRODUCT_ID"
+PADDLE_PRICE_ID = "REPLACE_WITH_SANDBOX_PRICE_ID"
+PRODUCT_OBJECT_KEY = "the-ecom-gambit-structure-edition.pdf"
+BOOK_COVER_OBJECT_KEY = "the-ecom-gambit-cover.jpg"
+MAX_DOWNLOADS = "5"
+
+[[env.sandbox.d1_databases]]
+binding = "DB"
+database_name = "dewify-paddle-sandbox"
+database_id = "REPLACE_WITH_SANDBOX_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[[env.sandbox.r2_buckets]]
+binding = "BOOK_FILES"
+bucket_name = "dewify-private-downloads"

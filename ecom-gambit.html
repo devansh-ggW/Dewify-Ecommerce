@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="THE ECOM GAMBIT — Structure Edition, a 39-page architecture and chapter plan for a global e-commerce business book.">
+  <title>THE ECOM GAMBIT — Structure Edition | DEWIFY</title>
+  <link rel="icon" href="/favicon.ico?v=20261121" type="image/x-icon" sizes="any">
+  <link rel="stylesheet" href="styles.css?v=20261121-2">
+  <style>
+    .gambit-product{padding:76px 0 110px;position:relative;z-index:2}
+    .gambit-grid{display:grid;grid-template-columns:minmax(260px,420px) minmax(0,1fr);gap:clamp(34px,6vw,76px);align-items:start}
+    .gambit-cover{position:sticky;top:104px}
+    .gambit-cover-frame{width:100%;aspect-ratio:2/3;overflow:hidden;background:#050505;border:1px solid rgba(223,211,180,.28);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+    .gambit-cover-frame img{width:100%;height:100%;display:block;object-fit:cover}
+    .gambit-cover-fallback{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:22px;text-align:center;color:#eee5d0}
+    .gambit-cover-fallback span{font:clamp(15px,2.2vw,22px) Georgia,serif;letter-spacing:.28em}
+    .gambit-cover-fallback strong{font:clamp(54px,8vw,84px) Georgia,serif;line-height:.9;letter-spacing:-.06em}
+    .gambit-cover-fallback b{font:clamp(46px,7vw,76px) Georgia,serif;line-height:.9;letter-spacing:-.04em;color:#6d9b2e}
+    .gambit-cover-fallback small{margin-top:36px;font:9px Arial,sans-serif;letter-spacing:.18em}
+    .gambit-meta{display:flex;justify-content:space-between;gap:16px;color:var(--dim);font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+    .gambit-main h1{margin:0;font:clamp(54px,7.6vw,102px)/.84 Georgia,serif;letter-spacing:-.075em;color:#f1e8d5}
+    .gambit-main h1 span{display:block;color:#709b31}
+    .gambit-sub{max-width:690px;margin:28px 0 0;color:var(--muted);font-size:15px;line-height:1.78}
+    .gambit-price{display:flex;align-items:end;justify-content:space-between;gap:20px;padding:24px 0;margin-top:32px;border-block:1px solid var(--line)}
+    .gambit-price strong{font-size:24px;letter-spacing:-.04em}
+    .gambit-status{margin-top:10px;color:var(--dim);font:10px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+    .gambit-status[data-state="error"]{color:#e6a39a}
+    .gambit-status[data-state="success"]{color:#a9d17a}
+    .gambit-section{margin-top:40px}
+    .gambit-section h2{margin:0 0 16px;font-size:23px;letter-spacing:-.045em}
+    .gambit-list{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+    .gambit-list div{padding:16px;background:rgba(12,12,12,.9)}
+    .gambit-list span{display:block;color:var(--dim);font:8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}
+    .gambit-list strong{display:block;margin-top:11px;font-size:12px}
+    .gambit-note{padding:20px;border:1px solid var(--line-strong);background:rgba(255,255,255,.035);color:var(--muted);font-size:12px;line-height:1.75}
+    .gambit-delivery{margin-top:22px;padding:18px;border:1px solid var(--line-strong);background:rgba(255,255,255,.025)}
+    .gambit-delivery p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+    .gambit-delivery-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    .gambit-delivery[hidden],#downloadFile[hidden],#checkDelivery[hidden]{display:none}
+    .gambit-buy[disabled]{opacity:.48;cursor:not-allowed}
+    @media(max-width:800px){.gambit-grid{grid-template-columns:1fr;gap:34px}.gambit-cover{position:static;max-width:390px;margin:0 auto}.gambit-list{grid-template-columns:1fr}.gambit-price{align-items:stretch;flex-direction:column}}
+  </style>
+  <link rel="stylesheet" href="local-profile.css">
+</head>
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html">dewify.</a>
+    <nav class="nav-links"><a href="products.html">Learn</a><a href="index.html#mindset">Mindset</a><a href="index.html#faq">FAQ</a><a href="notion-templates.html">Notion templates</a></nav>
+    <span class="store-pill">DIGITAL EDITION</span>
+  </div>
+</header>
+
+<main class="gambit-product">
+  <div class="container gambit-grid">
+    <div class="gambit-cover">
+      <div class="gambit-cover-frame">
+        <img id="bookCover" alt="THE ECOM GAMBIT front cover" hidden>
+        <div class="gambit-cover-fallback" id="coverFallback" aria-label="THE ECOM GAMBIT cover preview">
+          <span>THE</span><strong>ECOM</strong><b>GAMBIT</b><small>THE GLOBAL E-COMMERCE FIELD GUIDE</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="gambit-main">
+      <div class="gambit-meta"><span>DEWIFY / DIGITAL LEARNING</span><span>STRUCTURE EDITION</span></div>
+      <h1>THE ECOM<span>GAMBIT.</span></h1>
+      <p class="gambit-sub">A structured planning edition for a global e-commerce business book. It maps the proposed 80 chapters across 15 major parts, from business models and market research to Shopify, financial management, payments, marketing, operations, AI and international expansion.</p>
+
+      <div class="gambit-price">
+        <div>
+          <strong id="productPrice">Checking local price…</strong>
+          <div class="gambit-status" id="checkoutStatus" role="status" aria-live="polite">Preparing Paddle checkout…</div>
+        </div>
+        <button class="button button-light gambit-buy" id="buyButton" type="button" disabled>Checkout unavailable</button>
+      </div>
+
+      <section class="gambit-delivery" id="deliveryPanel" hidden>
+        <p id="deliveryMessage">Payment completed in Paddle. Verify the server-side payment record to prepare your PDF.</p>
+        <div class="gambit-delivery-actions">
+          <button class="button button-light" id="checkDelivery" type="button" hidden>Verify &amp; prepare download</button>
+          <a class="button button-light" id="downloadFile" href="#" download="The-Ecom-Gambit-Structure-Edition.pdf" hidden>Download the PDF ↗</a>
+        </div>
+      </section>
+
+      <section class="gambit-section">
+        <h2>What this edition contains</h2>
+        <div class="gambit-list">
+          <div><span>01 / STRUCTURE</span><strong>80 PROPOSED CHAPTERS</strong></div>
+          <div><span>02 / ORGANIZATION</span><strong>15 MAJOR PARTS</strong></div>
+          <div><span>03 / CHAPTER PLANS</span><strong>SUBJECTS &amp; LEARNING OBJECTIVES</strong></div>
+          <div><span>04 / EXECUTION</span><strong>PRACTICAL RESOURCES &amp; DEPENDENCIES</strong></div>
+          <div><span>05 / RESEARCH</span><strong>SOURCE REQUIREMENTS</strong></div>
+          <div><span>06 / PRODUCTION</span><strong>EDITORIAL REVIEW CONTROLS</strong></div>
+        </div>
+      </section>
+
+      <section class="gambit-section">
+        <h2>Important edition note</h2>
+        <div class="gambit-note">
+          The supplied PDF is titled <strong>Structure Edition</strong>. Page 2 explains that it is the proposed master structure, not the finished manuscript, and that chapter prose has not yet been drafted. This purchase is for the 39-page chapter architecture and planning document, not a completed 80-chapter textbook.
+        </div>
+      </section>
+
+      <section class="gambit-section">
+        <h2>Digital delivery</h2>
+        <div class="gambit-note">
+          This is a PDF digital product. Paddle handles the checkout; the PDF is released only after the server verifies Paddle's signed <strong>transaction.completed</strong> notification. No physical item is shipped.
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div><a class="brand" href="index.html">dewify.</a><p>Learn. Build. Repeat.</p></div>
+    <div class="footer-links"><a href="products.html">Products</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refund-policy.html">Refund Policy</a></div>
+    <div class="footer-contact"><span class="eyebrow">SUPPORT</span><a href="mailto:dewifystores@gmail.com">dewifystores@gmail.com ↗</a></div>
+    <span class="copyright">© 2026 DEWIFY</span>
+  </div>
+</footer>
+
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js" defer></script>
+<script src="config.js?v=20261122-1" defer></script>
+<script src="stars.js?v=20261120-2" defer></script>
+<script src="ecom-gambit.js?v=20261122-1" defer></script>
+<script src="local-profile.js" defer></script>
+</body>
+</html>
