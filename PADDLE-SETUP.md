@@ -26,8 +26,7 @@ A browser `checkout.completed` event is only a user-interface signal. It does no
 The repository does not contain Cloudflare account resources or secrets. Before checkout can be enabled:
 
 - Create a D1 database and apply `cloudflare/migrations/0001_orders.sql`.
-- Create a private R2 bucket and upload the PDF as `the-ecom-gambit-structure-edition.pdf`.
-- Upload the supplied cover image as `the-ecom-gambit-cover.jpg` to the same bucket.
+- Create a private R2 bucket and upload the PDF as `the-ecom-gambit-structure-edition.pdf`. The cover is already stored as a public static asset at `assets/the-ecom-gambit-cover.webp`.
 - Bind D1 as `DB` and R2 as `BOOK_FILES` in the Worker.
 - Set the Worker secret `PADDLE_WEBHOOK_SECRET` from the Paddle notification destination.
 - Configure the Paddle webhook URL as `https://YOUR-WORKER-HOST/webhooks/paddle` and subscribe to `transaction.completed`.
