@@ -30,7 +30,6 @@ PADDLE_ENVIRONMENT = "sandbox"
 PADDLE_PRODUCT_ID = "REPLACE_WITH_SANDBOX_PRODUCT_ID"
 PADDLE_PRICE_ID = "REPLACE_WITH_SANDBOX_PRICE_ID"
 PRODUCT_OBJECT_KEY = "the-ecom-gambit-structure-edition.pdf"
-BOOK_COVER_OBJECT_KEY = "the-ecom-gambit-cover.jpg"
 MAX_DOWNLOADS = "5"
 
 [[env.sandbox.d1_databases]]
