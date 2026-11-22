@@ -1,52 +1,57 @@
-# Paddle setup for DEWIFY
+# Paddle checkout and digital fulfillment
 
-## Existing storefront
+## Current DEWIFY hosting
 
-This repository is a static GitHub Pages site on `dewify.shop`. The public Paddle client-side token already exists in `config.js`. A client-side token is designed to be used by Paddle.js in the browser. Never place a Paddle API key or notification destination secret in `config.js`, HTML, or browser JavaScript.
+The storefront is a static GitHub Pages site on `dewify.shop`. GitHub Pages serves the HTML, CSS, and browser JavaScript. It does not run a server process, accept Paddle webhooks, keep a private order database, or securely deliver private files.
 
-The existing legacy products still use public static download files and browser-side completion callbacks. Those downloads are not protected against link sharing and are not server-verified. Do not use that pattern for THE ECOM GAMBIT.
+**No Cloudflare service is used or required by this repository.** The fulfillment API host has not yet been selected. Until a backend is deployed and tested, THE ECOM GAMBIT checkout remains disabled.
 
-## THE ECOM GAMBIT
+## Existing Paddle frontend configuration
 
-The product and price identifiers are configured in `config.js`. The dedicated checkout page is `ecom-gambit.html`; its server-side fulfillment code is in `cloudflare/`.
+The live Paddle client-side token and the THE ECOM GAMBIT product and price IDs are configured in `config.js`. Paddle client-side tokens are intended for browser use. Never put a Paddle API key or notification destination secret in `config.js`, HTML, or browser JavaScript.
 
-The new flow is:
+The `PADDLE_FULFILLMENT_API_URL` setting is intentionally blank. It is a provider-neutral base URL for the future fulfillment API, not a Cloudflare URL and not a secret.
 
-1. Paddle.js opens a checkout for the configured price.
-2. The browser attaches a random, one-time delivery nonce as Paddle transaction custom data.
-3. Paddle sends `transaction.completed` to the Worker.
-4. The Worker verifies the raw-body `Paddle-Signature` against its secret, checks the exact product and price, and records the entitlement in D1.
-5. The buyer submits their transaction ID and nonce. The Worker compares the nonce hash and streams the PDF from a private R2 bucket.
-6. The browser never receives an R2 object URL. The Worker limits repeat downloads.
+## Required backend contract
 
-A browser `checkout.completed` event is only a user-interface signal. It does not grant access.
+The chosen backend can be hosted on a provider that supports server-side code, a persistent order store, and private file storage. It must implement both routes below before checkout is enabled.
 
-## Deployment blockers
+### 1. Paddle webhook
 
-The repository does not contain Cloudflare account resources or secrets. Before checkout can be enabled:
+`POST /webhooks/paddle`
 
-- Create a D1 database and apply `cloudflare/migrations/0001_orders.sql`.
-- Create a private R2 bucket and upload the PDF as `the-ecom-gambit-structure-edition.pdf`. The cover is already stored as a public static asset at `assets/the-ecom-gambit-cover.webp`.
-- Bind D1 as `DB` and R2 as `BOOK_FILES` in the Worker.
-- Set the Worker secret `PADDLE_WEBHOOK_SECRET` from the Paddle notification destination.
-- Configure the Paddle webhook URL as `https://YOUR-WORKER-HOST/webhooks/paddle` and subscribe to `transaction.completed`.
-- Set `PADDLE_FULFILLMENT_API_URL` in `config.js` to the deployed Worker URL.
-- Confirm `STORE_ORIGIN` exactly matches `https://dewify.shop`.
+The server must:
 
-Use the Cloudflare dashboard to connect the `cloudflare/` directory to this GitHub repository through Workers Builds, or use Wrangler from a trusted development environment. The code is not live until the Worker and its bindings are deployed.
+- Verify the Paddle `Paddle-Signature` against the exact raw request body using the notification destination's secret.
+- Enforce a timestamp tolerance and reject invalid signatures.
+- Fulfil only the signed `transaction.completed` event for the configured THE ECOM GAMBIT product and price, with the expected quantity and the matching `sku` and one-time `delivery_nonce` in transaction custom data.
+- Persist the entitlement idempotently so webhook retries cannot create duplicate grants.
+- Store only a hash of the delivery nonce where practical. Keep the webhook secret server-side.
 
-## Sandbox
+### 2. Private PDF delivery
 
-Sandbox uses a separate Paddle client-side token, sandbox product and price IDs, notification destination secret, and D1 database. Sandbox and production values must not be mixed.
+`POST /api/download`
 
-The sandbox fields in `config.js` are intentionally empty. Add the sandbox client token and sandbox product/price IDs only after creating them in Paddle's sandbox environment. Configure the Worker sandbox environment with those matching product/price IDs and its own notification destination secret. Set `PADDLE_ENVIRONMENT` to `sandbox` only during sandbox testing, then restore `production`.
+The browser sends JSON containing `transaction_id` and `delivery_nonce`. The server must verify that both match an entitlement previously created by the signed webhook, enforce a reasonable download limit, and stream the PDF from private storage. Do not put the PDF in the public GitHub Pages repository or return a public storage URL.
 
-Run `npm test` in this directory before deployment. The automated tests cover webhook signature verification and transaction validation; they do not replace an end-to-end sandbox purchase.
+The browser's Paddle `checkout.completed` event is only a user-interface signal. It must never create an entitlement or unlock the PDF by itself.
 
-## International checkout and promotions
+## Connect the frontend after deployment
 
-The product page uses Paddle price preview for localized price display and lets Paddle Checkout determine the available buyer payment methods and final tax/currency details. Country-specific promotions are not fabricated in code: create the discount in Paddle and configure its eligible countries/regions in Paddle's dashboard. A global optional code can be supplied through `ECOM_GAMBIT_PROMO_CODE`.
+1. Choose and deploy the non-Cloudflare backend host.
+2. Configure its private database/storage and server-side Paddle notification destination secret.
+3. Point the Paddle notification destination at `https://YOUR-API-HOST/webhooks/paddle` and subscribe to `transaction.completed`.
+4. Set `PADDLE_FULFILLMENT_API_URL` in `config.js` to the deployed API's base URL, without a trailing slash.
+5. Configure separate Paddle sandbox credentials, product/price IDs, webhook destination, and test data.
+6. Complete a real sandbox checkout and verify that the PDF is unavailable before the signed webhook, available only to the matching transaction and nonce after it, and never served from a public URL.
+7. Enable production checkout only after the complete sandbox flow has passed.
 
-## PDF accuracy
+The sandbox token, product ID, and price ID fields are intentionally blank until matching sandbox values exist. Never mix sandbox and production credentials.
 
-The supplied `THE ECOM GAMBIT.pdf` says on page 2 that it is a proposed master structure and not the finished manuscript. The store calls it **Structure Edition** and states that it contains chapter plans rather than full chapter prose.
+## Existing legacy downloads
+
+Older DEWIFY products still use public static download files and browser-side checkout callbacks. Those links are not protected against copying or sharing and are separate from THE ECOM GAMBIT flow. Do not copy that legacy pattern into new private digital-product fulfilment.
+
+## Product accuracy
+
+The supplied THE ECOM GAMBIT PDF is the **39-page Structure Edition**. Page 2 describes it as a proposed master structure and states that chapter prose has not yet been drafted. The product page must continue to describe the file accurately as a structure and planning edition, not a completed 80-chapter manuscript.

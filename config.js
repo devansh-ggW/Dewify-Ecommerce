@@ -2,7 +2,7 @@ window.DEWIFY_CONFIG = {
   brand: "DEWIFY",
   supportEmail: "dewifystores@gmail.com",
   PADDLE_ENVIRONMENT: "production",
-  // Public API base URL for the separate Cloudflare Worker. Leave empty until deployed.
+  // Provider-neutral URL for the server-side Paddle fulfillment API. Leave empty until deployed.
   PADDLE_FULFILLMENT_API_URL: "",
   // Sandbox values are intentionally blank. Never reuse production prices/tokens in sandbox.
   PADDLE_SANDBOX_CLIENT_TOKEN: "",
