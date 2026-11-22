@@ -1,57 +1,41 @@
-# Paddle checkout and digital fulfillment
+# DEWIFY Paddle checkout and digital downloads
 
-## Current DEWIFY hosting
+## Hosting
 
-The storefront is a static GitHub Pages site on `dewify.shop`. GitHub Pages serves the HTML, CSS, and browser JavaScript. It does not run a server process, accept Paddle webhooks, keep a private order database, or securely deliver private files.
+DEWIFY is a static GitHub Pages storefront on `dewify.shop`. Product pages load Paddle.js v2 in the browser and use the same checkout and download pattern as the existing products.
 
-**No Cloudflare service is used or required by this repository.** The fulfillment API host has not yet been selected. Until a backend is deployed and tested, THE ECOM GAMBIT checkout remains disabled.
+No Cloudflare service, Worker, database, or private object storage is used by this flow.
 
-## Existing Paddle frontend configuration
+## Product configuration
 
-The live Paddle client-side token and the THE ECOM GAMBIT product and price IDs are configured in `config.js`. Paddle client-side tokens are intended for browser use. Never put a Paddle API key or notification destination secret in `config.js`, HTML, or browser JavaScript.
+Each product entry in `config.js` contains its Paddle Price ID and a `downloadUrl` pointing to a static file served by the DEWIFY site.
 
-The `PADDLE_FULFILLMENT_API_URL` setting is intentionally blank. It is a provider-neutral base URL for the future fulfillment API, not a Cloudflare URL and not a secret.
+THE ECOM GAMBIT uses:
 
-## Required backend contract
+- Product ID: `pro_01m81azb8jnb4ejrhbmxnyedfv`
+- Price ID: `pri_01m81b57jng4gsnnbnv2fte0cz`
+- Download file: `THE ECOM GAMBIT.pdf` at the repository root
 
-The chosen backend can be hosted on a provider that supports server-side code, a persistent order store, and private file storage. It must implement both routes below before checkout is enabled.
+The product page checks that the configured download file exists before enabling the Buy button. Upload the PDF with that exact filename to the repository root before checkout can be used.
 
-### 1. Paddle webhook
+## Checkout and delivery behavior
 
-`POST /webhooks/paddle`
+1. Paddle.js initializes with the public client-side token in `config.js`.
+2. The page previews the localized price using `Paddle.PricePreview`.
+3. The Buy button opens Paddle Checkout for the configured Price ID.
+4. On Paddle's `checkout.completed` browser event, the page reveals the configured download link and records the ready state in local storage.
+5. The page checks for deferred UPI payment status and does not unlock the file while Paddle still reports the payment as pending.
 
-The server must:
+This matches the existing AI MONEY ARC, EBOOX, WEBBLE, and Creator Pack product pages.
 
-- Verify the Paddle `Paddle-Signature` against the exact raw request body using the notification destination's secret.
-- Enforce a timestamp tolerance and reject invalid signatures.
-- Fulfil only the signed `transaction.completed` event for the configured THE ECOM GAMBIT product and price, with the expected quantity and the matching `sku` and one-time `delivery_nonce` in transaction custom data.
-- Persist the entitlement idempotently so webhook retries cannot create duplicate grants.
-- Store only a hash of the delivery nonce where practical. Keep the webhook secret server-side.
+## Important limitation
 
-### 2. Private PDF delivery
+This is the existing DEWIFY legacy delivery model, not secure paid-file access. The PDF is a public static file on GitHub Pages. Anyone who knows or discovers its URL can download it without completing checkout. Hiding the link in the page and saving a local browser flag are user-interface behavior only; they do not prove payment to a server.
 
-`POST /api/download`
+A browser `checkout.completed` event is not a server-verified entitlement. Do not describe this setup as private, protected, or fraud-proof. A secure download system would require a separate backend that verifies signed Paddle webhooks and releases files from private storage. That is not part of this implementation.
 
-The browser sends JSON containing `transaction_id` and `delivery_nonce`. The server must verify that both match an entitlement previously created by the signed webhook, enforce a reasonable download limit, and stream the PDF from private storage. Do not put the PDF in the public GitHub Pages repository or return a public storage URL.
-
-The browser's Paddle `checkout.completed` event is only a user-interface signal. It must never create an entitlement or unlock the PDF by itself.
-
-## Connect the frontend after deployment
-
-1. Choose and deploy the non-Cloudflare backend host.
-2. Configure its private database/storage and server-side Paddle notification destination secret.
-3. Point the Paddle notification destination at `https://YOUR-API-HOST/webhooks/paddle` and subscribe to `transaction.completed`.
-4. Set `PADDLE_FULFILLMENT_API_URL` in `config.js` to the deployed API's base URL, without a trailing slash.
-5. Configure separate Paddle sandbox credentials, product/price IDs, webhook destination, and test data.
-6. Complete a real sandbox checkout and verify that the PDF is unavailable before the signed webhook, available only to the matching transaction and nonce after it, and never served from a public URL.
-7. Enable production checkout only after the complete sandbox flow has passed.
-
-The sandbox token, product ID, and price ID fields are intentionally blank until matching sandbox values exist. Never mix sandbox and production credentials.
-
-## Existing legacy downloads
-
-Older DEWIFY products still use public static download files and browser-side checkout callbacks. Those links are not protected against copying or sharing and are separate from THE ECOM GAMBIT flow. Do not copy that legacy pattern into new private digital-product fulfilment.
+Never place a Paddle API key or notification destination secret in `config.js` or browser JavaScript. The client-side token is intended for the browser.
 
 ## Product accuracy
 
-The supplied THE ECOM GAMBIT PDF is the **39-page Structure Edition**. Page 2 describes it as a proposed master structure and states that chapter prose has not yet been drafted. The product page must continue to describe the file accurately as a structure and planning edition, not a completed 80-chapter manuscript.
+THE ECOM GAMBIT is the 39-page **Structure Edition**. It is a planning document for an 80-chapter book, not the completed 80-chapter manuscript. The product page must keep that distinction clear.
