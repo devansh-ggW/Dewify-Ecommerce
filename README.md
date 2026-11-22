@@ -46,8 +46,14 @@ The page loads Paddle checkout only when its release mode is set to `paid`. In f
 
 ## THE ECOM GAMBIT payment and delivery
 
-The Ecom Gambit has its own Paddle product and price in `config.js`. Its secure fulfillment service is in `cloudflare/`. The GitHub Pages site must not expose the PDF or a direct public download URL.
+THE ECOM GAMBIT keeps its own Paddle product and price configuration in `config.js`. Its browser checkout flow is provider-neutral and expects a separate server-side fulfillment API.
 
-The checkout remains disabled until `PADDLE_FULFILLMENT_API_URL` points to the deployed Worker, the Worker has its D1 and private R2 bindings, and the Paddle notification destination is configured. See [cloudflare/README.md](cloudflare/README.md) for setup and sandbox verification.
+The DEWIFY storefront is hosted as a static GitHub Pages site. GitHub Pages cannot receive Paddle webhooks, verify payment signatures, maintain private purchase entitlements, or securely stream a private PDF. Therefore **THE ECOM GAMBIT checkout stays disabled** while no non-Cloudflare fulfillment host has been selected and deployed.
 
-The supplied PDF is labelled **Structure Edition**. It is a 39-page book architecture and chapter plan, not the finished 80-chapter manuscript. The product page intentionally describes that distinction.
+The frontend expects:
+- `POST /webhooks/paddle` to receive and verify signed `transaction.completed` notifications.
+- `POST /api/download` to verify a transaction ID and one-time delivery nonce against a server-side entitlement, then stream the PDF from private storage.
+
+Set `PADDLE_FULFILLMENT_API_URL` only after that backend is deployed and tested. Keep the PDF, Paddle API keys, and webhook destination secret off GitHub Pages and out of browser code. A browser `checkout.completed` callback is not proof of payment.
+
+See [PADDLE-SETUP.md](PADDLE-SETUP.md) for the provider-neutral backend contract and release checklist. No Cloudflare deployment or account is required by this repository.
