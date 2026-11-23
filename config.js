@@ -25,18 +25,6 @@ window.DEWIFY_CONFIG = {
     {id:"creator-stash-700",productId:"pro_01m39m7m260rfj92k09tdc70c8",name:"CREATOR STASH 700",version:"DROP 05",category:"DIGITAL PRODUCTS",type:"One-time digital purchase",format:"350 website templates + 350 design templates",priceId:"pri_01m39m9dxebwxnhrqpcmmtgck5",basePriceUsd:null,displayPrice:"Price shown at checkout",downloadUrl:"CREATOR_STASH_700.zip",image:"assets/creator-stash-700-cover.svg",description:"A large creator stash with 700 templates: 350 single-file website templates and 350 editable SVG design templates across business, weddings, celebrations, food, beauty, events and more.",highlights:["350 single-file website templates","350 editable SVG design templates","No frameworks, npm or build process for website templates","Responsive websites with embedded CSS and JavaScript","Instant digital ZIP delivery"]},
     {id:"creator-arsenal-1000",productId:"pro_01m39gv9nym8krspztnfnqfm3y",name:"CREATOR ARSENAL 1000",version:"DROP 06",category:"DIGITAL PRODUCTS",type:"One-time digital purchase",format:"500 website templates + 500 design templates",priceId:"pri_01m39gxn8k1ytp2efs880wm899",basePriceUsd:7.99,displayPrice:"$7.99",downloadUrl:"dewify-creator-arsenal-8a9b630b156d3088c2eb058559f63d18aae70c72.zip",image:"assets/creator-arsenal-1000-cover.svg",description:"A creator-ready arsenal of 1,000 editable templates for businesses, weddings, celebrations, food, beauty, events and more.",highlights:["500 single-file website templates","500 editable design templates","HTML + CSS + JavaScript included in every website file","Business, weddings, celebrations, food, beauty and event categories","Instant digital ZIP delivery"]}
   ],
-  notionTemplates: {
-    sellerDashboard: {
-      id: "dewify-seller-dashboard",
-      name: "DEWIFY Ecommerce Seller Dashboard",
-      releaseMode: "free",
-      priceId: "",
-      notionUrl: "https://shard-dugout-b5f.notion.site/DEWIFY-Ecommerce-Seller-Dashboard-Customer-Template-41e57ad7b0818134a254d01e0c4ba0ba?pvs=73",
-      displayPrice: "Free during testing",
-      image: "assets/dewify-ecommerce-seller-dashboard.svg",
-      description: "A structured Notion workspace for organizing ecommerce operations, customer records and setup guidance."
-    }
-  }
 };
 
 (() => {
